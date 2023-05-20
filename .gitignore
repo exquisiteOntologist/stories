@@ -1,1 +1,7 @@
 target
+node_modules
+chirp.db
+.DS_Store
+
+
+

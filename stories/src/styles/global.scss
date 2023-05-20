@@ -1,0 +1,74 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+$brand-light: #FFFCF7;
+$brand-dark: #000;
+
+:root {
+    // font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+    font-family: 'SF Pro Display';
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 400;
+    
+    --primary: #0f0f0f;
+    color: var(--primary);
+    background-color: #f6f6f6;  
+    background-color: #fffefe;
+    
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-text-size-adjust: 100%;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --primary: #f6f6f6;
+        color: var(--primary);
+        background-color: #2f2f2f;
+    }
+    /*   
+    a:hover {
+        color: #24c8db;
+    }
+    
+    input,
+    button {
+        color: #ffffff;
+        background-color: #0f0f0f98;
+    }
+    button:active {
+        background-color: #0f0f0f69;
+    } */
+}
+
+html,
+body {
+    // font-family: 'Source Sans Pro', sans-serif;
+    // background: #fff;
+    // color: #000;
+    padding: 0;
+    margin: 0;
+    max-width: 100vw;
+    // overflow-x: hidden;
+    // overflow-y: hidden;
+    position: relative;
+}
+
+html a {
+    color: inherit;
+}
+
+* {
+    max-width: 100%;
+}
+
+h1 {
+    @media (prefers-color-scheme: dark) {
+        color: #fff
+    }
+}
+

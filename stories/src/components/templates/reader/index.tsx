@@ -1,0 +1,93 @@
+// import { PageProps } from 'gatsby'
+import * as React from 'react'
+import { useEffect, useState } from 'react'
+// import Helmet from "react-helmet"
+import { contentBodiesSelectors } from '../../../redux/features/contentBodiesSlice'
+import { contentsSelectors, fetchContent } from '../../../redux/features/contentsSlice'
+import { selectColours, setThemeColours } from '../../../redux/features/themeSlice'
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
+import { createHslaString, generateContentColours } from '../../../utilities/graphics/colours'
+import { IconChat } from '../../atoms/icons/chat'
+import { Button } from '../../atoms/button'
+import { ReaderViewProps } from './reader.interfaces'
+import './reader.scss'
+
+const ReaderView: React.FC<ReaderViewProps> = ({ contentId }) => {
+    const dispatch = useAppDispatch()
+    const content = useAppSelector(s => contentsSelectors.selectById(s, contentId))
+    const contentBody = useAppSelector(s => contentBodiesSelectors.selectById(s, content?.contentBodyId))
+    const colours = useAppSelector(selectColours)
+    const coverImage = content?.media.find(m => m.isCover)?.mediaImage[0]
+    
+    useEffect(() => {
+        if (!content) dispatch(fetchContent([Number(contentId)]))
+    }, [dispatch])
+
+    useEffect(() => {
+        const coverDataUrl = coverImage?.dataUrl;   
+        if (coverDataUrl) generateContentColours(coverDataUrl).then(v => {
+            dispatch(setThemeColours(v))
+        })
+    }, [coverImage, dispatch])
+    
+    if (!content || !contentBody) return null
+
+    const showOriginalArticle = true // future: if scraped article much longer than excerpt
+    const [originalArticleLoaded, setOriginalArticleLoaded] = useState(true) 
+    const articleSourceContent = /* contentBody.body?.length > 0 ? contentBody.body : */ content.description
+    const articleHtml = articleSourceContent?.replace(/data-src/gi, 'src')
+        .replace(/<script/gi, '[script')
+        .replace(/script>/gi, 'script]')
+    
+    const coverImageUrl = coverImage?.url
+    const headerImage = coverImage && (<img className='mb-20 mx-auto' src={coverImageUrl} width={coverImage?.width} height={coverImage?.height} alt={content.title} />)
+
+    const commentsUrl = content?.contentCommunity?.discussionUrl
+    const comments = commentsUrl && (
+        <Button
+            className={'inline-block'}
+            Icon={IconChat}
+            label="Comments"
+            href={commentsUrl}
+        />
+    )
+
+    const articleTitle = content.title
+    const textContentWidths = `w-full max-w-7xl`
+
+    return (
+        <>
+            {/* <Helmet>
+                <title>"{articleTitle}" | Semblance</title>
+            </Helmet> */}
+            <article className='reader w-full' style={{ /* backgroundColor: colours?.background */ }}>
+                <header className='reader__header text-center mb-10'>
+                    {headerImage}
+                    <h1 className={`text-center text-5xl leading-normal px-4 mx-auto mb-10 ${textContentWidths} contrast-200`} style={{ color: colours?.primaryLightnessAdjusted }}>
+                        <a href={content.url} target='_blank'>{articleTitle}</a>
+                    </h1>
+                    <div className='inline-block' style={{ color: colours?.primaryLightnessAdjusted }}>
+                        {comments}
+                    </div>
+                </header>
+                {showOriginalArticle && content.url
+                    ? (
+                        <iframe
+                            className={`w-[90vw] h-[80vh] mx-auto ${originalArticleLoaded ? 'block' : 'hidden'} border-2 border-solid border-slate-400`}
+                            style={{ borderColor: colours.primaryHslVals && createHslaString(...colours.primaryHslVals, 0.5) }}
+                            src={content.url}
+                        ></iframe>
+                    )
+                    : (
+                        <section
+                            className={`reader__body w-full max-w-5xl px-4 mb-2 mx-auto ${coverImageUrl ? 'has-cover' : ''}`}
+                            dangerouslySetInnerHTML={{ __html: articleHtml }}
+                        ></section>
+                    )
+                }
+            </article>
+        </>
+    )
+}
+
+export default ReaderView

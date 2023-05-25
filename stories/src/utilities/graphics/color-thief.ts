@@ -1,4 +1,4 @@
-import quantize from 'quantize'
+// import quantize from 'quantize'
 
 /*
  * Color Thief v2.3.2
@@ -77,7 +77,7 @@ class CanvasImage {
     
     constructor(image: HTMLImageElement) {
         this.canvas  = document.createElement('canvas');
-        this.context = this.canvas.getContext('2d');
+        this.context = this.canvas.getContext('2d') as CanvasRenderingContext2D;
         this.width  = this.canvas.width  = image.naturalWidth;
         this.height = this.canvas.height = image.naturalHeight;
         this.context.drawImage(image, 0, 0, this.width, this.height);

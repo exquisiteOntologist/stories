@@ -58,13 +58,14 @@ export const ShutEye: React.FC = () => {
     // progress.reset()
 
     const canvasRef = useRef<HTMLCanvasElement>(null)
-    // const colour = colours.primaryLightnessAdjusted ?? !!canvasRef.current ? getComputedStyle(canvasRef.current as HTMLCanvasElement).color : 'rgba(0,0,0,1)' // 'currentColor' // 'rgba(0,0,0,1)'
-    const colour = window.matchMedia("(prefers-color-scheme: dark)").matches ? 'white' : 'black'
-    console.log('colour', colour)
+    const useDarkColour = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const genericColour = useDarkColour ? 'white' : 'black'
+    const colour = colours.primaryLightnessAdjusted ?? genericColour //!!canvasRef.current ? getComputedStyle(canvasRef.current as HTMLCanvasElement).color : 'rgba(0,0,0,1)' // 'currentColor' // 'rgba(0,0,0,1)'
+    // console.log('colour', colour)
 
     useEffect(() => {
         setActive(false);
-        const handleDarkMode = (e: MediaQueryListEvent) => /* e.matches &&  */{
+        const handleDarkMode = () => {
             progress.reset()
             setActive(false)
             setRand(Math.random())
@@ -73,18 +74,13 @@ export const ShutEye: React.FC = () => {
         darkModePreference.addEventListener("change", handleDarkMode)
         const lightModePreference = window.matchMedia("(prefers-color-scheme: light)")
         lightModePreference.addEventListener("change", handleDarkMode)
-        // TODO: Sort out match media, it does setActive true somehow and doesn't change colour
-        // const handleFocus = () => {
-        //     setActive(true)
-        //     setRand(Math.random())
-        // }
-        // window.addEventListener('focus', handleFocus)
+        // window.addEventListener('focus', handleDarkMode)
 
         return () => {
-            // return for unmount
+            // return for unmount lifecycle step
             darkModePreference.removeEventListener('change', handleDarkMode);
             lightModePreference.removeEventListener('change', handleDarkMode);
-            // window.removeEventListener('focus', handleFocus)
+            // window.removeEventListener('focus', handleDarkMode)
         }
     }, [])
 

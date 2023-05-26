@@ -8,6 +8,7 @@ fn greet(name: &str) -> String {
 }
 
 fn main() {
+    _ = chirp::db::db_init();
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![greet])
         .run(tauri::generate_context!())

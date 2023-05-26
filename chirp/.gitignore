@@ -1,0 +1,6 @@
+/target
+
+chirp.db
+*.db
+
+.DS_Store

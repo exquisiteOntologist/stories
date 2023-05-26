@@ -7,6 +7,8 @@
 
   --foreground-rgb: 0, 0, 0;
   --background-rgb: #FFFDF8;
+  --h1-hex: #2E2C2A;
+  --h2-hex: hsla(30,5%,17%,0.7);
   /* --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255; */
 
@@ -45,6 +47,8 @@
   :root {
     --foreground-rgb: 255, 255, 255;
     --background-rgb: #000;
+    --h1-hex: #eeddcc;
+    --h2-hex: hsla(24, 27%, 85%, 0.7);
     /* --background-start-rgb: 0, 0, 0;
     --background-end-rgb: 0, 0, 0; */
 

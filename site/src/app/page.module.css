@@ -1,0 +1,40 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3rem 6rem;
+  min-height: 100vh;
+}
+
+.headerTop {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.intro {
+  width: 860px;
+  max-width: 100%;
+}
+
+.intro h1 {
+  font-size: 60px;
+  font-weight: 700;
+  color: #2E2C2A;
+  width: 388px;
+  max-width: 100%;
+  margin-top: 1rem;
+}
+
+.intro h2 {
+  font-size: 28px;
+  font-weight: 400;
+  color: hsla(30,5%,17%,0.7);
+  margin-top: 1rem;
+}
+
+.introImg {
+  display: block;
+  margin-top: 2rem;
+}

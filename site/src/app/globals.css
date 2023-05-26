@@ -46,7 +46,7 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
-    --background-rgb: #000;
+    --background-rgb: #2b2b2b;
     --h1-hex: #eeddcc;
     --h2-hex: hsla(24, 27%, 85%, 0.7);
     /* --background-start-rgb: 0, 0, 0;

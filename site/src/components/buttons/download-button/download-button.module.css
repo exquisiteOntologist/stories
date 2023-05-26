@@ -1,6 +1,18 @@
+:root {
+    --download-a-rgb: rgba(0,0,0,0.06);
+    --download-b-rgb: rgba(0, 0, 0, 0.69);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --download-a-rgb: rgba(255,255,255,0.06);
+        --download-b-rgb: rgba(255, 255, 255, 0.9);
+    }
+}
+
 .download {
     padding: 14px;
-    border: 1px solid rgba(0,0,0,0.06);
+    border: 1px solid var(--download-a-rgb);
     border-radius: 3px;
     text-align: center;
     line-height: 1;
@@ -11,14 +23,14 @@
     display: block;
     padding: 11px 20px;
     border-radius: 3px;
-    border: 1px solid rgba(0, 0, 0, 0.69);
+    border: 1px solid var(--download-b-rgb);
     margin-bottom: 14px;
     font-size: 16px;
 }
 
 .downloadButton:hover {
     /* background-color: lightcoral; */
-    background-color: rgba(0, 0, 0, 0.69);
+    background-color: var(--download-b-rgb);
     color: var(--background-rgb);
 }
 

@@ -14,7 +14,7 @@ pub fn parse_atom_date(opt_date: Option<DateTime<FixedOffset>>) -> DateTime<Utc>
 	date_time
 }
 
-pub fn parse_atom(s_id: &i32, url: &String, feed_text: &String) -> Result<(Source, Vec<Contents>), Box<dyn Error>> {
+pub fn parse_atom(s_id: &i32, url: &String, feed_text: &String) -> Result<(Source, Vec<Contents>), Box<dyn Error + Send + Sync>> {
 	let atom_feed = feed_text.parse::<Feed>().unwrap();
 
 	let atom_source = Source {

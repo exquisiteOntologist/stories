@@ -23,7 +23,7 @@ pub fn parse_rss_date(date_str: &str) -> DateTime<Utc> {
 	new_date_utc
 }
 
-pub fn parse_rss(s_id: &i32, url: &String, feed_text: &String) -> Result<(Source, Vec<Contents>), Box<dyn Error>> {
+pub fn parse_rss(s_id: &i32, url: &String, feed_text: &String) -> Result<(Source, Vec<Contents>), Box<dyn Error + Send + Sync>> {
 	let channel_result = Channel::from_str(&feed_text);
 
 	if channel_result.is_err() {

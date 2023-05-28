@@ -4,7 +4,7 @@ use scraper::{Html, Selector};
 
 use crate::{utils::{fetch_url_to_string, get_datetime_now, fully_form_url}, entities::{WebPage, Contents, Content, ContentBody, Source, SourceKind, ContentMedia, MediaKind}};
 
-pub async fn parse_website(s_id: &i32, url: &String, doc_text: &String, article_url_segment: &String) -> Result<(Source, Vec<Contents>), Box<dyn Error>> {
+pub async fn parse_website(s_id: &i32, url: &String, doc_text: &String, article_url_segment: &String) -> Result<(Source, Vec<Contents>), Box<dyn Error + Send + Sync>> {
 	if article_url_segment.is_empty() {
 		print!(
 			"
@@ -27,7 +27,7 @@ pub async fn parse_website(s_id: &i32, url: &String, doc_text: &String, article_
 	// https://docs.rs/scraper/latest/scraper/
 	
 	let doc = Html::parse_document(doc_text);
-	let title = scrape_title(&doc)?;
+	let title = scrape_title(&doc).unwrap();
 
 	let website_source = Source {
 		id: s_id | 0,
@@ -38,14 +38,16 @@ pub async fn parse_website(s_id: &i32, url: &String, doc_text: &String, article_
 		data: vec![("article_url_segment".into(), article_url_segment.into())]
 	};
 
-	let website_contents_res = parse_web_articles(url, &doc, article_url_segment).await;
+	// let website_contents_res = parse_web_articles(url, &doc, article_url_segment).await;
 
-	if website_contents_res.is_err() {
-		println!("Could not find or retrieve articles for provided URL and path pattern");
-		return Err("Could not find or retrieve articles".into());
-	}
+	// if website_contents_res.is_err() {
+	// 	println!("Could not find or retrieve articles for provided URL and path pattern");
+	// 	return Err("Could not find or retrieve articles".into());
+	// }
 
-	let website_contents = website_contents_res?;
+	// let website_contents = website_contents_res?;
+
+	let website_contents: Vec<Contents> = vec![];
 
 	Ok((website_source, website_contents))
 }

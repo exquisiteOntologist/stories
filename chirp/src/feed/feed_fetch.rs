@@ -1,13 +1,13 @@
 use std::error::Error;
 use crate::{entities::{Source, Contents}, feed::{parse_atom, parse_rss, parse_website}, utils::fetch_url_to_string};
 
-pub async fn feed_fetch(source_id: i32, url: String, other_param: &String) -> Result<(Source, Vec<Contents>), Box<dyn Error>> {
-	let feed_text = fetch_url_to_string(&url).await?;
+pub async fn feed_fetch(source_id: i32, url: String, other_param: &String) -> Result<(Source, Vec<Contents>), Box<dyn Error + Send + Sync>> {
+	let feed_text = fetch_url_to_string(&url).await.unwrap();
 
 	let is_atom = feed_text.contains(&"<feed");
 	let is_rss = !is_atom && feed_text.contains(&"<rss");
 
-	let parse_result: Result<(Source, Vec<Contents>), Box<dyn Error>> = if is_atom {
+	let parse_result: Result<(Source, Vec<Contents>), Box<dyn Error + Send + Sync>> = if is_atom {
 		parse_atom(&source_id, &url, &feed_text)
 	} else if is_rss {
 		parse_rss(&source_id, &url, &feed_text)

@@ -41,7 +41,7 @@ pub fn db_map_content_body_query<P: Params>(s: &mut Statement, p: P) -> Result<V
 	Ok(bodies)
 }
 
-pub fn db_content_add(contents: Vec<Contents>) -> Result<(), Box<dyn Error>> {
+pub fn db_content_add(contents: Vec<Contents>) -> Result<(), Box<dyn Error + Send + Sync>> {
 	let conn = db_connect()?;
 
 	for c in contents {

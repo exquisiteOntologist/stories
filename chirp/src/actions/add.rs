@@ -57,7 +57,7 @@ pub async fn source_add(args: Vec<String>) -> Result<(), Box<dyn Error>> {
         dc_items.push(dc_item);
     }
     
-    db_content_add(dc_items)?;
+    db_content_add(dc_items).unwrap();
     db_source_retrievals_update_success(&source_id)?;
     
     println!("finished adding source {:?}", source.name);

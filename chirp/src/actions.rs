@@ -21,7 +21,7 @@ pub async fn take_command() -> Result<(), Box<dyn Error>> {
         "rename" => todo!(),
         "sources" => list_sources(),
         "articles" => todo!(),
-        // "update" => update().await,
+        "update" => update_action().await,
         "search" => search(args),
         "search_entity" => todo!(),
         "find_in_catalogue" => todo!(),

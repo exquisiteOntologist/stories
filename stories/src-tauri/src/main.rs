@@ -3,11 +3,8 @@
 
 use std::{time::Duration};
 
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
+pub mod commands;
+pub use commands::*;
 
 async fn continual_updates() {
     // Repeatedly call update.
@@ -29,7 +26,7 @@ async fn main() {
     println!("finished db init");
 
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![commands::greet::greet])
         .setup(|_app| {
             // if it can't spawn due to lack of send due to bug in chirp most likely
             tokio::spawn(continual_updates());

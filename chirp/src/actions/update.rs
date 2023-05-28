@@ -6,6 +6,12 @@ use crate::db::{db_content_add, db_sources_retrieve_outdated, db_source_retrieva
 use crate::entities::{Source, SourceKind};
 use crate::feed::feed_fetch;
 
+// The match expression in "actions.rs" not expecting "Send"
+pub async fn update_action() -> Result<(), Box<dyn Error>> {
+    _ = update().await;
+    Ok(())
+}
+
 pub async fn update() -> Result<(), Box<dyn Error + Send + Sync>> {
     println!("Updating content");
     

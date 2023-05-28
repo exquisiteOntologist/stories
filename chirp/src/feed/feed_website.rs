@@ -1,4 +1,4 @@
-use std::{error::Error, collections::HashSet};
+use std::{error::Error, collections::HashSet, vec};
 use futures::future::join_all;
 use scraper::{Html, Selector};
 
@@ -26,8 +26,8 @@ pub async fn parse_website(s_id: &i32, url: &String, doc_text: &String, article_
 	// use scraper
 	// https://docs.rs/scraper/latest/scraper/
 	
-	let doc = Html::parse_document(doc_text);
-	let title = scrape_title(&doc).unwrap();
+	// let doc = Html::parse_document(doc_text); // <- ! Html does not implement Send, hence parsing in each method
+	let title = scrape_title(&doc_text).unwrap();
 
 	let website_source = Source {
 		id: s_id | 0,
@@ -38,22 +38,18 @@ pub async fn parse_website(s_id: &i32, url: &String, doc_text: &String, article_
 		data: vec![("article_url_segment".into(), article_url_segment.into())]
 	};
 
-	// let website_contents_res = parse_web_articles(url, &doc, article_url_segment).await;
+	let website_contents_res: Result<Vec<Contents>, Box<dyn Error>> = parse_web_articles(url, &doc_text, article_url_segment).await;
 
-	// if website_contents_res.is_err() {
-	// 	println!("Could not find or retrieve articles for provided URL and path pattern");
-	// 	return Err("Could not find or retrieve articles".into());
-	// }
+	if website_contents_res.is_err() {
+		println!("Could not find or retrieve articles for provided URL and path pattern");
+		return Err("Could not find or retrieve articles".into());
+	}
 
-	// let website_contents = website_contents_res?;
-
-	let website_contents: Vec<Contents> = vec![];
-
-	Ok((website_source, website_contents))
+	Ok((website_source, website_contents_res.unwrap()))
 }
 
-pub async fn parse_web_articles(url: &String, doc: &Html, article_url_segment: &String) -> Result<Vec<Contents>, Box<dyn Error>> {
-	let article_links = scrape_links(&doc, &article_url_segment.to_string())?;
+pub async fn parse_web_articles(url: &String, doc_text: &String, article_url_segment: &String) -> Result<Vec<Contents>, Box<dyn Error>> {
+	let article_links = scrape_links(&doc_text, &article_url_segment.to_string()).unwrap();
 	let article_urls: Vec<String> = article_links.into_iter().filter_map(|href| fully_form_url(url, &href).ok()).collect();
 	if article_urls.is_empty() {
 		return Err("No article links found".into());
@@ -66,14 +62,14 @@ pub async fn parse_web_articles(url: &String, doc: &Html, article_url_segment: &
 }
 
 // For a URL get the page doc, scrape the page, and return the Contents
-pub async fn contents_from_page(url: String) -> Result<Contents, Box<dyn Error>> {
+pub async fn contents_from_page(url: String) -> Result<Contents, Box<dyn Error + Send + Sync>> {
 	let doc: Result<Html, Box<dyn Error>> = get_page_doc(&url).await;
 
 	if doc.is_err() {
 		return Err(format!("Page could not be retrieved for {url}").into());
 	}
 
-	let page = scrape_web_page(&doc?, &url)?;
+	let page = scrape_web_page(&doc.unwrap(), &url).unwrap();
 
 	let contents = Contents {
 		content: Content {
@@ -108,7 +104,7 @@ pub async fn contents_from_page(url: String) -> Result<Contents, Box<dyn Error>>
 pub fn scrape_web_page(doc: &Html, url: &String) -> Result<WebPage, Box<dyn Error>> {
 	let page = WebPage {
 		url: url.to_owned(),
-		title: scrape_title(&doc)?,
+		title: scrape_title_from_doc(&doc)?,
     	body_text: doc.html(),
 		cover_img: scrape_cover_image(&doc)?
 	};
@@ -126,10 +122,17 @@ pub async fn get_page_doc(url: &String) -> Result<Html, Box<dyn Error>> {
 	Ok(doc)
 }
 
-pub fn scrape_title(doc: &Html) -> Result<String, Box<dyn Error>> {
+pub fn scrape_title_from_doc(doc: &Html) -> Result<String, Box<dyn Error>> {
 	let title_selector = Selector::parse("title").unwrap();
 	let node_title = doc.select(&title_selector).next().unwrap();
 	let title = node_title.text().collect::<Vec<_>>().join(&String::new());
+	
+	Ok(title)
+}
+
+pub fn scrape_title(doc_text: &String) -> Result<String, Box<dyn Error>> {
+	let doc = Html::parse_document(doc_text);
+	let title = scrape_title_from_doc(&doc).unwrap();
 	
 	Ok(title)
 }
@@ -157,7 +160,8 @@ pub fn scrape_cover_images_og(doc: &Html) -> Result<String, Box<dyn Error>> {
 	Ok(img_src.into())
 }
 
-pub fn scrape_links(doc: &Html, article_url_segment: &String) -> Result<Vec<String>, Box<dyn Error>> {
+pub fn scrape_links(doc_text: &String, article_url_segment: &String) -> Result<Vec<String>, Box<dyn Error>> {
+	let doc = Html::parse_document(doc_text);
 	let article_link_pattern = format!("a[href*=\"{article_url_segment}\"]");
 	// println!("Article link pattern is: {:?}", article_link_pattern);
 	let article_link_selector = Selector::parse(&article_link_pattern).unwrap();

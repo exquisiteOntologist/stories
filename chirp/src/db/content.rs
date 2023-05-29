@@ -1,6 +1,6 @@
 use std::error::Error;
 use chrono::{DateTime, Utc};
-use rusqlite::{Params, Statement};
+use rusqlite::{Params, Statement, Connection};
 
 use crate::entities::{Contents, Content, ContentBody};
 use super::db_connect;
@@ -129,4 +129,43 @@ pub async fn db_content_retrieve(id: i32) -> Result<Content, Box<dyn Error>> {
 	let out = content.get(0).unwrap().to_owned();
 
 	Ok(out)
+}
+
+pub async fn db_list_content() -> Result<Vec<Content>, Box<dyn Error>> {
+	let conn: Connection = db_connect()?;
+
+	let mut content_list_query: Statement = conn.prepare(
+		"SELECT * FROM content LIMIT 1000"
+	)?;
+
+	let content_list_res = db_map_content_query(&mut content_list_query, []);
+
+	if content_list_res.is_err() {
+		return Err(content_list_res.unwrap_err());
+	}
+	
+	let content_list = content_list_res?;
+
+	Ok(content_list)
+}
+
+pub async fn db_list_content_of_source(id: i32) -> Result<Vec<Content>, Box<dyn Error>> {
+	let conn: Connection = db_connect()?;
+
+	let mut content_list_query: Statement = conn.prepare(
+		"SELECT * FROM content WHERE source_id = :ID LIMIT 1000"
+	)?;
+	let id_string = id.to_string();
+    let named_params = [
+        (":ID", id_string.as_str()),
+    ];
+	let content_list_res = db_map_content_query(&mut content_list_query, &named_params);
+
+	if content_list_res.is_err() {
+		return Err(content_list_res.unwrap_err());
+	}
+	
+	let content_list = content_list_res?;
+
+	Ok(content_list)
 }

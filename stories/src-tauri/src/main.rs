@@ -13,7 +13,7 @@ async fn main() {
     println!("finished db init");
 
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![commands::greet::greet])
+        .invoke_handler(tauri::generate_handler![greet, list_sources])
         .setup(|_app| {
             // if it can't spawn due to lack of send due to bug in chirp most likely
             tokio::spawn(continual_updates());

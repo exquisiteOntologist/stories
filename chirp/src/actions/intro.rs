@@ -9,6 +9,7 @@ pub fn intro() -> Result<(), Box<dyn Error>> {
             - remove {{Source ID}}:     Remove a source
             - update:               Update all sources
             - sources:                      List sources
+            - content:                      List content
             - search {{Phrase}}:        Search content & sources
             - view {{Content ID}}:   Get URL to content for viewing
             \n

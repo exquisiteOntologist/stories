@@ -19,8 +19,8 @@ pub async fn take_command() -> Result<(), Box<dyn Error>> {
         "add" => source_add(args).await,
         "remove" => source_remove(args),
         "rename" => todo!(),
-        "sources" => list_sources(),
-        "articles" => todo!(),
+        "sources" => list_sources_action(),
+        "content" => list_content_action().await,
         "update" => update_action().await,
         "search" => search(args),
         "search_entity" => todo!(),
@@ -37,6 +37,9 @@ pub use intro::*;
 
 pub mod add;
 pub use add::*;
+
+pub mod content;
+pub use content::*;
 
 pub mod remove;
 pub use remove::*;

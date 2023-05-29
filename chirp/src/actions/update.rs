@@ -18,18 +18,7 @@ pub async fn update() -> Result<(), Box<dyn Error + Send + Sync>> {
     let sources = db_sources_retrieve_outdated().unwrap();
     let sources_futures = sources.iter().map(|s| update_single_feed(s));
 
-    // join_all(sources_futures).await;
-
-    // sources_futures.for_each(async |f| f.await);
-
-    for s in sources_futures {
-        _ = s.await;
-    }
-    // sources_futures.for_each(|x| x.await)
-
-    // for x in sources_futures {
-    //     _ = x.await;
-    // }
+    join_all(sources_futures).await;
 
     Ok(())
 }

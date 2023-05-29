@@ -1,24 +1,11 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::{time::Duration};
+pub mod background;
+pub use background::*;
 
 pub mod commands;
 pub use commands::*;
-
-async fn continual_updates() {
-    // Repeatedly call update.
-    // Updates are then performed on each individual source,
-    // according to the time since source's last retrieval.
-    let dur = Duration::from_secs(30);
-    loop {
-        println!("Before updates");
-        _ = chirp::actions::update().await;
-        println!("After updates");
-        tokio::time::sleep(dur).await;
-        println!("after sleep");
-    }
-}
 
 #[tokio::main]
 async fn main() {

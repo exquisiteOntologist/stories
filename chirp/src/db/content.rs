@@ -1,5 +1,5 @@
 use std::error::Error;
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Utc, TimeZone};
 use rusqlite::{Params, Statement, Connection};
 
 use crate::entities::{Contents, Content, ContentBody};
@@ -10,14 +10,16 @@ pub fn db_map_content_query<P: Params>(s: &mut Statement, p: P) -> Result<Vec<Co
 	let content_rows = s.query_map(p, |row| {
 		let date_published: String = row.get(4)?;
 		let date_retrieved: String = row.get(5)?;
+
+		// println!("date retrieved {}", date_retrieved);
 		
 		Ok(Content {
 			id: row.get(0)?,
 			source_id: row.get(1)?,
 			title: row.get(2)?,
 			url: row.get(3)?,
-			date_published: DateTime::parse_from_str(&date_published, "%F").unwrap_or_default().with_timezone(&Utc),
-			date_retrieved: DateTime::parse_from_str(&date_retrieved, "%F").unwrap_or_default().with_timezone(&Utc)
+			date_published: Utc.datetime_from_str(&date_published, "%F %T%.6f %Z").unwrap_or_default().into(),
+			date_retrieved: Utc.datetime_from_str(&date_retrieved, "%F %T%.6f %Z").unwrap_or_default().into()
 		})
 	})?;
 
@@ -135,7 +137,7 @@ pub async fn db_list_content() -> Result<Vec<Content>, Box<dyn Error>> {
 	let conn: Connection = db_connect()?;
 
 	let mut content_list_query: Statement = conn.prepare(
-		"SELECT * FROM content LIMIT 1000"
+		"SELECT * FROM content ORDER BY id DESC LIMIT 1000"
 	)?;
 
 	let content_list_res = db_map_content_query(&mut content_list_query, []);
@@ -153,7 +155,7 @@ pub async fn db_list_content_of_source(id: i32) -> Result<Vec<Content>, Box<dyn 
 	let conn: Connection = db_connect()?;
 
 	let mut content_list_query: Statement = conn.prepare(
-		"SELECT * FROM content WHERE source_id = :ID LIMIT 1000"
+		"SELECT * FROM content WHERE source_id = :ID ORDER BY id DESC LIMIT 1000"
 	)?;
 	let id_string = id.to_string();
     let named_params = [

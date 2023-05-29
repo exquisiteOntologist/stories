@@ -9,9 +9,11 @@ pub async fn list_content_action() -> Result<(), Box<dyn Error>> {
         let id = c.id;
         let title = c.title;
         let url = c.url;
+        let date = c.date_published.to_string();
 
-        println!("Content ID {id}:      \"{title}\"");
+        println!("{id}: \"{title}\"");
         println!("  url: {url}");
+        println!("  date: {date}");
     }
 
     Ok(())

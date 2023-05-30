@@ -72,6 +72,7 @@ pub struct ContentDto {
 
 #[derive(Debug)]
 #[derive(Clone)]
+#[typeshare]
 #[derive(Serialize)]
 pub struct ContentBody {
     pub id: i32,
@@ -85,6 +86,19 @@ pub struct ContentBody {
 #[derive(Serialize)]
 pub enum MediaKind {
     IMAGE
+}
+
+pub fn select_media_kind(i: i32) -> MediaKind {
+    match i {
+        0 => MediaKind::IMAGE,
+        _ => MediaKind::IMAGE
+    }
+}
+
+pub fn get_media_kind_index(mk: MediaKind) -> i32 {
+    match mk {
+        MediaKind::IMAGE => 0
+    }
 }
 
 #[derive(Debug)]

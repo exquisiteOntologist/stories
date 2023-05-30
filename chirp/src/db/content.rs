@@ -1,8 +1,8 @@
-use std::error::Error;
+use std::{error::Error, rc::Rc, borrow::Borrow};
 use chrono::{Utc, TimeZone};
-use rusqlite::{Params, Statement, Connection};
+use rusqlite::{Params, Statement, Connection, params, types::Value};
 
-use crate::entities::{FullContent, Content, ContentBody};
+use crate::entities::{FullContent, Content, ContentBody, ContentMedia, select_media_kind, MediaKind};
 use super::db_connect;
 
 const DATE_FROM_FORMAT: &str = "%F %T%.6f %Z";
@@ -30,7 +30,7 @@ pub fn db_map_content_query<P: Params>(s: &mut Statement, p: P) -> Result<Vec<Co
 
 pub fn db_map_content_body_query<P: Params>(s: &mut Statement, p: P) -> Result<Vec<ContentBody>, Box<dyn Error>> {
 	// assumes used a SELECT *
-	let rows = s.query_map(p, |row| {
+	let mapped_bodies = s.query_map(p, |row| {
 		Ok(ContentBody {
 			id: row.get(0)?,
 			content_id: row.get(1)?,
@@ -38,7 +38,23 @@ pub fn db_map_content_body_query<P: Params>(s: &mut Statement, p: P) -> Result<V
 		})
 	})?;
 
-	let bodies = rows.map(|x| x.unwrap()).collect::<Vec<ContentBody>>();
+	let bodies = mapped_bodies.map(|x| x.unwrap()).collect::<Vec<ContentBody>>();
+
+	Ok(bodies)
+}
+
+pub fn db_map_content_media_query<P: Params>(s: &mut Statement, p: P) -> Result<Vec<ContentMedia>, Box<dyn Error>> {
+	// assumes used a SELECT *
+	let mapped_media = s.query_map(p, |row| {
+		Ok(ContentMedia {
+			id: row.get(0)?,
+			content_id: row.get(1)?,
+			src: row.get(2)?,
+			kind: MediaKind::IMAGE // select_media_kind(row.get(3)?)
+		})
+	})?;
+
+	let bodies = mapped_media.map(|x| x.unwrap()).collect::<Vec<ContentMedia>>();
 
 	Ok(bodies)
 }
@@ -172,20 +188,69 @@ pub fn db_list_content_of_source(id: i32) -> Result<Vec<Content>, Box<dyn Error>
 	Ok(content_list)
 }
 
-// pub fn db_list_content_full() -> Result<Vec<FullContent>, Box<dyn Error>> {
-// 	let conn: Connection = db_connect()?;
+pub fn db_list_content_full() -> Result<Vec<FullContent>, Box<dyn Error>> {
+	let conn: Connection = db_connect()?;
+	rusqlite::vtab::array::load_module(&conn)?; // <- Adds "rarray" table function
 
-// 	let mut content_list_query: Statement = conn.prepare(
-// 		"SELECT * FROM content ORDER BY id DESC LIMIT 1000"
-// 	)?;
+	let mut content_query: Statement = conn.prepare(
+		"SELECT * FROM content ORDER BY id DESC LIMIT 1000"
+	)?;
 
-// 	let content_list_res = db_map_content_query(&mut content_list_query, []);
+	let content_res = db_map_content_query(&mut content_query, []);
 
-// 	if content_list_res.is_err() {
-// 		return Err(content_list_res.unwrap_err());
-// 	}
+	if content_res.is_err() {
+		return Err(content_res.unwrap_err());
+	}
 	
-// 	let content_list = content_list_res?;
+	let content = content_res?;
 
-// 	Ok(content_list)
-// }
+	let ids: Vec<i32> = content.clone().into_iter().map(|c| c.id).collect::<Vec<i32>>();
+	let id_values = Rc::new(ids.iter().copied().map(Value::from).collect::<Vec<Value>>());
+	let params = [id_values];
+
+	let mut bodies_query: Statement = conn.prepare(
+		"SELECT * FROM content_body WHERE content_id IN (SELECT * FROM rarray(?1))"
+	)?;
+	let bodies_res: Vec<ContentBody> = db_map_content_body_query(&mut bodies_query, params.clone())?;
+
+	let mut medias_query: Statement = conn.prepare(
+		"SELECT * FROM content_media WHERE content_id IN (SELECT * FROM rarray(?1))"
+	)?;
+	let medias_res: Vec<ContentMedia> = db_map_content_media_query(&mut medias_query, params.clone())?;
+
+	println!("bodies count {:?}", bodies_res.clone().len());
+	println!("medias count {:?}", medias_res.clone().len());
+
+	let mut bodies = bodies_res.into_iter();
+	let medias = medias_res.into_iter();
+
+	let full_content: Vec<FullContent> = content.into_iter().map(|c| {
+		let m = medias.clone().filter(|m| m.content_id == c.id);
+		let b = bodies.find(|b| b.content_id == c.id);
+		let cb = if b.is_some() {
+			b.unwrap()
+		} else {
+			ContentBody {
+				id: 0,
+				content_id: c.id,
+				body_text: String::new()
+			}
+		};
+
+		// if m.clone().count() > 0 {
+		// 	println!("Found some media for {:?}", c.title);
+		// } else if medias.clone().count() > 0 {
+		// 	println!("Missed some media for {:?}", c.title);
+		// }
+
+		let fc = FullContent {
+			content: c.to_owned(),
+			content_body: cb,
+			content_media: m.collect()
+		};
+
+		return fc;
+	}).collect();
+
+	Ok(full_content)
+}

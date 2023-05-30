@@ -34,6 +34,7 @@ const AppPageInner = () => {
               <CollectionView path="/:collectionId" />
               {/* <CollectionEditView path="/edit" /> */}
               <CollectionView path="/" />
+              <CollectionView default />
               {/* <NotFound default /> */}
           </Router>
         </main>

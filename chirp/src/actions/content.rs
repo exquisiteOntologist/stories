@@ -1,6 +1,6 @@
 use std::error::Error;
 
-use crate::{db::db_list_content, entities};
+use crate::{db::{db_list_content, db_list_content_full}, entities};
 
 pub fn list_content_action() -> Result<(), Box<dyn Error>> {
     let content_list = list_content()?;
@@ -25,9 +25,34 @@ pub fn list_content() -> Result<Vec<entities::Content>, Box<dyn Error>> {
     Ok(content_list)
 }
 
-// pub fn list_content_full() -> Result<Vec<entities::FullContent>, Box<dyn Error>> {
-//     // 
-// }
+pub fn list_content_full_action() -> Result<(), Box<dyn Error>> {
+    let content_list_full = list_content_full()?;
+
+    for c in content_list_full {
+        let id = c.content.id;
+        let title = c.content.title;
+        let url = c.content.url;
+        let date = c.content.date_published;
+        let media = c.content_media.first();
+        let media_src = if media.is_some() {
+            media.unwrap().src.clone()
+        } else {
+            " ".into()
+        };
+        println!("{id}: \"{title}\"");
+        println!("  url: {url}");
+        println!("  date: {date}");
+        println!(" media: {media_src}")
+    }
+
+    Ok(())
+}
+
+pub fn list_content_full() -> Result<Vec<entities::FullContent>, Box<dyn Error>> {
+    let content_list_full = db_list_content_full()?;
+
+    Ok(content_list_full)
+}
 
 // pub async fn list_full_content() -> Result<Vec<entities::Contents>, Box<dyn Error>> {
 //     // 

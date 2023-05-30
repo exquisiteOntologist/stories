@@ -5,21 +5,21 @@ use rusqlite::{Params, Statement, Connection};
 use crate::entities::{FullContent, Content, ContentBody};
 use super::db_connect;
 
+const DATE_FROM_FORMAT: &str = "%F %T%.6f %Z";
+
 pub fn db_map_content_query<P: Params>(s: &mut Statement, p: P) -> Result<Vec<Content>, Box<dyn Error>> {
-	// assumes used a SELECT *
+	// assumes used a "SELECT * FROM content"
 	let content_rows = s.query_map(p, |row| {
 		let date_published: String = row.get(4)?;
 		let date_retrieved: String = row.get(5)?;
-
-		// println!("date retrieved {}", date_retrieved);
-		
+	
 		Ok(Content {
 			id: row.get(0)?,
 			source_id: row.get(1)?,
 			title: row.get(2)?,
 			url: row.get(3)?,
-			date_published: Utc.datetime_from_str(&date_published, "%F %T%.6f %Z").unwrap_or_default().into(),
-			date_retrieved: Utc.datetime_from_str(&date_retrieved, "%F %T%.6f %Z").unwrap_or_default().into()
+			date_published: Utc.datetime_from_str(&date_published, &DATE_FROM_FORMAT).unwrap_or_default().into(),
+			date_retrieved: Utc.datetime_from_str(&date_retrieved, &DATE_FROM_FORMAT).unwrap_or_default().into()
 		})
 	})?;
 

@@ -60,7 +60,8 @@ export const ShutEye: React.FC = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const useDarkColour = window.matchMedia("(prefers-color-scheme: dark)").matches;
     const genericColour = useDarkColour ? 'white' : 'black'
-    const colour = colours.primaryLightnessAdjusted ?? genericColour //!!canvasRef.current ? getComputedStyle(canvasRef.current as HTMLCanvasElement).color : 'rgba(0,0,0,1)' // 'currentColor' // 'rgba(0,0,0,1)'
+    const colour = canvasRef.current ? getComputedStyle(canvasRef.current as HTMLCanvasElement).color : 'currentColor'
+    // const colour = colours.primaryLightnessAdjusted ?? genericColour //!!canvasRef.current ? getComputedStyle(canvasRef.current as HTMLCanvasElement).color : 'rgba(0,0,0,1)' // 'currentColor' // 'rgba(0,0,0,1)'
     // console.log('colour', colour)
 
     useEffect(() => {

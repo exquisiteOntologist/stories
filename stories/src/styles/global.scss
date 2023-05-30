@@ -29,7 +29,8 @@ $system-font: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Appl
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --primary: #f6f6f6;
+        // --primary: #f6f6f6;
+        --primary: #e2ae72;
         color: var(--primary);
         background-color: #2f2f2f;
     }

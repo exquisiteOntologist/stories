@@ -20,7 +20,7 @@ pub async fn take_command() -> Result<(), Box<dyn Error>> {
         "remove" => source_remove(args),
         "rename" => todo!(),
         "sources" => list_sources_action(),
-        "content" => list_content_action().await,
+        "content" => list_content_action(),
         "update" => update_action().await,
         "search" => search(args),
         "search_entity" => todo!(),

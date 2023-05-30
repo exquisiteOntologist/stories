@@ -1,5 +1,5 @@
 use std::error::Error;
-use chrono::{DateTime, Utc, TimeZone};
+use chrono::{Utc, TimeZone};
 use rusqlite::{Params, Statement, Connection};
 
 use crate::entities::{Contents, Content, ContentBody};
@@ -106,7 +106,7 @@ pub fn db_content_add(contents: Vec<Contents>) -> Result<(), Box<dyn Error + Sen
 	Ok(())
 }
 
-pub async fn db_content_retrieve(id: i32) -> Result<Content, Box<dyn Error>> {
+pub fn db_content_retrieve(id: i32) -> Result<Content, Box<dyn Error>> {
 	let conn = db_connect()?;
 
 	let mut content_query = conn.prepare(
@@ -133,7 +133,7 @@ pub async fn db_content_retrieve(id: i32) -> Result<Content, Box<dyn Error>> {
 	Ok(out)
 }
 
-pub async fn db_list_content() -> Result<Vec<Content>, Box<dyn Error>> {
+pub fn db_list_content() -> Result<Vec<Content>, Box<dyn Error>> {
 	let conn: Connection = db_connect()?;
 
 	let mut content_list_query: Statement = conn.prepare(
@@ -151,7 +151,7 @@ pub async fn db_list_content() -> Result<Vec<Content>, Box<dyn Error>> {
 	Ok(content_list)
 }
 
-pub async fn db_list_content_of_source(id: i32) -> Result<Vec<Content>, Box<dyn Error>> {
+pub fn db_list_content_of_source(id: i32) -> Result<Vec<Content>, Box<dyn Error>> {
 	let conn: Connection = db_connect()?;
 
 	let mut content_list_query: Statement = conn.prepare(

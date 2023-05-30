@@ -8,6 +8,7 @@ import { ListingRow } from '../../molecules/listings/row'
 // import { fetchSources, sourcesSelectors } from '../../../redux/features/sourcesSlice'
 import { ListingCard } from '../../molecules/listings/card'
 import { resetThemeColours } from '../../../redux/features/themeSlice'
+import { invoke } from '@tauri-apps/api'
 
 interface CollectionViewProps {
     collectionId?: number | string
@@ -57,6 +58,9 @@ const CollectionView: React.FC<CollectionViewProps> = (props) => {
     //         source={sources?.find(s => s?.sourceId == content.sourceId)}
     //     />
     // ))
+
+    invoke('list_sources').then((response) => console.log('sources', response))
+    invoke('list_content').then((response) => console.log('recent content', response))
 
     return (
         <>

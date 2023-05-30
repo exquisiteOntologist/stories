@@ -1,6 +1,6 @@
 use std::error::Error;
 
-use crate::{db::{db_sources_retrieve, self}, entities::{SourceKind, self}};
+use crate::{db::{db_sources_retrieve}, entities::{SourceKind, self}};
 
 pub fn list_sources_action() -> Result<(), Box<dyn Error>> {
     let sources: Vec<entities::Source> = list_sources()?;

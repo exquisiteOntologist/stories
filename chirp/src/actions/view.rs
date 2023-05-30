@@ -10,7 +10,7 @@ pub async fn view_content(args: Vec<String>) -> Result<(), Box<dyn Error>> {
     }
 
     let id: i32 = args.get(2).unwrap().parse().unwrap();
-    let c_res = db_content_retrieve(id).await;
+    let c_res = db_content_retrieve(id);
 
     if c_res.is_err() {
         println!("The ID does not exist");

@@ -420,6 +420,7 @@ dependencies = [
  "rss",
  "rusqlite",
  "scraper",
+ "serde",
  "tokio",
  "url",
 ]

@@ -1,6 +1,9 @@
 use chrono::{DateTime, Utc};
+// use serde::Serialize;
+use serde::{Serialize};
 
 #[derive(Debug)]
+#[derive(Serialize)]
 pub struct Source {
     pub id: i32,
     pub name: String,
@@ -11,6 +14,7 @@ pub struct Source {
 }
 
 #[derive(Debug)]
+#[derive(Serialize)]
 pub enum SourceKind {
     RSS,
     WEB
@@ -52,6 +56,19 @@ pub struct Content {
 
 #[derive(Debug)]
 #[derive(Clone)]
+#[derive(Serialize)]
+pub struct ContentDto {
+    pub id: i32,
+    pub source_id: i32,
+    pub title: String,
+    pub url: String,
+    pub date_published: String,
+    pub date_retrieved: String
+}
+
+#[derive(Debug)]
+#[derive(Clone)]
+#[derive(Serialize)]
 pub struct ContentBody {
     pub id: i32,
     pub content_id: i32,

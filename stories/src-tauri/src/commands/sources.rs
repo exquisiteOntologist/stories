@@ -1,4 +1,4 @@
 #[tauri::command]
-pub fn list_sources(name: &str) -> Vec<chirp::db::Source> {
-    chirp::actions::sources::list_sources
+pub fn list_sources() -> Vec<chirp::entities::Source> {
+    chirp::actions::sources::list_sources().unwrap()
 }

@@ -1,8 +1,9 @@
 use chrono::{DateTime, Utc};
-// use serde::Serialize;
 use serde::{Serialize};
+use typeshare::typeshare;
 
 #[derive(Debug)]
+// #[typeshare::typeshare] // <- cannot do tuples as in data:
 #[derive(Serialize)]
 pub struct Source {
     pub id: i32,
@@ -14,6 +15,7 @@ pub struct Source {
 }
 
 #[derive(Debug)]
+#[typeshare]
 #[derive(Serialize)]
 pub enum SourceKind {
     RSS,
@@ -56,6 +58,7 @@ pub struct Content {
 
 #[derive(Debug)]
 #[derive(Clone)]
+#[typeshare]
 #[derive(Serialize)]
 pub struct ContentDto {
     pub id: i32,

@@ -1,5 +1,6 @@
 import { createAsyncThunk, createEntityAdapter, createSlice } from "@reduxjs/toolkit";
 import { invoke } from "@tauri-apps/api";
+import { ContentDto } from "../../data/chirp-types";
 import { RootState } from "../store";
 // import { fetchContentBodies } from "./contentBodiesSlice";
 
@@ -16,7 +17,7 @@ export const fetchContentOfSources = createAsyncThunk(
 
         const content = await new Promise(r => invoke('list_content').then((response) => r(response)))
 
-        dispatch(setAllContents(content))
+        dispatch(setAllContents(content as ContentDto[]))
         // dispatch(fetchContentBodies(data.map(x => x.contentId)))
     }
 )
@@ -32,12 +33,12 @@ export const fetchContent = createAsyncThunk(
 
         const content = await new Promise(r => invoke('list_content').then((response) => r(response)))
 
-        dispatch(setAllContents(content))
+        dispatch(setAllContents(content as ContentDto[]))
         // dispatch(fetchContentBodies(data.map(x => x.contentId)))
     }
 )
 
-const contentsAdapter = createEntityAdapter<any /* ContentDto type */>({
+const contentsAdapter = createEntityAdapter<ContentDto>({
     selectId: (content) => content.id
 })
 

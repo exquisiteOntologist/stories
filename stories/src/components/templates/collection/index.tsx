@@ -23,6 +23,7 @@ const CollectionView: React.FC<CollectionViewProps> = (props) => {
     const sources = useAppSelector(sourcesSelectors.selectAll)
     const contents = useAppSelector(contentsSelectors.selectAll).slice(0, clientItemsLimit)
 
+    const collectionId: number = 0
     const title = 'hi'
     
     useEffect(() => {
@@ -44,27 +45,27 @@ const CollectionView: React.FC<CollectionViewProps> = (props) => {
         dispatch(resetThemeColours())
     }, [dispatch])
 
-    // const contentRows = contents.map((content, cI) => (
-    //     <ListingRow
-    //         key={content.id}
-    //         id={content.id}
-    //         title={content.title}
-    //         linkUrl={`/app/reader/${content.id}`}
-    //         content={content}
-    //         source={sources?.find(s => s?.sourceId == content.sourceId)}
-    //     />
-    // ));
+    const contentRows = contents.map((content, cI) => (
+        <ListingRow
+            key={content.id}
+            id={content.id}
+            title={content.title}
+            linkUrl={`/app/reader/${content.id}`}
+            content={content}
+            source={sources?.find(s => s?.sourceId == content.source_id)}
+        />
+    ));
 
-    // const contentCards = contents.map((content, cI) => (
-    //     <ListingCard
-    //         key={content.id}
-    //         id={content.id}
-    //         title={content.title}
-    //         linkUrl={`/app/reader/${content.id}`}
-    //         content={content}
-    //         source={sources?.find(s => s?.sourceId == content.sourceId)}
-    //     />
-    // ))
+    const contentCards = contents.map((content, cI) => (
+        <ListingCard
+            key={content.id}
+            id={content.id}
+            title={content.title}
+            linkUrl={`/app/reader/${content.id}`}
+            content={content}
+            source={sources?.find(s => s?.sourceId == content.source_id)}
+        />
+    ))
 
     invoke('list_sources').then((response) => console.log('sources', response))
     invoke('list_content').then((response) => console.log('recent content', response))
@@ -76,12 +77,12 @@ const CollectionView: React.FC<CollectionViewProps> = (props) => {
             </Helmet> */}
             <div className="collection w-full max-w-7xl mx-4 h-min-content">
                 <h1 className='text-4xl font-semibold mb-24'>{title}</h1>
-                {/* <ListingsContainer view='Cards'>
+                <ListingsContainer view='Cards'>
                     {contentCards}
                 </ListingsContainer>
                 <ListingsContainer view='Rows'>
                    {contentRows}
-                </ListingsContainer> */}
+                </ListingsContainer>
             </div>
         </>
     )

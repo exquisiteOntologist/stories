@@ -3,21 +3,21 @@ import React from 'react'
 import { ListingCardProps } from './interfaces'
 
 export const ListingCard: React.FC<ListingCardProps> = ({ title, linkUrl, content, source }) => {
-    const listingCoverImage = [...content?.media]?.sort(m => m.isCover ? 0 : 1)[0]?.mediaImage[0]
-    const perfectFit = (pxSize?: number) => pxSize ? `min(100%, ${pxSize}px)` : '100%'
-    const coverImage = listingCoverImage && (!listingCoverImage?.width || (listingCoverImage.width > 300)) && (
-        <img
-            className='object-cover m-auto'
-            src={listingCoverImage?.url}
-            alt={title}
-            width={listingCoverImage?.width}
-            height={listingCoverImage?.height}
-            style={{
-                width: perfectFit(listingCoverImage?.width),
-                height: perfectFit(listingCoverImage?.height)
-            }}
-        />
-    )
+    // const listingCoverImage = [...content?.media]?.sort(m => m.isCover ? 0 : 1)[0]?.mediaImage[0]
+    // const perfectFit = (pxSize?: number) => pxSize ? `min(100%, ${pxSize}px)` : '100%'
+    // const coverImage = listingCoverImage && (!listingCoverImage?.width || (listingCoverImage.width > 300)) && (
+    //     <img
+    //         className='object-cover m-auto'
+    //         src={listingCoverImage?.url}
+    //         alt={title}
+    //         width={listingCoverImage?.width}
+    //         height={listingCoverImage?.height}
+    //         style={{
+    //             width: perfectFit(listingCoverImage?.width),
+    //             height: perfectFit(listingCoverImage?.height)
+    //         }}
+    //     />
+    // )
 
     const sourceLink = source && (
         <a
@@ -36,7 +36,7 @@ export const ListingCard: React.FC<ListingCardProps> = ({ title, linkUrl, conten
 
     const description = content && (
         <span className='font-normal ml-6 text-gray-300'>
-            {content?.description?.slice(0, 100)}
+            {/* {content?.description?.slice(0, 100)} */}
         </span>
     )
 
@@ -44,7 +44,7 @@ export const ListingCard: React.FC<ListingCardProps> = ({ title, linkUrl, conten
         <article className='group flex flex-col text-center mb-6'>
             <Link className='flex flex-col w-full' to={linkUrl}>
                 <picture className='flex flex-col grow w-full aspect-square my-1 rounded-md overflow-hidden empty:bg-gray-100'>
-                    {coverImage}
+                    {/* {coverImage} */}
                 </picture>
             </Link>
             <h1 className="text-base grow mx-0 my-2">

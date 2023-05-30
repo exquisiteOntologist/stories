@@ -39,7 +39,7 @@ pub fn get_source_kind_index(sk: SourceKind) -> i32 {
 
 #[derive(Debug)]
 #[derive(Clone)]
-pub struct Contents {
+pub struct FullContent {
     pub content: Content,
     pub content_body: ContentBody,
     pub content_media: Vec<ContentMedia>
@@ -66,7 +66,8 @@ pub struct ContentDto {
     pub title: String,
     pub url: String,
     pub date_published: String,
-    pub date_retrieved: String
+    pub date_retrieved: String,
+    pub media: Vec<ContentMedia>
 }
 
 #[derive(Debug)]
@@ -80,12 +81,16 @@ pub struct ContentBody {
 
 #[derive(Debug)]
 #[derive(Clone)]
+#[typeshare]
+#[derive(Serialize)]
 pub enum MediaKind {
     IMAGE
 }
 
 #[derive(Debug)]
 #[derive(Clone)]
+#[typeshare]
+#[derive(Serialize)]
 pub struct ContentMedia {
     pub id: i32,
     pub content_id: i32,

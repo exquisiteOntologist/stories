@@ -2,7 +2,7 @@ use std::{error::Error};
 use atom_syndication::Feed;
 use chrono::{DateTime, FixedOffset, Utc};
 
-use crate::{entities::{ContentBody, Contents, Source, Content, SourceKind}, utils::get_datetime_now};
+use crate::{entities::{ContentBody, FullContent, Source, Content, SourceKind}, utils::get_datetime_now};
 
 pub fn parse_atom_date(opt_date: Option<DateTime<FixedOffset>>) -> DateTime<Utc> {
 	if opt_date.is_none() {
@@ -14,7 +14,7 @@ pub fn parse_atom_date(opt_date: Option<DateTime<FixedOffset>>) -> DateTime<Utc>
 	date_time
 }
 
-pub fn parse_atom(s_id: &i32, url: &String, feed_text: &String) -> Result<(Source, Vec<Contents>), Box<dyn Error + Send + Sync>> {
+pub fn parse_atom(s_id: &i32, url: &String, feed_text: &String) -> Result<(Source, Vec<FullContent>), Box<dyn Error + Send + Sync>> {
 	let atom_feed = feed_text.parse::<Feed>().unwrap();
 
 	let atom_source = Source {
@@ -26,7 +26,7 @@ pub fn parse_atom(s_id: &i32, url: &String, feed_text: &String) -> Result<(Sourc
 		data: vec![]
 	};
 
-	let atom_content: Vec<Contents> = atom_feed.entries.iter().map(|e| Contents {
+	let atom_content: Vec<FullContent> = atom_feed.entries.iter().map(|e| FullContent {
 		content: Content {
 			id: 0,
 			source_id: s_id | 0,

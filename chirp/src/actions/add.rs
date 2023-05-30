@@ -1,7 +1,7 @@
 use std::error::Error;
 use rusqlite::Result;
 use crate::db::{db_source_add, db_content_add, db_source_get_id, db_source_retrievals_add, db_source_retrievals_update_success, db_source_add_data};
-use crate::entities::{Contents};
+use crate::entities::{FullContent};
 use crate::feed::feed_fetch;
 
 pub async fn source_add(args: Vec<String>) -> Result<(), Box<dyn Error>> {
@@ -41,14 +41,14 @@ pub async fn source_add(args: Vec<String>) -> Result<(), Box<dyn Error>> {
     
     db_source_retrievals_add(&source_id)?;
     
-    let mut dc_items: Vec<Contents> = vec![];
+    let mut dc_items: Vec<FullContent> = vec![];
 
     // Duplicate each of the contents, setting the Source ID from the newly added source's retrieved ID
     for fc_item in feed_contents {
         let mut c = fc_item.content.clone();
         c.source_id = source_id;
                 
-        let dc_item = Contents {
+        let dc_item = FullContent {
             content: c,
             content_body: fc_item.content_body,
             content_media: fc_item.content_media

@@ -2,9 +2,9 @@ use std::{error::Error, collections::HashSet, vec};
 use futures::future::join_all;
 use scraper::{Html, Selector};
 
-use crate::{utils::{fetch_url_to_string, get_datetime_now, fully_form_url}, entities::{WebPage, Contents, Content, ContentBody, Source, SourceKind, ContentMedia, MediaKind}};
+use crate::{utils::{fetch_url_to_string, get_datetime_now, fully_form_url}, entities::{WebPage, FullContent, Content, ContentBody, Source, SourceKind, ContentMedia, MediaKind}};
 
-pub async fn parse_website(s_id: &i32, url: &String, doc_text: &String, article_url_segment: &String) -> Result<(Source, Vec<Contents>), Box<dyn Error + Send + Sync>> {
+pub async fn parse_website(s_id: &i32, url: &String, doc_text: &String, article_url_segment: &String) -> Result<(Source, Vec<FullContent>), Box<dyn Error + Send + Sync>> {
 	if article_url_segment.is_empty() {
 		print!(
 			"
@@ -38,7 +38,7 @@ pub async fn parse_website(s_id: &i32, url: &String, doc_text: &String, article_
 		data: vec![("article_url_segment".into(), article_url_segment.into())]
 	};
 
-	let website_contents_res: Result<Vec<Contents>, Box<dyn Error>> = parse_web_articles(url, &doc_text, article_url_segment).await;
+	let website_contents_res: Result<Vec<FullContent>, Box<dyn Error>> = parse_web_articles(url, &doc_text, article_url_segment).await;
 
 	if website_contents_res.is_err() {
 		println!("Could not find or retrieve articles for provided URL and path pattern");
@@ -48,7 +48,7 @@ pub async fn parse_website(s_id: &i32, url: &String, doc_text: &String, article_
 	Ok((website_source, website_contents_res.unwrap()))
 }
 
-pub async fn parse_web_articles(url: &String, doc_text: &String, article_url_segment: &String) -> Result<Vec<Contents>, Box<dyn Error>> {
+pub async fn parse_web_articles(url: &String, doc_text: &String, article_url_segment: &String) -> Result<Vec<FullContent>, Box<dyn Error>> {
 	let article_links = scrape_links(&doc_text, &article_url_segment.to_string()).unwrap();
 	let article_urls: Vec<String> = article_links.into_iter().filter_map(|href| fully_form_url(url, &href).ok()).collect();
 	if article_urls.is_empty() {
@@ -56,13 +56,13 @@ pub async fn parse_web_articles(url: &String, doc_text: &String, article_url_seg
 	}
 	// TODO: We can query the DB to see if the articles' pages were already fetched
 	let article_futures = article_urls.into_iter().map(|p_url| contents_from_page(p_url.to_string()));
-	let website_contents: Vec<Contents> = join_all(article_futures).await.drain_filter(|r| r.is_ok()).map(|r| r.unwrap()).collect();
+	let website_contents: Vec<FullContent> = join_all(article_futures).await.drain_filter(|r| r.is_ok()).map(|r| r.unwrap()).collect();
 
 	Ok(website_contents)
 }
 
 // For a URL get the page doc, scrape the page, and return the Contents
-pub async fn contents_from_page(url: String) -> Result<Contents, Box<dyn Error + Send + Sync>> {
+pub async fn contents_from_page(url: String) -> Result<FullContent, Box<dyn Error + Send + Sync>> {
 	let doc: Result<Html, Box<dyn Error>> = get_page_doc(&url).await;
 
 	if doc.is_err() {
@@ -71,7 +71,7 @@ pub async fn contents_from_page(url: String) -> Result<Contents, Box<dyn Error +
 
 	let page = scrape_web_page(&doc.unwrap(), &url).unwrap();
 
-	let contents = Contents {
+	let contents = FullContent {
 		content: Content {
 			id: 0,
 			source_id: 0,

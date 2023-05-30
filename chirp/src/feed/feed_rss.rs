@@ -2,7 +2,7 @@ use std::{error::Error, str::FromStr};
 use chrono::{DateTime, Utc};
 use rss::Channel;
 
-use crate::{utils::get_datetime_now, entities::{Source, Contents, Content, ContentBody, SourceKind}};
+use crate::{utils::get_datetime_now, entities::{Source, FullContent, Content, ContentBody, SourceKind}};
 
 // https://docs.rs/chrono/latest/chrono/format/strftime/index.html
 // "Thu, 13 Apr 2023 08:00:00 +0100"
@@ -23,7 +23,7 @@ pub fn parse_rss_date(date_str: &str) -> DateTime<Utc> {
 	new_date_utc
 }
 
-pub fn parse_rss(s_id: &i32, url: &String, feed_text: &String) -> Result<(Source, Vec<Contents>), Box<dyn Error + Send + Sync>> {
+pub fn parse_rss(s_id: &i32, url: &String, feed_text: &String) -> Result<(Source, Vec<FullContent>), Box<dyn Error + Send + Sync>> {
 	let channel_result = Channel::from_str(&feed_text);
 
 	if channel_result.is_err() {
@@ -44,7 +44,7 @@ pub fn parse_rss(s_id: &i32, url: &String, feed_text: &String) -> Result<(Source
 		data: vec![]
 	};
 
-	let rss_contents: Vec<Contents> = channel.items.into_iter().map(|i| Contents {
+	let rss_contents: Vec<FullContent> = channel.items.into_iter().map(|i| FullContent {
 		content: Content {
 			id: 0,
 			source_id: s_id | 0,

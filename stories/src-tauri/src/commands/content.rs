@@ -9,7 +9,8 @@ pub fn list_content() -> Result<Vec<ContentDto>, ()> {
         title: c.title,
         url: c.url,
         date_published: c.date_published.to_string(),
-        date_retrieved: c.date_retrieved.to_string()
+        date_retrieved: c.date_retrieved.to_string(),
+        media: vec![]
     }).collect();
 
     Ok(c_dto)

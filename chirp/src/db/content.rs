@@ -2,7 +2,7 @@ use std::error::Error;
 use chrono::{Utc, TimeZone};
 use rusqlite::{Params, Statement, Connection};
 
-use crate::entities::{Contents, Content, ContentBody};
+use crate::entities::{FullContent, Content, ContentBody};
 use super::db_connect;
 
 pub fn db_map_content_query<P: Params>(s: &mut Statement, p: P) -> Result<Vec<Content>, Box<dyn Error>> {
@@ -43,7 +43,7 @@ pub fn db_map_content_body_query<P: Params>(s: &mut Statement, p: P) -> Result<V
 	Ok(bodies)
 }
 
-pub fn db_content_add(contents: Vec<Contents>) -> Result<(), Box<dyn Error + Send + Sync>> {
+pub fn db_content_add(contents: Vec<FullContent>) -> Result<(), Box<dyn Error + Send + Sync>> {
 	let conn = db_connect()?;
 
 	for c in contents {
@@ -171,3 +171,21 @@ pub fn db_list_content_of_source(id: i32) -> Result<Vec<Content>, Box<dyn Error>
 
 	Ok(content_list)
 }
+
+// pub fn db_list_content_full() -> Result<Vec<FullContent>, Box<dyn Error>> {
+// 	let conn: Connection = db_connect()?;
+
+// 	let mut content_list_query: Statement = conn.prepare(
+// 		"SELECT * FROM content ORDER BY id DESC LIMIT 1000"
+// 	)?;
+
+// 	let content_list_res = db_map_content_query(&mut content_list_query, []);
+
+// 	if content_list_res.is_err() {
+// 		return Err(content_list_res.unwrap_err());
+// 	}
+	
+// 	let content_list = content_list_res?;
+
+// 	Ok(content_list)
+// }

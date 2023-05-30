@@ -25,6 +25,10 @@ pub fn list_content() -> Result<Vec<entities::Content>, Box<dyn Error>> {
     Ok(content_list)
 }
 
+// pub fn list_content_full() -> Result<Vec<entities::FullContent>, Box<dyn Error>> {
+//     // 
+// }
+
 // pub async fn list_full_content() -> Result<Vec<entities::Contents>, Box<dyn Error>> {
 //     // 
 // }

@@ -30,7 +30,7 @@ const themeSlice = createSlice({
                 ...action.payload
             }
         }),
-        resetThemeColours: (state, action: PayloadAction<ContentColours>) => ({
+        resetThemeColours: (state, action: PayloadAction) => ({
             ...state,
             colours: {}
         }),

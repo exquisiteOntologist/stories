@@ -1,7 +1,5 @@
-import { initialState as collections } from './features/collectionsReducer'
-import { initialState as darkMode } from './features/darkmodeReducer'
+// import { initialState as collections } from './features/collectionsSlice'
 
 export const rootInitialState = {
-    collections,
-    darkMode
+    // collections,
 }

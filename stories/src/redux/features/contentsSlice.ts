@@ -1,53 +1,56 @@
-// import { createAsyncThunk, createEntityAdapter, createSlice } from "@reduxjs/toolkit";
-// import { components } from "../../data/openapi";
-// import { getContents, getSourcesContents } from "../../utilities/requests";
-// import { RootState } from "../store";
+import { createAsyncThunk, createEntityAdapter, createSlice } from "@reduxjs/toolkit";
+import { invoke } from "@tauri-apps/api";
+import { RootState } from "../store";
 // import { fetchContentBodies } from "./contentBodiesSlice";
 
-// export const fetchContentOfSources = createAsyncThunk(
-//     'contents/fetchContentOfSources',
-//     async (sourceIds: number[] | null, { dispatch, getState }) => {
-//         // @TODO: Check the localStorage first (or maybe simultaneously)
+export const fetchContentOfSources = createAsyncThunk(
+    'contents/fetchContentOfSources',
+    async (sourceIds: number[] | null, { dispatch, getState }) => {
+        // @TODO: Check the localStorage first (or maybe simultaneously)
         
-//         const contents = await getSourcesContents({ sourceIds })
+        // const contents = await getSourcesContents({ sourceIds })
 
-//         if (contents.status !== 200) throw Error('Failed to fetch content from sources')
+        // if (contents.status !== 200) throw Error('Failed to fetch content from sources')
        
-//         const data = contents.data
+        // const data = contents.data
 
-//         dispatch(setAllContents(data))
-//         dispatch(fetchContentBodies(data.map(x => x.contentId)))
-//     }
-// )
+        const content = await new Promise(r => invoke('list_content').then((response) => r(response)))
 
-// export const fetchContent = createAsyncThunk(
-//     'contents/fetchContent',
-//     async (contentIds: number[] | null, { dispatch }) =>{
-//         const contents = await getContents({ contentIds })
+        dispatch(setAllContents(content))
+        // dispatch(fetchContentBodies(data.map(x => x.contentId)))
+    }
+)
 
-//         if (contents.status != 200) throw Error('Failed to fetch content')
+export const fetchContent = createAsyncThunk(
+    'contents/fetchContent',
+    async (contentIds: number[] | null | undefined, { dispatch }) =>{
+        // const contents = await getContents({ contentIds })
 
-//         const data = contents.data
+        // if (contents.status != 200) throw Error('Failed to fetch content')
 
-//         dispatch(setAllContents(data))
-//         dispatch(fetchContentBodies(data.map(x => x.contentId)))
-//     }
-// )
+        // const data = contents.data
 
-// const contentsAdapter = createEntityAdapter<components["schemas"]["ContentDto"]>({
-//     selectId: (content) => content.contentId
-// })
+        const content = await new Promise(r => invoke('list_content').then((response) => r(response)))
 
-// const contentsSlice = createSlice({
-//     name: 'contents',
-//     initialState: contentsAdapter.getInitialState(),
-//     reducers: {
-//         setAllContents: contentsAdapter.setAll
-//     },
-//     extraReducers: {}
-// })
+        dispatch(setAllContents(content))
+        // dispatch(fetchContentBodies(data.map(x => x.contentId)))
+    }
+)
 
-// export const { setAllContents } = contentsSlice.actions
-// export const contentsSelectors = contentsAdapter.getSelectors<RootState>((state) => state.contents)
+const contentsAdapter = createEntityAdapter<any /* ContentDto type */>({
+    selectId: (content) => content.id
+})
 
-// export const contentsReducer = contentsSlice.reducer
+const contentsSlice = createSlice({
+    name: 'contents',
+    initialState: contentsAdapter.getInitialState(),
+    reducers: {
+        setAllContents: contentsAdapter.setAll
+    },
+    extraReducers: {}
+})
+
+export const { setAllContents } = contentsSlice.actions
+export const contentsSelectors = contentsAdapter.getSelectors<RootState>((state) => state.contents)
+
+export const contentsReducer = contentsSlice.reducer

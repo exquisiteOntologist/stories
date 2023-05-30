@@ -1,20 +1,27 @@
-// import { AsyncThunk, createAsyncThunk, createEntityAdapter, createSlice } from "@reduxjs/toolkit";
-// import { components } from "../../data/openapi";
-// import { getSources, getSourcesOfCollection, postAddSource } from "../../utilities/requests";
-// import { RootState } from "../store";
+import { AsyncThunk, createAsyncThunk, createEntityAdapter, createSlice } from "@reduxjs/toolkit";
+import { invoke } from "@tauri-apps/api";
+import { RootState } from "../store";
 
-// export const fetchSources = createAsyncThunk(
-//     'sources/fetchSources',
-//     async (sourceIds: number[] | null, { dispatch }) => {
-//         const sources = await getSources({
-//             sourceIds
-//         })
+/**
+ * Fetch sources.
+ * If no ID is specified, then recent sources are fetched.
+ */
+export const fetchSources = createAsyncThunk(
+    'sources/fetchSources',
+    async (sourceIds: number[] | null | undefined, { dispatch }) => {
+        // const sources = await getSources({
+        //     sourceIds
+        // })
 
-//         if (sources.status !== 200) return
+        // if (sources.status !== 200) return
 
-//         dispatch(setAllSources(sources.data))
-//     }
-// )
+        // dispatch(setAllSources(sources.data))
+
+        const sources = await new Promise(r => invoke('list_sources').then((response) => r(response)))
+
+        dispatch(setAllSources(sources))
+    }
+)
 
 // export const fetchSourcesOfCollection = createAsyncThunk(
 //     'sources/fetchSourcesOfCollection',
@@ -58,20 +65,20 @@
 //     }
 // )
 
-// const sourcesAdapter = createEntityAdapter<components["schemas"]["SourceDto"]>({
-//     selectId: (source) => source.sourceId
-// })
+const sourcesAdapter = createEntityAdapter<any /* SourceDto type */>({
+    selectId: (source) => source.id
+})
 
-// const sourcesSlice = createSlice({
-//     name: 'sources',
-//     initialState: sourcesAdapter.getInitialState(),
-//     reducers: {
-//         setAllSources: sourcesAdapter.setAll
-//     },
-//     extraReducers: {}
-// })
+const sourcesSlice = createSlice({
+    name: 'sources',
+    initialState: sourcesAdapter.getInitialState(),
+    reducers: {
+        setAllSources: sourcesAdapter.setAll
+    },
+    extraReducers: {}
+})
 
-// export const { setAllSources } = sourcesSlice.actions
-// export const sourcesSelectors = sourcesAdapter.getSelectors<RootState>((state) => state.sources)
+export const { setAllSources } = sourcesSlice.actions
+export const sourcesSelectors = sourcesAdapter.getSelectors<RootState>((state) => state.sources)
 
-// export const sourcesReducer = sourcesSlice.reducer
+export const sourcesReducer = sourcesSlice.reducer

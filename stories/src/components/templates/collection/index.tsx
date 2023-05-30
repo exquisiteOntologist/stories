@@ -3,9 +3,9 @@ import { useEffect } from 'react'
 // import Helmet from 'react-helmet'
 import ListingsContainer from '../../molecules/listings/listings-container'
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
-// import { contentsSelectors, fetchContentOfSources } from '../../../redux/features/contentsSlice'
+import { contentsSelectors, fetchContent, fetchContentOfSources } from '../../../redux/features/contentsSlice'
 import { ListingRow } from '../../molecules/listings/row'
-// import { fetchSources, sourcesSelectors } from '../../../redux/features/sourcesSlice'
+import { fetchSources, sourcesSelectors } from '../../../redux/features/sourcesSlice'
 import { ListingCard } from '../../molecules/listings/card'
 import { resetThemeColours } from '../../../redux/features/themeSlice'
 import { invoke } from '@tauri-apps/api'
@@ -20,29 +20,36 @@ const CollectionView: React.FC<CollectionViewProps> = (props) => {
     const dispatch = useAppDispatch()
 
     // @TODO: List collections in this collection view in addition to sources/contents
-    // const contents = useAppSelector(contentsSelectors.selectAll).slice(0, clientItemsLimit)
-    // const sources = useAppSelector(sourcesSelectors.selectAll)
+    const sources = useAppSelector(sourcesSelectors.selectAll)
+    const contents = useAppSelector(contentsSelectors.selectAll).slice(0, clientItemsLimit)
 
     const title = 'hi'
     
     useEffect(() => {
-        // @TODO: Make server return default collection
-        const sourceIds = [1, 2, 3, 4, 5, 6]
-
-        // dispatch(fetchSources(sourceIds))
-        // dispatch(fetchContentOfSources(sourceIds))
+        // TODO: Replace with fetch_sources_of_collection, with default id as 0 (top-level/all)
+        dispatch(fetchSources())
     }, [dispatch])
 
-    // useEffect(() => {
-    //     dispatch(resetThemeColours(null))
-    // }, [dispatch])
+    useEffect(() => {
+        console.log('source ids in use effect', sources)
+        dispatch(fetchContent())
+        // 
+    }, [sources])
+
+    useEffect(() => {
+        console.log('contents for given sources in view', contents)
+    }, [contents])
+
+    useEffect(() => {
+        dispatch(resetThemeColours())
+    }, [dispatch])
 
     // const contentRows = contents.map((content, cI) => (
     //     <ListingRow
-    //         key={content.contentId}
-    //         id={content.contentId}
+    //         key={content.id}
+    //         id={content.id}
     //         title={content.title}
-    //         linkUrl={`/app/reader/${content.contentId}`}
+    //         linkUrl={`/app/reader/${content.id}`}
     //         content={content}
     //         source={sources?.find(s => s?.sourceId == content.sourceId)}
     //     />
@@ -50,10 +57,10 @@ const CollectionView: React.FC<CollectionViewProps> = (props) => {
 
     // const contentCards = contents.map((content, cI) => (
     //     <ListingCard
-    //         key={content.contentId}
-    //         id={content.contentId}
+    //         key={content.id}
+    //         id={content.id}
     //         title={content.title}
-    //         linkUrl={`/app/reader/${content.contentId}`}
+    //         linkUrl={`/app/reader/${content.id}`}
     //         content={content}
     //         source={sources?.find(s => s?.sourceId == content.sourceId)}
     //     />

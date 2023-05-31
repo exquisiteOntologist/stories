@@ -1,3 +1,7 @@
+:root {
+  --section-gap: 230px;
+}
+
 .main {
   display: flex;
   flex-direction: column;
@@ -34,7 +38,8 @@
 
 .intro h2 {
   font-size: 28px;
-  font-weight: 400;
+  /* font-weight: 400; */
+  font-weight: 350;
   color: var(--h2-hex);
   margin-top: 1rem;
 }
@@ -42,4 +47,41 @@
 .introImg {
   display: block;
   margin-top: 2rem;
+}
+
+section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 900px;
+  max-width: 90%;
+  margin: var(--section-gap) 0 0 0;
+}
+
+section h2 {
+  font-size: 28px;
+  font-weight: 370;
+  margin-bottom: 1.8rem;
+}
+
+section p {
+  font-size: 21px;
+  font-weight: 370;
+  color: rgba(var(--foreground-rgb), 0.7);
+}
+
+footer {
+  margin-top: var(--section-gap);
+}
+
+.topCenter {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 1.5rem;
+}
+
+.middle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

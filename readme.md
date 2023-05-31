@@ -1,6 +1,6 @@
 # Stories
 
-Stories is your window to the world.
+Make sense of the world.
 
 Features:
 - See what is happening

@@ -23,6 +23,12 @@ export interface ContentDto {
 	media: ContentMedia[];
 }
 
+export interface ContentBody {
+	id: number;
+	content_id: number;
+	body_text: string;
+}
+
 export enum SourceKind {
 	RSS = "RSS",
 	WEB = "WEB",

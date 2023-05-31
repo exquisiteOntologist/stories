@@ -1,5 +1,12 @@
 :root {
   --section-gap: 230px;
+  /* --major-break: 1280px; */
+}
+
+@media (max-width: 1280px) {
+  :root {
+    --section-gap: 6rem;
+  }
 }
 
 .main {
@@ -9,6 +16,12 @@
   align-items: center;
   padding: 3rem 6rem;
   min-height: 100vh;
+}
+
+@media (max-width: 1280px) {
+  .main {
+    padding: 3rem 1rem;
+  }
 }
 
 .headerTop {
@@ -46,7 +59,13 @@
 
 .introImg {
   display: block;
-  margin-top: 2rem;
+  margin: 2rem 0 0 0;
+}
+
+.introImg img {
+  max-width: 90%;
+  height: auto;
+  margin: 0 auto;
 }
 
 section {
@@ -56,6 +75,16 @@ section {
   width: 960px;
   max-width: 90%;
   margin: var(--section-gap) 0 0 0;
+}
+
+@media (max-width: 1280px) {
+  section {
+    grid-template-columns: 1fr;
+  }
+
+  section div {
+    margin-bottom: 1rem;
+  }
 }
 
 section h2 {

@@ -1,0 +1,22 @@
+:root {
+    --chip-orange: #EE9628;
+    --chip-blue: #2874ee;
+}
+
+.chip {
+    display: inline-block;
+    line-height: 1;    
+    margin: 1rem 0;
+    padding: 0.5rem 1rem;
+    border-radius: 16px;
+    color: #fff;
+}
+
+.chip[data-variant="default"],
+.chip[data-variant="blue"] {
+    background-color: var(--chip-blue);
+}
+
+.chip[data-variant="orange"] {
+    background-color: var(--chip-orange);;
+}

@@ -4,10 +4,13 @@ import styles from './page.module.css'
 import { Me } from '../components/illustrations/me'
 import { QuestionsAnsweredText } from '../components/illustrations/questions-answered'
 import { AppIcon } from '../components/logos/app-icon'
+import { Chip } from '../components/chip'
 import imgScreenshot from '../../public/images/early-screenshot.png'
 import { DownloadButton } from '@/components/buttons/download-button'
 
 export default function Home() {
+  const chipComingSoon = <Chip variant="orange">Coming Soon</Chip>
+
   return (
     <main className={styles.main}>
       <header className={styles.headerTop}>
@@ -25,6 +28,7 @@ export default function Home() {
         <div>
           <h2>Your Questions Answered</h2>
           <p>Have information work for you. Your questions and your goals are answered &amp; updated as times change. You don’t have to read the internet yourself.</p>
+          {chipComingSoon}
         </div>
         <div className={styles.middle}>
           <QuestionsAnsweredText />
@@ -32,8 +36,9 @@ export default function Home() {
       </section>
       <section>
         <div>
-          <h2>Take a Breath &amp; Out</h2>
+          <h2>Take a Breath &amp; Go Out</h2>
           <p>Any word, concept, or context has associated words, concepts, and contexts. You can dive deeper into anything. An article could lead to an academic paper and a video, or a wiki.</p>
+          {chipComingSoon}
         </div>
         <div>
           {/*  */}
@@ -43,6 +48,7 @@ export default function Home() {
         <div>
           <h2>Your Sources</h2>
           <p>Add your chosen Websites, Subscriptions, and APIs.<br></br>For reading and watching, analysis and search, or all of the above. Automatic updates, refreshing not required.</p>
+          <Chip variant="blue">Starting with Websites</Chip>
         </div>
         <div>
           {/*  */}

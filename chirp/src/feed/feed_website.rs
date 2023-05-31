@@ -2,7 +2,7 @@ use std::{error::Error, collections::HashSet, vec};
 use futures::future::join_all;
 use scraper::{Html, Selector};
 
-use crate::{utils::{fetch_url_to_string, get_datetime_now, fully_form_url}, entities::{WebPage, FullContent, Content, ContentBody, Source, SourceKind, ContentMedia, MediaKind}};
+use crate::{utils::{fetch_url_to_string, get_datetime_now, fully_form_url}, entities::{WebPage, FullContent, Content, ContentBody, Source, SourceKind, ContentMedia, MediaKind}, db::db_check_content_existing_urls};
 
 pub async fn parse_website(s_id: &i32, url: &String, doc_text: &String, article_url_segment: &String) -> Result<(Source, Vec<FullContent>), Box<dyn Error + Send + Sync>> {
 	if article_url_segment.is_empty() {
@@ -45,7 +45,12 @@ pub async fn parse_website(s_id: &i32, url: &String, doc_text: &String, article_
 		return Err("Could not find or retrieve articles".into());
 	}
 
-	Ok((website_source, website_contents_res.unwrap()))
+	let website_contents: Vec<FullContent> = website_contents_res.unwrap().into_iter().map(|mut c| {
+		c.content.source_id = s_id.to_owned();
+		return c;
+	}).into_iter().collect::<Vec<FullContent>>();
+
+	Ok((website_source, website_contents))
 }
 
 pub async fn parse_web_articles(url: &String, doc_text: &String, article_url_segment: &String) -> Result<Vec<FullContent>, Box<dyn Error>> {
@@ -54,8 +59,33 @@ pub async fn parse_web_articles(url: &String, doc_text: &String, article_url_seg
 	if article_urls.is_empty() {
 		return Err("No article links found".into());
 	}
+	
+	println!("Urls found {:?}", article_urls.len());
+	
+	let urls_already_crawled = db_check_content_existing_urls(&article_urls)?;
+
+	println!("Urls already crawled {:?}", urls_already_crawled.len());
+
+	let urls_to_crawl: Vec<String> = article_urls.into_iter().filter(|au| urls_already_crawled.clone().into_iter().find(|uac| {
+		let same: bool = au == uac;
+		let isSame = if same {
+			"yes"
+		} else {
+			"no"
+		};
+		if same {
+			println!("A: {:?}", au);
+			println!("B: {:?}", uac);
+			println!("Same? {:?}", isSame);
+		}
+		
+		return same;
+	}).is_none()).collect();
+
+	println!("Urls to crawl {:?}", urls_to_crawl.len());
+	
 	// TODO: We can query the DB to see if the articles' pages were already fetched
-	let article_futures = article_urls.into_iter().map(|p_url| contents_from_page(p_url.to_string()));
+	let article_futures = urls_to_crawl.into_iter().map(|p_url| contents_from_page(p_url.to_string()));
 	let website_contents: Vec<FullContent> = join_all(article_futures).await.drain_filter(|r| r.is_ok()).map(|r| r.unwrap()).collect();
 
 	Ok(website_contents)

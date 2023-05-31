@@ -1,8 +1,8 @@
-use std::{error::Error, rc::Rc, borrow::Borrow};
+use std::{error::Error, rc::Rc};
 use chrono::{Utc, TimeZone};
-use rusqlite::{Params, Statement, Connection, params, types::Value};
+use rusqlite::{Params, Statement, Connection, types::Value};
 
-use crate::entities::{FullContent, Content, ContentBody, ContentMedia, select_media_kind, MediaKind};
+use crate::entities::{FullContent, Content, ContentBody, ContentMedia, MediaKind};
 use super::db_connect;
 
 const DATE_FROM_FORMAT: &str = "%F %T%.6f %Z";
@@ -57,6 +57,15 @@ pub fn db_map_content_media_query<P: Params>(s: &mut Statement, p: P) -> Result<
 	let bodies = mapped_media.map(|x| x.unwrap()).collect::<Vec<ContentMedia>>();
 
 	Ok(bodies)
+}
+
+pub fn db_map_content_urls<P: Params>(s: &mut Statement, p: P) -> Result<Vec<String>, Box<dyn Error>> {
+	// assumes used a "SELECT * FROM content"
+	let content_urls_map = s.query_map(p, |row| Ok(row.get(0)?))?;
+
+	let content_urls = content_urls_map.map(|x| x.unwrap()).collect::<Vec<String>>();
+
+	Ok(content_urls)
 }
 
 pub fn db_content_add(contents: Vec<FullContent>) -> Result<(), Box<dyn Error + Send + Sync>> {
@@ -147,6 +156,32 @@ pub fn db_content_retrieve(id: i32) -> Result<Content, Box<dyn Error>> {
 	let out = content.get(0).unwrap().to_owned();
 
 	Ok(out)
+}
+
+pub fn db_check_content_existing_urls(content_urls: &Vec<String>) -> Result<Vec<String>, Box<dyn Error>> {
+	let conn: Connection = db_connect()?;
+	rusqlite::vtab::array::load_module(&conn)?; // <- Adds "rarray" table function
+
+	let content_url_values = Rc::new(content_urls.to_owned().into_iter().map(Value::from).collect::<Vec<Value>>());
+	let params = [content_url_values];
+
+	let mut content_url_query: Statement = conn.prepare(
+		// "SELECT url FROM content WHERE url IN (SELECT * FROM rarray(?1))"
+		"SELECT url FROM content"
+	)?;
+	let existing_urls_res = db_map_content_urls(&mut content_url_query, []/* params.clone() */);
+
+	if existing_urls_res.is_err() {
+		println!("Error retrieving existing content URLs");
+		let err = existing_urls_res.unwrap_err();
+		println!("{:?}", err);
+		return Err(err);
+	}
+
+	let existing_urls: Vec<String> = existing_urls_res.unwrap();
+
+	// URLs that already exist (from provided URLs)
+	return Ok(existing_urls)
 }
 
 pub fn db_list_content() -> Result<Vec<Content>, Box<dyn Error>> {

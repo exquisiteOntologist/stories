@@ -17,7 +17,7 @@ You may use any Operating System (also known as an OS).
 
 ## Usage
 
-From a shell run the app.
+From a shell run the app. Available commands will be presented.
 
 ## Developers
 

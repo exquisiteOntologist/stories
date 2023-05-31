@@ -52,7 +52,8 @@
 section {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  width: 900px;
+  grid-column-gap: 3rem;
+  width: 960px;
   max-width: 90%;
   margin: var(--section-gap) 0 0 0;
 }

@@ -2,6 +2,7 @@ import { LogoAlt } from '@/components/logos/logo-alt'
 import Image from 'next/image'
 import styles from './page.module.css'
 import { Me } from '../components/illustrations/me'
+import { QuestionsAnsweredText } from '../components/illustrations/questions-answered'
 import { AppIcon } from '../components/logos/app-icon'
 import imgScreenshot from '../../public/images/early-screenshot.png'
 import { DownloadButton } from '@/components/buttons/download-button'
@@ -25,8 +26,8 @@ export default function Home() {
           <h2>Your Questions Answered</h2>
           <p>Have information work for you. Your questions and your goals are answered &amp; updated as times change. You don’t have to read the internet yourself.</p>
         </div>
-        <div>
-          {/*  */}
+        <div className={styles.middle}>
+          <QuestionsAnsweredText />
         </div>
       </section>
       <section>

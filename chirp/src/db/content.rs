@@ -166,10 +166,10 @@ pub fn db_check_content_existing_urls(content_urls: &Vec<String>) -> Result<Vec<
 	let params = [content_url_values];
 
 	let mut content_url_query: Statement = conn.prepare(
-		// "SELECT url FROM content WHERE url IN (SELECT * FROM rarray(?1))"
-		"SELECT url FROM content"
+		"SELECT url FROM content WHERE url IN (SELECT * FROM rarray(?1))"
+		// "SELECT url FROM content"
 	)?;
-	let existing_urls_res = db_map_content_urls(&mut content_url_query, []/* params.clone() */);
+	let existing_urls_res = db_map_content_urls(&mut content_url_query, params.clone());
 
 	if existing_urls_res.is_err() {
 		println!("Error retrieving existing content URLs");

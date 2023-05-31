@@ -66,21 +66,8 @@ pub async fn parse_web_articles(url: &String, doc_text: &String, article_url_seg
 
 	println!("Urls already crawled {:?}", urls_already_crawled.len());
 
-	let urls_to_crawl: Vec<String> = article_urls.into_iter().filter(|au| urls_already_crawled.clone().into_iter().find(|uac| {
-		let same: bool = au == uac;
-		let isSame = if same {
-			"yes"
-		} else {
-			"no"
-		};
-		if same {
-			println!("A: {:?}", au);
-			println!("B: {:?}", uac);
-			println!("Same? {:?}", isSame);
-		}
-		
-		return same;
-	}).is_none()).collect();
+	// note the way into_iter works means it consumes the vector, so it must be cloned in each instance of filter
+	let urls_to_crawl: Vec<String> = article_urls.into_iter().filter(|au| urls_already_crawled.clone().into_iter().find(|uac| au == uac).is_none()).collect();
 
 	println!("Urls to crawl {:?}", urls_to_crawl.len());
 	

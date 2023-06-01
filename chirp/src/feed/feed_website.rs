@@ -1,4 +1,4 @@
-use std::{error::Error, collections::HashSet, vec};
+use std::{error::Error, collections::HashSet, vec, borrow::Borrow};
 use futures::future::join_all;
 use scraper::{Html, Selector};
 
@@ -62,16 +62,16 @@ pub async fn parse_web_articles(url: &String, doc_text: &String, article_url_seg
 	
 	println!("Urls found {:?}", article_urls.len());
 	
-	let urls_already_crawled = db_check_content_existing_urls(&article_urls)?;
+	let urls_already_crawled: Vec<String> = db_check_content_existing_urls(&article_urls)?;
 
 	println!("Urls already crawled {:?}", urls_already_crawled.len());
 
-	// note the way into_iter works means it consumes the vector, so it must be cloned in each instance of filter
-	let urls_to_crawl: Vec<String> = article_urls.into_iter().filter(|au| urls_already_crawled.clone().into_iter().find(|uac| au == uac).is_none()).collect();
+	// note the way into_iter works means it consumes the vector, so it must be cloned in each instance of filter,
+	// or alternatively use borrows
+	let urls_to_crawl: Vec<String> = article_urls.into_iter().filter(|au| (urls_already_crawled.borrow() as &Vec<String>).into_iter().find(|uac| &au == uac).is_none()).collect();
 
 	println!("Urls to crawl {:?}", urls_to_crawl.len());
 	
-	// TODO: We can query the DB to see if the articles' pages were already fetched
 	let article_futures = urls_to_crawl.into_iter().map(|p_url| contents_from_page(p_url.to_string()));
 	let website_contents: Vec<FullContent> = join_all(article_futures).await.drain_filter(|r| r.is_ok()).map(|r| r.unwrap()).collect();
 

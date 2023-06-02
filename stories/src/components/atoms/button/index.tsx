@@ -8,7 +8,7 @@ export const buttonClassesHollow = 'border border-slate-800 border-solid text-bl
 /**
  * Button with icon and label.
  */
-export const Button: React.FC<ButtonProps> = ({ className, label, Icon, linkTo, href, action, usePadding = true, disabled }) => {
+export const Button: React.FC<ButtonProps> = ({ className, label, Icon, linkTo, href, action, sideAction, usePadding = true, disabled }) => {
     const buttonIcon = Icon && <span className={`relative${label ? ' mr-5' : ''}`}><Icon /></span>
     const buttonLabel = label && <span className="relative">{label}</span>
     const buttonInner = (
@@ -36,7 +36,7 @@ export const Button: React.FC<ButtonProps> = ({ className, label, Icon, linkTo, 
 
     if (className) classNames.push(className)
 
-    const asLink = () => <Link className={classNames.join(' ')} to={linkTo || ''}>{buttonInner}</Link>
+    const asLink = () => <Link className={classNames.join(' ')} to={linkTo || ''} onClick={() => sideAction && sideAction()}>{buttonInner}</Link>
     const asExternalLink = () => <a className={classNames.join(' ')} href={href} target="_blank">{buttonInner}</a>
     const asButton = () => <button className={classNames.join(' ')} onClick={action} disabled={disabled}>{buttonInner}</button>
 

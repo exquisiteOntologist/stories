@@ -5,7 +5,7 @@ import { ListingCardProps } from './interfaces'
 export const ListingCard: React.FC<ListingCardProps> = ({ title, linkUrl, content, source }) => {
     const listingCoverImage = content?.media?.length && [...content?.media][0] //?.sort(m => m.isCover ? 0 : 1)[0]?.mediaImage[0]
     const perfectFit = (pxSize?: number) => pxSize ? `min(100%, ${pxSize}px)` : '100%'
-    const coverImage = listingCoverImage && ( // && (!listingCoverImage?.width || (listingCoverImage.width > 300)) && (
+    const coverImage = listingCoverImage ? ( // && (!listingCoverImage?.width || (listingCoverImage.width > 300)) && (
         <img
             className='object-cover m-auto'
             src={listingCoverImage?.src}
@@ -17,7 +17,7 @@ export const ListingCard: React.FC<ListingCardProps> = ({ title, linkUrl, conten
                 // height: perfectFit(null /* listingCoverImage?.height */)
             }}
         />
-    )
+    ) : null
 
     // const sourceLink = source && (
     //     <a

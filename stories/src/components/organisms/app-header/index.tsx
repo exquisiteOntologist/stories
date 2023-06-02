@@ -19,6 +19,7 @@ const AppMenuNavigation: React.FC = () => (
             label=""
             linkTo={`${routeAppLanding}#`}
             usePadding={false}
+            sideAction={() => scrollTo({top: 0})}
         />
     </div>
 )

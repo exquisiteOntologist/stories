@@ -8,6 +8,8 @@ export interface ButtonProps {
     href?: string
     /** For non-link actions */
     action?: () => any
+    /** Secondary action for link buttons */
+    sideAction?: () => any
     /** Provide standard button padding */
     usePadding?: boolean
     disabled?: boolean

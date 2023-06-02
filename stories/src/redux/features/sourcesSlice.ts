@@ -1,5 +1,6 @@
 import { AsyncThunk, createAsyncThunk, createEntityAdapter, createSlice } from "@reduxjs/toolkit";
 import { invoke } from "@tauri-apps/api";
+import { SourceDto } from "../../data/chirp-types";
 import { RootState } from "../store";
 
 /**
@@ -9,63 +10,52 @@ import { RootState } from "../store";
 export const fetchSources = createAsyncThunk(
     'sources/fetchSources',
     async (sourceIds: number[] | null | undefined, { dispatch }) => {
-        // const sources = await getSources({
-        //     sourceIds
-        // })
-
-        // if (sources.status !== 200) return
-
-        // dispatch(setAllSources(sources.data))
-
+        // TODO: Do by sourceIds argument
         const sources = await new Promise(r => invoke('list_sources').then((response) => r(response)))
 
-        dispatch(setAllSources(sources))
+        dispatch(setAllSources(sources as SourceDto[]))
     }
 )
 
-// export const fetchSourcesOfCollection = createAsyncThunk(
-//     'sources/fetchSourcesOfCollection',
-//     async (collectionIds: number[] | null, { dispatch }) => {
-//         const sources = await getSourcesOfCollection({
-//             collectionIds
-//         })
+export const fetchSourcesOfCollection = createAsyncThunk(
+    'sources/fetchSourcesOfCollection',
+    async (collectionIds: number[] | null, { dispatch }) => {
+        // TODO: Do by collection ids argument
+        const sources = await new Promise(r => invoke('list_sources').then((response) => r(response)))
 
-//         if (sources.status !== 200) return
+        dispatch(setAllSources(sources as SourceDto[]))
+    }
+)
 
-//         dispatch(setAllSources(sources.data))
-//     }
-// )
+export interface SourceForCollection {
+    collectionIds: number[] | null,
+    sourceUrl: string,
+    otherParam: string
+}
 
-// export interface SourceForCollection {
-//     sourceUrl: string
-//     collectionIds: number[] | null
-// }
-
-// export const addSourceToCollection: AsyncThunk<boolean, SourceForCollection, {}> = createAsyncThunk(
-//     'sources/addSourceToCollection',
-//     async (sourceForCollection: SourceForCollection, { dispatch }) => {
-//         const { sourceUrl, collectionIds } = sourceForCollection
+export const addSourceToCollection: AsyncThunk<boolean, SourceForCollection, {}> = createAsyncThunk(
+    'sources/addSourceToCollection',
+    async (sourceForCollection: SourceForCollection, { dispatch }) => {
+        const { collectionIds, sourceUrl, otherParam } = sourceForCollection
         
-//         try {
-//             const sourceAdded = await postAddSource({
-//                 sourceUrl,
-//                 collectionIds
-//             })
+        try {
+            const source = await new Promise(r => invoke('add_source', {
+                collectionIds,
+                sourceUrl,
+                additionalParam: otherParam,
+            }).then((response) => r(response)))
     
-//             if (sourceAdded.status !== 200) throw new Error('failed to add source')
-    
-//             const newSources = [sourceAdded.data]
-//             dispatch(setAllSources(newSources))
-//             return true
-//         } catch (e) {
-//             console.error('failed to add source', e)
+            dispatch(setAllSources([source] as SourceDto[]))
+            return true
+        } catch (e) {
+            console.error('failed to add source', e)
 
-//             return false
-//         }
-//     }
-// )
+            return false
+        }
+    }
+)
 
-const sourcesAdapter = createEntityAdapter<any /* SourceDto type */>({
+const sourcesAdapter = createEntityAdapter<SourceDto>({
     selectId: (source) => source.id
 })
 

@@ -24,7 +24,7 @@ pub fn db_map_sources_query<P: Params>(s: &mut Statement, p: P) -> Result<Vec<So
 
 pub fn db_sources_retrieve() -> Result<Vec<Source>, Box<dyn Error>> {
 	let conn = db_connect()?;
-	let mut sources_query = conn.prepare("SELECT id, name, url, site_url, kind FROM source LIMIT 2000")?;
+	let mut sources_query: Statement = conn.prepare("SELECT * FROM source LIMIT 2000")?;
 	let sources = db_map_sources_query(&mut sources_query, [])?;
 
 	Ok(sources)
@@ -75,6 +75,18 @@ pub fn db_source_add_data_web(source: &Source, source_id: &i32) -> Result<(), Bo
 	_ = conn.close();
 
 	Ok(())
+}
+
+pub fn db_source_get(source_id: &i32) -> Result<Source, Box<dyn Error>> {
+	let conn = db_connect()?;
+	let params = [(":id", &source_id.to_string())];
+	let mut sources_query: Statement = conn.prepare("SELECT * FROM source WHERE id = :id")?;
+	let mut sources = db_map_sources_query(&mut sources_query, &params)?;
+	let source = sources.pop().unwrap();
+	
+	// _ = conn.close();
+	
+	Ok(source)
 }
 
 pub fn db_source_get_data_web_url_segment(source_id: &i32) -> Result<String, Box<dyn Error>> {

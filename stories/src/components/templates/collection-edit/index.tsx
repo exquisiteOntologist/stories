@@ -12,26 +12,25 @@ interface CollectionEditViewProps {
 const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
     const dispatch = useAppDispatch()
     const [sourceUrlEntry, setSourceUrlEntry] = useState<string>('')
+    const [otherParamEntry, setOtherParamEntry] = useState<string>('')
     const [addSourceMessage, setAddSourceMessage] = useState<[string, boolean]>(['', false])
     // const collection = useAppSelector(contentsSelectors.selectAll)
     const sources = useAppSelector(sourcesSelectors.selectAll)
 
-    const currentCollection = []
-    const collectionTitle = 'Top'
+    const currentCollection = 0 // TODO: Change collection id as collection is selected
+    const collectionTitle = 'Home'
 
     useEffect(() => {
-        // @TODO: Pass current collection ID if not default collection
-
-        dispatch(fetchSourcesOfCollection(currentCollection))
+        dispatch(fetchSourcesOfCollection([currentCollection]))
     }, [dispatch])
 
     const addToCollection = async (e: React.FormEvent) => {
         e.preventDefault()
         setAddSourceMessage(['Adding source...', false])
-        const success = (await dispatch(addSourceToCollection({sourceUrl: sourceUrlEntry, collectionIds: []}))).payload
+        const success = (await dispatch(addSourceToCollection({collectionIds: [currentCollection], sourceUrl: sourceUrlEntry, otherParam: otherParamEntry }))).payload
         console.log('add source to collection after success', success)
         setAddSourceMessage([`${success ? 'Finished adding' : 'Failed to add'} source "${sourceUrlEntry}"`, !success])
-        dispatch(fetchSourcesOfCollection(currentCollection))
+        dispatch(fetchSourcesOfCollection([currentCollection]))
     }
 
     const [addMessageText, addMessageWasError] = addSourceMessage
@@ -40,17 +39,18 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
         <div className="mb-10">
             <form className='flex mb-2' onSubmit={e => addToCollection(e)}>
                 {/* <h3 className='text-xl'>Enter source URL</h3> */}
-                <input className='block border border-slate-400 rounded-md w-full mr-2 px-4 py-2 bg-transparent' type="text" placeholder="Enter source URL" value={sourceUrlEntry} onChange={e => setSourceUrlEntry(e.currentTarget.value)} />
+                <input className='block border border-slate-400 rounded-md w-full mr-2 px-4 py-2 bg-transparent' type="text" placeholder="Enter source URL" spellCheck="false" value={sourceUrlEntry} onChange={e => setSourceUrlEntry(e.currentTarget.value)} />
+                <input className='block border border-slate-400 rounded-md w-full mr-2 px-4 py-2 bg-transparent' type="text" placeholder="Article URL '/{segment}/'" spellCheck="false" value={otherParamEntry} onChange={e => setOtherParamEntry(e.currentTarget.value)} />
                 <Button className={`${buttonClassesHollow} whitespace-nowrap`} action={() => {}} label="Add Source" disabled={!sourceUrlEntry}></Button>
             </form>
             <p className={`${addMessageWasError ? 'text-orange-700' : 'text-green-700'}`}>{addMessageText}&nbsp;</p>
         </div>
     )
 
-    const sourceList = sources.sort((sA, sB) => (sA.title || '').localeCompare(sB.title || '')).map(source => (
-        <div className="my-2" key={source.sourceId}>
-            <h3>{source.title}</h3>
-            <p className="text-gray-300" title={`ID ${source.sourceId}`}><span className="font-bold">{source.sourceType === 0 ? 'RSS' : ''}&nbsp;</span>{source.url}</p>
+    const sourceList = sources.sort((sA, sB) => (sA.name || '').localeCompare(sB.name || '')).map(source => (
+        <div className="my-2" key={source.id}>
+            <h3>{source.name}</h3>
+            <p className="text-gray-300" title={`ID ${source.id}`}><span className="font-bold">{source.kind}&nbsp;</span>{source.url}</p>
         </div>
     ))
 

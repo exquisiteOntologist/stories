@@ -3,7 +3,7 @@ use serde::{Serialize};
 use typeshare::typeshare;
 
 #[derive(Debug)]
-// #[typeshare::typeshare] // <- cannot do tuples as in data:
+// #[typeshare] // <- cannot do tuples as in data:
 #[derive(Serialize)]
 pub struct Source {
     pub id: i32,
@@ -15,6 +15,19 @@ pub struct Source {
 }
 
 #[derive(Debug)]
+#[derive(Clone)]
+#[typeshare] // <- cannot do tuples as in data:
+#[derive(Serialize)]
+pub struct SourceDto {
+    pub id: i32,
+    pub name: String,
+    pub url: String,
+    pub site_url: String,
+    pub kind: SourceKind
+}
+
+#[derive(Debug)]
+#[derive(Clone)]
 #[typeshare]
 #[derive(Serialize)]
 pub enum SourceKind {

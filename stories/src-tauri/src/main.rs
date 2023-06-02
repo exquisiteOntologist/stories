@@ -16,6 +16,7 @@ async fn main() {
         .invoke_handler(tauri::generate_handler![
             greet,
             commands::sources::list_sources,
+            commands::sources::add_source,
             commands::content::list_content
         ])
         .setup(|_app| {

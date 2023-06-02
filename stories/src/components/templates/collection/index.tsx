@@ -51,7 +51,7 @@ const CollectionView: React.FC<CollectionViewProps> = (props) => {
             title={content.title}
             linkUrl={content.url /* `/reader/${content.id}` */}
             content={content}
-            source={sources?.find(s => s?.sourceId == content.source_id)}
+            source={sources?.find(s => s?.id == content.source_id)}
         />
     ));
 
@@ -62,7 +62,7 @@ const CollectionView: React.FC<CollectionViewProps> = (props) => {
             title={content.title}
             linkUrl={content.url /* `/reader/${content.id}` */}
             content={content}
-            source={sources?.find(s => s?.sourceId == content.source_id)}
+            source={sources?.find(s => s?.id == content.source_id)}
         />
     ))
 

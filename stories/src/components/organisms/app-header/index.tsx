@@ -12,14 +12,19 @@ import { IconWidgets } from "../../atoms/icons/widgets";
 import { ShutEye } from "../../atoms/logo/shut-eye";
 import { ButtonsGroup } from "../../molecules/buttons-group";
 
+const scrollToTop = () => scrollTo({top: 0})
+
 const AppMenuNavigation: React.FC = () => (
     <div className="pointer-events-auto py-4">
         <Button
             Icon={ShutEye}
             label=""
-            linkTo={`${routeAppLanding}#`}
+            linkTo={routeAppLanding}
             usePadding={false}
-            sideAction={() => scrollTo({top: 0})}
+            sideAction={() => {
+                const alreadyAtDest = location.pathname === routeAppLanding
+                if (alreadyAtDest) scrollToTop()
+            }}
         />
     </div>
 )
@@ -32,30 +37,30 @@ const AppMenuActions: React.FC<AppHeaderProps> = ({location}) => (
             // linkTo={`${location.pathname}/edit`}
             linkTo={`/edit`}
         />
-        <Button
+        {/* <Button
             Icon={IconPaintRoller}
             label="Customize"
             action={() => console.log('customize')}
             disabled={true}
-        />
-        <Button
+        /> */}
+        {/* <Button
             Icon={IconWidgets}
             label="Widgets"
             action={() => console.log('widgets')}
             disabled={true}
-        />
-         <Button
+        /> */}
+         {/* <Button
             Icon={IconMagic}
             label="Magic ID"
             action={() => console.log('magic ID')}
             disabled={true}
-        />
-        <Button
+        /> */}
+        {/* <Button
             Icon={IconSearch}
             label="Search"
             action={() => console.log('search')}
             disabled={true}
-        />
+        /> */}
     </ButtonsGroup>
 )
 

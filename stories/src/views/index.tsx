@@ -32,7 +32,7 @@ const AppPageInner = () => {
               {/* <NotFound default /> */}
               {/* <CollectionView default /> */}
               <CollectionView path="/" />
-              {/* <CollectionEditView path="/edit" /> */}
+              <CollectionEditView path="/edit" />
               {/* <CollectionEditView path="/:collectionId/edit" /> */}
               <ReaderView path="/reader/:contentId" />
               {/* <CollectionView path="/:collectionId" /> */}

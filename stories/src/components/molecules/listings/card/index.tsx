@@ -42,16 +42,16 @@ export const ListingCard: React.FC<ListingCardProps> = ({ title, linkUrl, conten
 
     return (
         <article className='group flex flex-col text-center mb-6'>
-            <Link className='flex flex-col w-full' to={linkUrl}>
+            <a className='flex flex-col w-full' href={linkUrl} target="_blank">
                 <picture className='flex flex-col grow w-full aspect-square my-1 rounded-md overflow-hidden empty:bg-gray-100'>
                     {coverImage}
                 </picture>
-            </Link>
+            </a>
             <h1 className="text-base grow mx-0 my-2">
-                <Link className='grow font-semibold text-gray-500 group-hover:text-black transition-all duration-50' to={linkUrl}>
+                <a className='grow font-semibold text-gray-500 group-hover:text-black transition-all duration-50' href={linkUrl} target="_blank">
                     {title}
                     {/* {description} */}
-                </Link>
+                </a>
                 {/* {sourceLink} */}
             </h1>
         </article>

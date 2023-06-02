@@ -192,5 +192,4 @@ pub fn scrape_links(doc_text: &String, article_url_segment: &String) -> Result<V
 	Ok(links)
 }
 
-// TODO: Retrieve favicon
-// TODO: Retrieve the OG:IMAGE etc.
+// TODO: Retrieve favicon (for site not page)

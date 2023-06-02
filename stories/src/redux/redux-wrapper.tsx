@@ -2,7 +2,6 @@ import * as React from "react"
 import { ReactNode } from "react"
 import { Provider } from "react-redux"
 import { store } from "./store"
-// import configureStore from "./store"
 
 export const ReduxWrapper: React.FC<{ children?: ReactNode }> = ({ children /* element */ }) => {
     // Instantiating store in `wrapRootElement` handler ensures:

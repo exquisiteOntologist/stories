@@ -167,7 +167,6 @@ pub fn db_check_content_existing_urls(content_urls: &Vec<String>) -> Result<Vec<
 
 	let mut content_url_query: Statement = conn.prepare(
 		"SELECT url FROM content WHERE url IN (SELECT * FROM rarray(?1))"
-		// "SELECT url FROM content"
 	)?;
 	let existing_urls_res = db_map_content_urls(&mut content_url_query, params.clone());
 
@@ -181,7 +180,7 @@ pub fn db_check_content_existing_urls(content_urls: &Vec<String>) -> Result<Vec<
 	let existing_urls: Vec<String> = existing_urls_res.unwrap();
 
 	// URLs that already exist (from provided URLs)
-	return Ok(existing_urls)
+	Ok(existing_urls)
 }
 
 pub fn db_list_content() -> Result<Vec<Content>, Box<dyn Error>> {
@@ -288,4 +287,29 @@ pub fn db_list_content_full() -> Result<Vec<FullContent>, Box<dyn Error>> {
 	}).collect();
 
 	Ok(full_content)
+}
+
+pub fn db_content_bodies(content_ids: Vec<String>) -> Result<Vec<ContentBody>, Box<dyn Error>> {
+	let conn: Connection = db_connect()?;
+	rusqlite::vtab::array::load_module(&conn)?; // <- Adds "rarray" table function
+
+	let content_id_values = Rc::new(content_ids.to_owned().into_iter().map(Value::from).collect::<Vec<Value>>());
+	let params = [content_id_values];
+
+	let mut bodies_query: Statement = conn.prepare(
+		"SELECT * FROM content WHERE content_id IN (SELECT * FROM rarray(?1))"
+	)?;
+	let bodies_res = db_map_content_body_query(&mut bodies_query, params.clone());
+
+	if bodies_res.is_err() {
+		println!("Error retrieving content bodies");
+		let err = bodies_res.unwrap_err();
+		println!("{:?}", err);
+		return Err(err);
+	}
+
+	let bodies: Vec<ContentBody> = bodies_res.unwrap();
+
+	// URLs that already exist (from provided URLs)
+	Ok(bodies)
 }

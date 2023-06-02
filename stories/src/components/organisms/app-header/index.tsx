@@ -17,7 +17,7 @@ const AppMenuNavigation: React.FC = () => (
         <Button
             Icon={ShutEye}
             label=""
-            linkTo={routeAppLanding}
+            linkTo={`${routeAppLanding}#`}
             usePadding={false}
         />
     </div>
@@ -29,7 +29,7 @@ const AppMenuActions: React.FC<AppHeaderProps> = ({location}) => (
             Icon={IconShapes}
             label="Sources"
             // linkTo={`${location.pathname}/edit`}
-            linkTo={`/app/edit`}
+            linkTo={`/edit`}
         />
         <Button
             Icon={IconPaintRoller}

@@ -23,7 +23,7 @@ const CollectionView: React.FC<CollectionViewProps> = (props) => {
     const sources = useAppSelector(sourcesSelectors.selectAll)
     const contents = useAppSelector(contentsSelectors.selectAll).slice(0, clientItemsLimit)
 
-    const collectionId: number = 0
+    // const collectionId: number = 0
     const title = 'hi'
     
     useEffect(() => {
@@ -32,13 +32,12 @@ const CollectionView: React.FC<CollectionViewProps> = (props) => {
     }, [dispatch])
 
     useEffect(() => {
-        console.log('source ids in use effect', sources)
+        // console.log('source ids in use effect', sources)
         dispatch(fetchContent())
-        // 
     }, [sources])
 
     useEffect(() => {
-        console.log('contents for given sources in view', contents)
+        // console.log('contents for given sources in view', contents)
     }, [contents])
 
     useEffect(() => {
@@ -50,7 +49,7 @@ const CollectionView: React.FC<CollectionViewProps> = (props) => {
             key={content.id}
             id={content.id}
             title={content.title}
-            linkUrl={`/app/reader/${content.id}`}
+            linkUrl={content.url /* `/reader/${content.id}` */}
             content={content}
             source={sources?.find(s => s?.sourceId == content.source_id)}
         />
@@ -61,14 +60,11 @@ const CollectionView: React.FC<CollectionViewProps> = (props) => {
             key={content.id}
             id={content.id}
             title={content.title}
-            linkUrl={`/app/reader/${content.id}`}
+            linkUrl={content.url /* `/reader/${content.id}` */}
             content={content}
             source={sources?.find(s => s?.sourceId == content.source_id)}
         />
     ))
-
-    invoke('list_sources').then((response) => console.log('sources', response))
-    invoke('list_content').then((response) => console.log('recent content', response))
 
     return (
         <>

@@ -1,54 +1,60 @@
-// import { createAsyncThunk, createEntityAdapter, createSlice } from "@reduxjs/toolkit";
-// // import { components } from "../../data/openapi";
-// // import { getContentBodies } from "../../utilities/requests";
-// import { RootState } from "../store";
+import { createAsyncThunk, createEntityAdapter, createSlice } from "@reduxjs/toolkit";
+import { ContentBody } from "../../data/chirp-types";
+// import { components } from "../../data/openapi";
+// import { getContentBodies } from "../../utilities/requests";
+import { RootState } from "../store";
 
-// export const fetchContentBodies = createAsyncThunk(
-//     'contentBodies/fetchContentBodies',
-//     async (contentIds: number[] | null, { dispatch }) => {
-//         // @TODO: Check the localStorage first (or maybe simultaneously)
+export const fetchContentBodies = createAsyncThunk(
+    'contentBodies/fetchContentBodies',
+    async (contentIds: number[] | null, { dispatch }) => {
+        // @TODO: Check the localStorage first (or maybe simultaneously)
         
-//         const allContentBodiesData: Array<components["schemas"]["ContentBodyDto"]> = []
+        const allContentBodiesData: Array<ContentBody> = []
         
-//         try {
-//             // There are limits to how many IDs are accepted from a GET request
-//             const atOnce = 50
-//             let i = 0
-//             while (i < contentIds.length) {
-//                 const setToFetch = contentIds.slice(i, i + atOnce)
-//                 i += atOnce
+        try {
+            // There are limits to how many IDs are accepted from a GET request
+            const atOnce = 50
+            let i = 0
+            while (i < contentIds.length) {
+                const idsToFetchThisIteration = contentIds.slice(i, i + atOnce)
+                i += atOnce
 
-//                 const contentBodies = await getContentBodies({
-//                     contentIds: setToFetch
-//                 })
+                // const contentBodies = await getContentBodies({
+                //     contentIds: setToFetch
+                // })
 
-//                 if (contentBodies.status !== 200) return //@TODO: handle error when on and offline
+                const contentBodies = await new Promise(r => invoke('content_bodies', {
+                    contentIds: idsToFetchThisIteration
+                }).then((response) => r(response)))
 
-//                 allContentBodiesData.push(...contentBodies.data)
+                // if (contentBodies.status !== 200) return //@TODO: handle error when on and offline
 
-//             }
-//         } catch (e) {
-//             console.error('Content body retrieval failure', e)
-//         }
+                // allContentBodiesData.push(...contentBodies.data)
+                allContentBodiesData.push(...contentBodies)
 
-//         dispatch(setAllContentBodies(allContentBodiesData))
-//     }
-// )
+            }
+        } catch (e) {
+            console.error('Content body retrieval failure', e)
+        }
 
-// const contentBodiesAdapter = createEntityAdapter<components["schemas"]["ContentBodyDto"]>({
-//     selectId: (contentBody) => contentBody.contentBodyId
-// })
+        dispatch(setAllContentBodies(allContentBodiesData))
+    }
+)
 
-// const contentBodiesSlice = createSlice({
-//     name: 'contentBodies',
-//     initialState: contentBodiesAdapter.getInitialState(),
-//     reducers: {
-//         setAllContentBodies: contentBodiesAdapter.setAll
-//     },
-//     extraReducers: {}
-// })
+const contentBodiesAdapter = createEntityAdapter<ContentBody>({
+    selectId: (contentBody) => contentBody.content_id,
+})
 
-// export const { setAllContentBodies } = contentBodiesSlice.actions
-// export const contentBodiesSelectors = contentBodiesAdapter.getSelectors<RootState>((state) => state.contentBodies)
+const contentBodiesSlice = createSlice({
+    name: 'contentBodies',
+    initialState: contentBodiesAdapter.getInitialState(),
+    reducers: {
+        setAllContentBodies: contentBodiesAdapter.setAll
+    },
+    extraReducers: {}
+})
 
-// export const contentBodiesReducer = contentBodiesSlice.reducer
+export const { setAllContentBodies } = contentBodiesSlice.actions
+export const contentBodiesSelectors = contentBodiesAdapter.getSelectors<RootState>((state) => state.contentBodies)
+
+export const contentBodiesReducer = contentBodiesSlice.reducer

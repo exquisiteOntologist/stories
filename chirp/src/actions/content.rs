@@ -1,6 +1,6 @@
 use std::error::Error;
 
-use crate::{db::{db_list_content, db_list_content_full}, entities};
+use crate::{db::{db_list_content, db_list_content_full, db_content_bodies}, entities::{self, ContentBody}};
 
 pub fn list_content_action() -> Result<(), Box<dyn Error>> {
     let content_list = list_content()?;
@@ -54,6 +54,8 @@ pub fn list_content_full() -> Result<Vec<entities::FullContent>, Box<dyn Error>>
     Ok(content_list_full)
 }
 
-// pub async fn list_full_content() -> Result<Vec<entities::Contents>, Box<dyn Error>> {
-//     // 
-// }
+pub fn content_bodies(content_ids: Vec<String>) -> Result<Vec<entities::ContentBody>, Box<dyn Error>> {
+    let bodies: Vec<entities::ContentBody> = db_content_bodies(content_ids)?;
+
+    Ok(bodies)
+}

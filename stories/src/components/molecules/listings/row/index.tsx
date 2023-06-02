@@ -29,10 +29,10 @@ export const ListingRow: React.FC<ListingRowProps> = ({ title, linkUrl, content,
         <article className="relative group border-b border-gray-100">
             <h1 className="text-base mx-0 my-2">
                 {/* {sourceLink} */}
-                <Link to={linkUrl}>
+                <a href={linkUrl} target="_blank">
                     {title}
                     {description}
-                </Link>
+                </a>
             </h1>
         </article>
     )

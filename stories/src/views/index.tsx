@@ -28,14 +28,14 @@ const AppPageInner = () => {
       {({ location }) => (
         <main className="w-screen flex flex-col min-h-screen overscroll-none transition-all duration-1000" style={elMainStyle}>
           <AppHeader location={location} />
-          <Router basepath="/app" location={location} className={routerClassNames}>
-              {/* <ReaderView path="/reader/:contentId" /> */}
-              {/* <CollectionEditView path="/:collectionId/edit" /> */}
-              <CollectionView path="/:collectionId" />
-              {/* <CollectionEditView path="/edit" /> */}
-              <CollectionView path="/" />
-              <CollectionView default />
+          <Router location={location} className={routerClassNames}>
               {/* <NotFound default /> */}
+              {/* <CollectionView default /> */}
+              <CollectionView path="/" />
+              {/* <CollectionEditView path="/edit" /> */}
+              {/* <CollectionEditView path="/:collectionId/edit" /> */}
+              <ReaderView path="/reader/:contentId" />
+              {/* <CollectionView path="/:collectionId" /> */}
           </Router>
         </main>
       )}

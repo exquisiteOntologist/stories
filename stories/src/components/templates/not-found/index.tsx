@@ -4,7 +4,7 @@ import { Redirect } from "@reach/router"
 const NotFound = () => (
     <div>
         <h1>Not Found</h1>
-        <Redirect to="/app" />
+        <Redirect to="/" />
     </div>
 )
 

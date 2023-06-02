@@ -15,42 +15,48 @@ import './reader.scss'
 const ReaderView: React.FC<ReaderViewProps> = ({ contentId }) => {
     const dispatch = useAppDispatch()
     const content = useAppSelector(s => contentsSelectors.selectById(s, contentId))
-    const contentBody = useAppSelector(s => contentBodiesSelectors.selectById(s, content?.contentBodyId))
+    const contentBody = useAppSelector(s => contentBodiesSelectors.selectById(s, contentId))
     const colours = useAppSelector(selectColours)
-    const coverImage = content?.media.find(m => m.isCover)?.mediaImage[0]
+    const coverImage = content?.media?.length ? content.media[0] : null //.find(m => m.isCover)?.mediaImage[0]
+
+    console.log('content', content)
+    console.log('content body', contentBody)
     
     useEffect(() => {
         if (!content) dispatch(fetchContent([Number(contentId)]))
     }, [dispatch])
 
-    useEffect(() => {
-        const coverDataUrl = coverImage?.dataUrl;   
-        if (coverDataUrl) generateContentColours(coverDataUrl).then(v => {
-            dispatch(setThemeColours(v))
-        })
-    }, [coverImage, dispatch])
-    
-    if (!content || !contentBody) return null
+    // useEffect(() => {
+    //     const coverDataUrl = coverImage ? coverImage?.dataUrl : undefined;
+    //     if (coverDataUrl) generateContentColours(coverDataUrl).then(v => {
+    //         dispatch(setThemeColours(v))
+    //     })
+    // }, [coverImage, dispatch])
 
     const showOriginalArticle = true // future: if scraped article much longer than excerpt
     const [originalArticleLoaded, setOriginalArticleLoaded] = useState(true) 
-    const articleSourceContent = /* contentBody.body?.length > 0 ? contentBody.body : */ content.description
+    
+    console.log('original article loaded?', originalArticleLoaded)
+
+    if (!content) return null
+
+    const articleSourceContent = /* contentBody.body?.length > 0 ? contentBody.body : */ '' // content.description
     const articleHtml = articleSourceContent?.replace(/data-src/gi, 'src')
         .replace(/<script/gi, '[script')
         .replace(/script>/gi, 'script]')
     
-    const coverImageUrl = coverImage?.url
-    const headerImage = coverImage && (<img className='mb-20 mx-auto' src={coverImageUrl} width={coverImage?.width} height={coverImage?.height} alt={content.title} />)
+    const coverImageUrl = coverImage?.src
+    const headerImage = coverImage && (<img className='mb-20 mx-auto' src={coverImageUrl} width={/* coverImage?.width */ undefined} height={/* coverImage?.height */ undefined} alt={content.title} />)
 
-    const commentsUrl = content?.contentCommunity?.discussionUrl
-    const comments = commentsUrl && (
-        <Button
-            className={'inline-block'}
-            Icon={IconChat}
-            label="Comments"
-            href={commentsUrl}
-        />
-    )
+    // const commentsUrl = content?.contentCommunity?.discussionUrl
+    // const comments = commentsUrl && (
+    //     <Button
+    //         className={'inline-block'}
+    //         Icon={IconChat}
+    //         label="Comments"
+    //         href={commentsUrl}
+    //     />
+    // )
 
     const articleTitle = content.title
     const textContentWidths = `w-full max-w-7xl`
@@ -63,12 +69,12 @@ const ReaderView: React.FC<ReaderViewProps> = ({ contentId }) => {
             <article className='reader w-full' style={{ /* backgroundColor: colours?.background */ }}>
                 <header className='reader__header text-center mb-10'>
                     {headerImage}
-                    <h1 className={`text-center text-5xl leading-normal px-4 mx-auto mb-10 ${textContentWidths} contrast-200`} style={{ color: colours?.primaryLightnessAdjusted }}>
+                    <h1 className={`text-center text-5xl leading-normal px-4 mx-auto mb-10 ${textContentWidths} contrast-200`} style={{ color: colours?.primaryLightnessAdjusted ?? 'currentcolor' }}>
                         <a href={content.url} target='_blank'>{articleTitle}</a>
                     </h1>
-                    <div className='inline-block' style={{ color: colours?.primaryLightnessAdjusted }}>
+                    {/* <div className='inline-block' style={{ color: colours?.primaryLightnessAdjusted }}>
                         {comments}
-                    </div>
+                    </div> */}
                 </header>
                 {showOriginalArticle && content.url
                     ? (
@@ -76,6 +82,7 @@ const ReaderView: React.FC<ReaderViewProps> = ({ contentId }) => {
                             className={`w-[90vw] h-[80vh] mx-auto ${originalArticleLoaded ? 'block' : 'hidden'} border-2 border-solid border-slate-400`}
                             style={{ borderColor: colours.primaryHslVals && createHslaString(...colours.primaryHslVals, 0.5) }}
                             src={content.url}
+                            onLoad={(e) => setOriginalArticleLoaded(!!(e.target as HTMLIFrameElement)?.contentWindow?.window.length)}
                         ></iframe>
                     )
                     : (

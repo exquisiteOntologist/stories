@@ -1,3 +1,5 @@
+use std::error::Error;
+
 #[tauri::command]
 pub fn list_sources() -> Vec<chirp::entities::SourceDto> {
     let sources = chirp::actions::sources::list_sources().unwrap();
@@ -6,9 +8,13 @@ pub fn list_sources() -> Vec<chirp::entities::SourceDto> {
 }
 
 #[tauri::command]
-pub async fn add_source(_collection_ids: Vec<i32>, source_url: String, additional_param: String) -> Result<chirp::entities::SourceDto, ()> {
-    let s: chirp::entities::Source = chirp::actions::add::source_add(&source_url, &additional_param).await.unwrap();
-    let s_dto = source_to_dto(s);
+pub async fn add_source(_collection_ids: Vec<i32>, source_url: String, additional_param: String) -> Result<chirp::entities::SourceDto, String> {
+    let s_res = chirp::actions::add::source_add(&source_url, &additional_param).await;
+    if s_res.is_err() {
+        // return Err(s_res.unwrap_err());
+        return Err("Cannot add source".into())
+    }
+    let s_dto: chirp::entities::SourceDto = source_to_dto(s_res.unwrap());
 
     Ok(s_dto)
 }
@@ -23,9 +29,3 @@ pub fn source_to_dto(s: chirp::entities::Source) -> chirp::entities::SourceDto {
     }
 }
 
-// #[tauri::command]
-// pub fn add_sources_collection(source_urls: Vec<String>, collectionId: i32) -> Result<Vec<SourceDto>, ()> {
-//     let sources: Vec<SourceDto> = chirp::actions::sources::add_source_to_collection(source_urls, collectionId).unwrap();
-
-//     Ok(sources)
-// }

@@ -11,7 +11,7 @@ export const fetchSources = createAsyncThunk(
     'sources/fetchSources',
     async (sourceIds: number[] | null | undefined, { dispatch }) => {
         // TODO: Do by sourceIds argument
-        const sources = await new Promise(r => invoke('list_sources').then((response) => r(response)))
+        const sources = await invoke('list_sources')
 
         dispatch(setAllSources(sources as SourceDto[]))
     }
@@ -21,7 +21,7 @@ export const fetchSourcesOfCollection = createAsyncThunk(
     'sources/fetchSourcesOfCollection',
     async (collectionIds: number[] | null, { dispatch }) => {
         // TODO: Do by collection ids argument
-        const sources = await new Promise(r => invoke('list_sources').then((response) => r(response)))
+        const sources = await invoke('list_sources')
 
         dispatch(setAllSources(sources as SourceDto[]))
     }
@@ -39,11 +39,16 @@ export const addSourceToCollection: AsyncThunk<boolean, SourceForCollection, {}>
         const { collectionIds, sourceUrl, otherParam } = sourceForCollection
         
         try {
-            const source = await new Promise(r => invoke('add_source', {
+            const source = await invoke('add_source', {
                 collectionIds,
                 sourceUrl,
                 additionalParam: otherParam,
-            }).then((response) => r(response)))
+            });
+
+            if (!source) {
+                throw new Error("failed to add source!");
+                
+            }
     
             dispatch(setAllSources([source] as SourceDto[]))
             return true

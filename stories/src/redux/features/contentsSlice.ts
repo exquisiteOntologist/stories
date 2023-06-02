@@ -15,7 +15,7 @@ export const fetchContentOfSources = createAsyncThunk(
        
         // const data = contents.data
 
-        const content = await new Promise(r => invoke('list_content').then((response) => r(response)))
+        const content = await invoke('list_content')
 
         dispatch(setAllContents(content as ContentDto[]))
         // dispatch(fetchContentBodies(data.map(x => x.contentId)))
@@ -31,7 +31,7 @@ export const fetchContent = createAsyncThunk(
 
         // const data = contents.data
 
-        const content = await new Promise(r => invoke('list_content').then((response) => r(response)))
+        const content = await invoke('list_content')
 
         dispatch(setAllContents(content as ContentDto[]))
         // dispatch(fetchContentBodies(data.map(x => x.contentId)))

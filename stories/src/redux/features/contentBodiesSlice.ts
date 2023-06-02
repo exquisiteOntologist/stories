@@ -1,4 +1,5 @@
 import { createAsyncThunk, createEntityAdapter, createSlice } from "@reduxjs/toolkit";
+import { invoke } from "@tauri-apps/api";
 import { ContentBody } from "../../data/chirp-types";
 // import { components } from "../../data/openapi";
 // import { getContentBodies } from "../../utilities/requests";
@@ -19,17 +20,10 @@ export const fetchContentBodies = createAsyncThunk(
                 const idsToFetchThisIteration = contentIds.slice(i, i + atOnce)
                 i += atOnce
 
-                // const contentBodies = await getContentBodies({
-                //     contentIds: setToFetch
-                // })
-
-                const contentBodies = await new Promise(r => invoke('content_bodies', {
+                const contentBodies = await invoke('content_bodies', {
                     contentIds: idsToFetchThisIteration
-                }).then((response) => r(response)))
+                })
 
-                // if (contentBodies.status !== 200) return //@TODO: handle error when on and offline
-
-                // allContentBodiesData.push(...contentBodies.data)
                 allContentBodiesData.push(...contentBodies)
 
             }

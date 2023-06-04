@@ -94,6 +94,26 @@ pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
     )?;
 
     conn.execute(
+        "CREATE TABLE IF NOT EXISTS collection_settings (
+            id              INTEGER PRIMARY KEY UNIQUE,
+            collection_id   INTEGER NOT NULL UNIQUE,
+            layout          TEXT,
+            FOREIGN KEY (collection_id) REFERENCES collection(id) ON DELETE CASCADE
+        )",
+        (),
+    )?;
+
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS collection_widget (
+            id              INTEGER PRIMARY KEY UNIQUE,
+            collection_id   INTEGER NOT NULL UNIQUE,
+            widget          TEXT NOT NULL,
+            FOREIGN KEY (collection_id) REFERENCES collection(id) ON DELETE CASCADE
+        )",
+        (),
+    )?;
+
+    conn.execute(
         "CREATE TABLE IF NOT EXISTS collection_to_source (
             collection_id   INTEGER NOT NULL UNIQUE,
             source_id       INTEGER NOT NULL UNIQUE,

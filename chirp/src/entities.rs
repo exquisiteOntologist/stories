@@ -3,6 +3,35 @@ use serde::{Serialize};
 use typeshare::typeshare;
 
 #[derive(Debug)]
+#[derive(Clone)]
+#[typeshare]
+#[derive(Serialize)]
+pub struct Collection {
+    pub id: i32,
+    pub name: String
+}
+
+#[derive(Debug)]
+#[derive(Clone)]
+#[typeshare]
+#[derive(Serialize)]
+pub struct CollectionSettings {
+    pub id: i32,
+    pub collection_id: i32,
+    pub layout: String
+}
+
+#[derive(Debug)]
+#[derive(Clone)]
+#[typeshare]
+#[derive(Serialize)]
+pub struct CollectionWidget {
+    pub id: i32,
+    pub collection_id: i32,
+    pub widget: String
+}
+
+#[derive(Debug)]
 // #[typeshare] // <- cannot do tuples as in data:
 #[derive(Serialize)]
 pub struct Source {
@@ -16,7 +45,7 @@ pub struct Source {
 
 #[derive(Debug)]
 #[derive(Clone)]
-#[typeshare] // <- cannot do tuples as in data:
+#[typeshare]
 #[derive(Serialize)]
 pub struct SourceDto {
     pub id: i32,

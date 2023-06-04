@@ -13,8 +13,8 @@ export const ListingCard: React.FC<ListingCardProps> = ({ title, linkUrl, conten
             width={undefined /* listingCoverImage?.width */}
             height={undefined /* listingCoverImage?.height */}
             style={{
-                // width: perfectFit(null /* listingCoverImage?.width */),
-                // height: perfectFit(null /* listingCoverImage?.height */)
+                width: '100%', // perfectFit(null /* listingCoverImage?.width */),
+                height: '100%' // perfectFit(null /* listingCoverImage?.height */)
             }}
         />
     ) : null

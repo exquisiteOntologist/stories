@@ -1,9 +1,11 @@
 import * as React from 'react'
 import { useEffect, useState } from 'react'
+import { SourceDto } from '../../../data/chirp-types'
 // import Helmet from 'react-helmet'
 import { addSourceToCollection, fetchSourcesOfCollection, sourcesSelectors } from '../../../redux/features/sourcesSlice'
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
 import { Button, buttonClassesHollow } from '../../atoms/button'
+import { IconRemove } from '../../atoms/icons/remove'
 
 interface CollectionEditViewProps {
     collectionId?: number | string
@@ -38,6 +40,7 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
 
     const addSource = (
         <div className="mb-10">
+            <h2 className='text-2xl font-semibold mb-2'>Add a Source</h2>
             <form className='flex mb-2' onSubmit={e => addToCollection(e)}>
                 {/* <h3 className='text-xl'>Enter source URL</h3> */}
                 <input className='block border border-slate-400 rounded-md w-full mr-2 px-4 py-2 bg-transparent' type="text" placeholder="Enter Source URL" spellCheck="false" value={sourceUrlEntry} onChange={e => setSourceUrlEntry(e.currentTarget.value)} />
@@ -64,19 +67,22 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
     }
 
     const sourceChecked = (id: number): boolean => selectedSourceIds.includes(id)
+    const kindClass = (kind: SourceDto['kind']) => kind === 'RSS' ? 'text-red-900' : 'text-blue-900'
 
     const sourceList = sources.sort((sA, sB) => (sA.name || '').localeCompare(sB.name || '')).map(s => (
         <div className="select-none" key={s.id}>
             <input className="hidden" type="checkbox" id={s.id.toString()} name={s.id.toString()} onChange={e => handleCheckToggle(e, s.id)} />
             <label htmlFor={s.id.toString()} className={`block p-2 p2-3 px-2 -mt-2 -ml-2 -mr-2 max-w-none rounded-md ${sourceChecked(s.id) ? 'bg-blue-200' : ''}`}>
                 <h3>{s.name}</h3>
-                <p className="text-gray-900 opacity-30 mix-blend-multiply" title={`ID ${s.id}`}><span className="font-bold">{s.kind}&nbsp;</span>{s.url}</p>
+                <p className="text-gray-900 opacity-30 mix-blend-multiply" title={`ID ${s.id}`}><span className={`font-bold ${kindClass(s.kind)}`}>{s.kind}&nbsp;</span>{s.url}</p>
                 {/* <p className="text-gray-300" title={`ID ${s.id}`}><span className="font-bold">{s.kind}&nbsp;</span>{s.url}</p> */}
             </label>
         </div>
     ))
 
     const nestedCollectionList = []
+
+    const showContextActions: boolean = !!selectedSourceIds.length
 
     return (
         <>
@@ -106,6 +112,12 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
                         </>
                     ) || null
                 }
+                <div className={`flex justify-center transition-all duration-0 ${showContextActions ? 'opacity-1' : 'opacity-0'}`}>
+                    <Button 
+                        Icon={IconRemove}
+                        action={() => console.log('would delete sources:', selectedSourceIds)}
+                    />
+                </div>
             </div>
         </>
     )

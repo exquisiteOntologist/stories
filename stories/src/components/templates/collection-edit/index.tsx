@@ -11,6 +11,7 @@ interface CollectionEditViewProps {
 
 const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
     const dispatch = useAppDispatch()
+    const [selectedSourceIds, setSelectedSourceIds] = useState<number[]>([])
     const [sourceUrlEntry, setSourceUrlEntry] = useState<string>('')
     const [otherParamEntry, setOtherParamEntry] = useState<string>('')
     const [addSourceMessage, setAddSourceMessage] = useState<[string, boolean]>(['', false])
@@ -46,15 +47,32 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
             {
                 addMessageText
                     ? (<p className={`${addMessageWasError ? 'text-orange-700' : 'text-green-700'}`}>{addMessageText}&nbsp;</p>)
-                    : (<p className="text-gray-300"><span className="font-semibold">Tip:</span> If articles on a site have "/2023/" in their URLs, add "2023" as the segment.&nbsp;</p>)
+                    : (<p className="text-gray-300"><span className="font-semibold">Tip:</span> If articles on a site have &ldquo;/2023/&rdquo; in their URLs, add &ldquo;2023&rdquo; as the segment.&nbsp;</p>)
             }
         </div>
     )
 
-    const sourceList = sources.sort((sA, sB) => (sA.name || '').localeCompare(sB.name || '')).map(source => (
-        <div className="my-2" key={source.id}>
-            <h3>{source.name}</h3>
-            <p className="text-gray-300" title={`ID ${source.id}`}><span className="font-bold">{source.kind}&nbsp;</span>{source.url}</p>
+    const handleCheckToggle = (e: React.ChangeEvent<HTMLInputElement>, id: number) => {
+        const checked: boolean = (e.target as HTMLInputElement)?.checked
+        const selected = [...selectedSourceIds]
+        if (checked) {
+            selected.push(id)
+        } else {
+            selected.splice(selected.indexOf(id), 1)
+        }
+        setSelectedSourceIds(selected)
+    }
+
+    const sourceChecked = (id: number): boolean => selectedSourceIds.includes(id)
+
+    const sourceList = sources.sort((sA, sB) => (sA.name || '').localeCompare(sB.name || '')).map(s => (
+        <div className="select-none" key={s.id}>
+            <input className="hidden" type="checkbox" id={s.id.toString()} name={s.id.toString()} onChange={e => handleCheckToggle(e, s.id)} />
+            <label htmlFor={s.id.toString()} className={`block p-2 p2-3 px-2 -mt-2 -ml-2 -mr-2 max-w-none rounded-md ${sourceChecked(s.id) ? 'bg-blue-200' : ''}`}>
+                <h3>{s.name}</h3>
+                <p className="text-gray-900 opacity-30 mix-blend-multiply" title={`ID ${s.id}`}><span className="font-bold">{s.kind}&nbsp;</span>{s.url}</p>
+                {/* <p className="text-gray-300" title={`ID ${s.id}`}><span className="font-bold">{s.kind}&nbsp;</span>{s.url}</p> */}
+            </label>
         </div>
     ))
 
@@ -66,12 +84,12 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
                 <title>Editing &ldquo;{collectionTitle}&rdquo; | Semblance</title>
             </Helmet> */}
             <div className="collection max-w-xl w-full h-min-content">
-                <h1 className="text-4xl font-semibold mb-24">Sources of &ldquo;{collectionTitle}&rdquo; Collection</h1>
+                <h1 className="text-4xl font-semibold mb-24">Sources of <span className="text-blue-600">{collectionTitle}</span> Collection</h1>
                 {addSource}
                 {
                     sourceList?.length && (
                         <>
-                            <h2 className='text-2xl font-semibold'>Sources</h2>
+                            <h2 className='text-2xl font-semibold mb-2'>Sources</h2>
                             <div className='mb-10'>
                                 {sourceList}
                             </div>

@@ -72,7 +72,10 @@ const CollectionView: React.FC<CollectionViewProps> = (props) => {
                 <title>{title} | Semblance</title>
             </Helmet> */}
             <div className="collection w-full max-w-7xl mx-4 h-min-content">
-                <h1 className='text-4xl font-semibold mb-24'>{title}</h1>
+                <hgroup className="mb-24">
+                    <h1 className="text-4xl font-semibold">{title}</h1>
+                    <h2 className="text-2xl font-semibold"><span className="text-yellow-500">Home</span></h2>
+                </hgroup>
                 <ListingsContainer view='Cards'>
                     {contentCards}
                 </ListingsContainer>

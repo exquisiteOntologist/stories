@@ -3,7 +3,8 @@ import React from 'react'
 import { ButtonProps } from './interfaces'
 
 export const buttonClassesPadding = 'px-5 py-2'
-export const buttonClassesHollow = 'border border-slate-800 border-solid text-black'
+// export const buttonClassesHollow = 'border border-slate-800 border-solid text-black'
+export const buttonClassesHollow = 'border border-current border-solid current'
 
 /**
  * Button with icon and label.

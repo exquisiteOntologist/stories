@@ -60,6 +60,25 @@ export const addSourceToCollection: AsyncThunk<boolean, SourceForCollection, {}>
     }
 )
 
+export interface RemoveSources {
+    collectionId: number,
+    sourceIds: number[]
+}
+
+export const removeSources: AsyncThunk<boolean, RemoveSources, {}> = createAsyncThunk(
+    'sources/removeSources',
+    async (rmSources: RemoveSources, { dispatch }) => {
+        try {
+            await invoke('remove_sources', {...rmSources})
+            dispatch(fetchSourcesOfCollection([rmSources.collectionId]))
+            return true
+        } catch (e) {
+            console.error('failed to remove sources', e)
+            return false
+        }
+    }
+)
+
 const sourcesAdapter = createEntityAdapter<SourceDto>({
     selectId: (source) => source.id
 })

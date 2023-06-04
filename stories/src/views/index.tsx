@@ -3,7 +3,6 @@ import * as React from "react"
 import { AppHeader } from "../components/organisms/app-header";
 import CollectionView from "../components/templates/collection"
 import CollectionEditView from "../components/templates/collection-edit"
-import NotFound from "../components/templates/not-found"
 import ReaderView from "../components/templates/reader"
 import { selectColours } from "../redux/features/themeSlice"
 import { useAppSelector } from "../redux/hooks"
@@ -58,28 +57,5 @@ const AppView: React.FC = () => (
     </ReduxWrapper>
   </React.Fragment>
 )
-
-// const elMainStyle: React.CSSProperties = {
-//   "--pixel-ratio": window?.devicePixelRatio || 1,
-//   // "--primary": colours.primaryLightnessAdjusted,
-//   // background: colours.backgroundLightnessAdjusted
-// } as React.CSSProperties;
-
-// const AppView: React.FC = () => (
-//   <React.Fragment>
-//     <ReduxWrapper>
-//       <Location>
-//         {({ location }) => (
-//           <main className="w-screen flex flex-col min-h-screen overscroll-none transition-all duration-1000" style={elMainStyle}>
-//             <AppHeader location={location} />
-//             <div className="flex justify-center py-12 overflow-x-hidden">
-//               <CollectionView />
-//             </div>
-//           </main>
-//         )}
-//       </Location>
-//     </ReduxWrapper>
-//   </React.Fragment>
-// )
 
 export default AppView

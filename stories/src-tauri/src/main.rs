@@ -17,6 +17,7 @@ async fn main() {
             greet,
             commands::sources::list_sources,
             commands::sources::add_source,
+            commands::sources::remove_sources,
             commands::content::list_content
         ])
         .setup(|_app| {

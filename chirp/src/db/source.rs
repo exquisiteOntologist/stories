@@ -1,5 +1,5 @@
-use std::error::Error;
-use rusqlite::{Params, Statement};
+use std::{error::Error, rc::Rc};
+use rusqlite::{Params, Statement, Connection, types::Value};
 
 use crate::entities::{Source, SourceKind, select_source_kind};
 use super::{db_connect, db_retrievals_outdated_sources};
@@ -73,6 +73,28 @@ pub fn db_source_add_data_web(source: &Source, source_id: &i32) -> Result<(), Bo
 		(&source_id, &url_segment),
 	)?;
 	_ = conn.close();
+
+	Ok(())
+}
+
+pub fn db_sources_delete(source_ids: &Vec<i32>) -> Result<(), Box<dyn Error>> {
+	let conn: Connection = db_connect()?;
+	rusqlite::vtab::array::load_module(&conn)?; // <- Adds "rarray" table function
+
+	let source_id_values = Rc::new(source_ids.to_owned().into_iter().map(Value::from).collect::<Vec<Value>>());
+	let params = [source_id_values];
+
+	let mut delete_query: Statement = conn.prepare(
+		"DELETE FROM source WHERE id IN (SELECT * FROM rarray(?1))"
+	)?;
+
+	let d_res = delete_query.execute(params);
+
+	if d_res.is_err() {
+		let err = d_res.unwrap_err();
+		println!("{:?}", err);
+		return Err("Error deleting content ids".into());
+	}
 
 	Ok(())
 }

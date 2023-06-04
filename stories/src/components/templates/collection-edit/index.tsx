@@ -2,7 +2,7 @@ import * as React from 'react'
 import { useEffect, useState } from 'react'
 import { SourceDto } from '../../../data/chirp-types'
 // import Helmet from 'react-helmet'
-import { addSourceToCollection, fetchSourcesOfCollection, sourcesSelectors } from '../../../redux/features/sourcesSlice'
+import { addSourceToCollection, fetchSourcesOfCollection, removeSources, sourcesSelectors } from '../../../redux/features/sourcesSlice'
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
 import { Button, buttonClassesHollow } from '../../atoms/button'
 import { IconRemove } from '../../atoms/icons/remove'
@@ -115,7 +115,10 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
                 <div className={`flex justify-center transition-all duration-0 ${showContextActions ? 'opacity-1' : 'opacity-0'}`}>
                     <Button 
                         Icon={IconRemove}
-                        action={() => console.log('would delete sources:', selectedSourceIds)}
+                        action={() => dispatch(removeSources({
+                            collectionId: currentCollection,
+                            sourceIds: selectedSourceIds
+                        }))}
                     />
                 </div>
             </div>

@@ -39,11 +39,15 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
         <div className="mb-10">
             <form className='flex mb-2' onSubmit={e => addToCollection(e)}>
                 {/* <h3 className='text-xl'>Enter source URL</h3> */}
-                <input className='block border border-slate-400 rounded-md w-full mr-2 px-4 py-2 bg-transparent' type="text" placeholder="Enter source URL" spellCheck="false" value={sourceUrlEntry} onChange={e => setSourceUrlEntry(e.currentTarget.value)} />
-                <input className='block border border-slate-400 rounded-md w-full mr-2 px-4 py-2 bg-transparent' type="text" placeholder="Article URL '/{segment}/'" spellCheck="false" value={otherParamEntry} onChange={e => setOtherParamEntry(e.currentTarget.value)} />
+                <input className='block border border-slate-400 rounded-md w-full mr-2 px-4 py-2 bg-transparent' type="text" placeholder="Enter Source URL" spellCheck="false" value={sourceUrlEntry} onChange={e => setSourceUrlEntry(e.currentTarget.value)} />
+                <input className='block border border-slate-400 rounded-md w-full mr-2 px-4 py-2 bg-transparent' type="text" placeholder="Article URL '/segment/'" spellCheck="false" value={otherParamEntry} onChange={e => setOtherParamEntry(e.currentTarget.value)} />
                 <Button className={`${buttonClassesHollow} whitespace-nowrap`} action={() => {}} label="Add Source" disabled={!sourceUrlEntry}></Button>
             </form>
-            <p className={`${addMessageWasError ? 'text-orange-700' : 'text-green-700'}`}>{addMessageText}&nbsp;</p>
+            {
+                addMessageText
+                    ? (<p className={`${addMessageWasError ? 'text-orange-700' : 'text-green-700'}`}>{addMessageText}&nbsp;</p>)
+                    : (<p className="text-gray-300"><span className="font-semibold">Tip:</span> If articles on a site have "/2023/" in their URLs, add "2023" as the segment.&nbsp;</p>)
+            }
         </div>
     )
 

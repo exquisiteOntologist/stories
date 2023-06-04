@@ -1,6 +1,6 @@
 use std::error::Error;
 
-use crate::{db::{db_list_content, db_list_content_full, db_content_bodies}, entities::{self, ContentBody}};
+use crate::{db::{db_list_content, db_list_content_full, db_content_bodies}, entities::{self}};
 
 pub fn list_content_action() -> Result<(), Box<dyn Error>> {
     let content_list = list_content()?;

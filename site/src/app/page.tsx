@@ -6,6 +6,8 @@ import { QuestionsAnsweredText } from '../components/illustrations/questions-ans
 import { AppIcon } from '../components/logos/app-icon'
 import { Chip } from '../components/chip'
 import imgScreenshot from '../../public/images/early-screenshot.png'
+// import imgScreenshotCards from '../../public/images/early-screenshot-cards.png'
+import imgScreenshotAddSource from '../../public/images/sources-screenshot.png'
 import { DownloadButton } from '@/components/buttons/download-button'
 
 export default function Home() {
@@ -22,7 +24,8 @@ export default function Home() {
         <h2>Browsing, Updates, Answers.</h2>
       </div>
       <figure className={styles.introImg}>
-        <Image src={imgScreenshot} alt="Stories provides a view of the world" width={2792/2} height={1424/2} />
+        <Image src={imgScreenshot} alt="Stories provides a view of the world" width={2880/2} height={1424/2} />
+        {/* <Image src={imgScreenshotCards} alt="Stories provides a view of the world" width={3204/2} height={1660/2} /> */}
       </figure>
       <section>
         <div>
@@ -48,10 +51,12 @@ export default function Home() {
         <div>
           <h2>Your Sources</h2>
           <p>Add your chosen Websites, Subscriptions, and APIs.<br></br>For reading and watching, analysis and search, or all of the above. Automatic updates, refreshing not required.</p>
-          <Chip variant="blue">Starting with Websites</Chip>
+          <p>&nbsp;</p>
+          <p>Viewing content opens original web pages. Publishers rejoice!</p>
+          <Chip variant="blue">Read Websites today. More soon.</Chip>{/* <Chip variant="orange">Features coming soon</Chip> */}
         </div>
-        <div>
-          {/*  */}
+        <div className={styles.middle}>
+          <Image className={styles.floating} src={imgScreenshotAddSource} alt="Stories provides a view of the world" width={786/2} height={682/2} />
         </div>
       </section>
       <section>

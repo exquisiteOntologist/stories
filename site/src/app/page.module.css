@@ -1,13 +1,4 @@
-:root {
-  --section-gap: 230px;
-  /* --major-break: 1280px; */
-}
 
-@media (max-width: 1280px) {
-  :root {
-    --section-gap: 6rem;
-  }
-}
 
 .main {
   display: flex;
@@ -68,7 +59,7 @@
   margin: 0 auto;
 }
 
-section {
+.main section {
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-column-gap: 3rem;
@@ -78,28 +69,28 @@ section {
 }
 
 @media (max-width: 1280px) {
-  section {
+  .main section {
     grid-template-columns: 1fr;
   }
 
-  section div {
+  .main section div {
     margin-bottom: 1rem;
   }
 }
 
-section h2 {
+.main section h2 {
   font-size: 28px;
   font-weight: 370;
   margin-bottom: 1.8rem;
 }
 
-section p {
+.main section p {
   font-size: 21px;
   font-weight: 370;
   color: rgba(var(--foreground-rgb), 0.7);
 }
 
-footer {
+.main footer {
   margin-top: var(--section-gap);
 }
 
@@ -114,4 +105,13 @@ footer {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.stitched {
+  border: 2px solid currentColor;
+}
+
+.floating {
+  border-radius: 2rem;
+  box-shadow: 0 1rem 3rem #0000001a;  
 }

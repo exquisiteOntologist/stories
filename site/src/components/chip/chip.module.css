@@ -1,7 +1,4 @@
-:root {
-    --chip-orange: #EE9628;
-    --chip-blue: #2874ee;
-}
+
 
 .chip {
     display: inline-block;

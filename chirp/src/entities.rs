@@ -1,5 +1,5 @@
 use chrono::{DateTime, Utc};
-use serde::{Serialize};
+use serde::{Serialize, Deserialize};
 use typeshare::typeshare;
 
 #[derive(Debug)]
@@ -14,7 +14,7 @@ pub struct Collection {
 #[derive(Debug)]
 #[derive(Clone)]
 #[typeshare]
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize)]
 pub struct CollectionSettings {
     pub id: i32,
     pub collection_id: i32,

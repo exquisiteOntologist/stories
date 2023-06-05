@@ -39,6 +39,9 @@ pub use intro::*;
 pub mod add;
 pub use add::*;
 
+pub mod collections;
+pub use collections::*;
+
 pub mod content;
 pub use content::*;
 

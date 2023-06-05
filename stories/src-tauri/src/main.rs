@@ -15,10 +15,11 @@ async fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
             greet,
-            commands::sources::list_sources,
+            commands::collections::set_collection_settings,
+            commands::content::list_content,
             commands::sources::add_source,
+            commands::sources::list_sources,
             commands::sources::remove_sources,
-            commands::content::list_content
         ])
         .setup(|_app| {
             // if it can't spawn due to lack of send due to bug in chirp most likely

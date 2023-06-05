@@ -2,6 +2,9 @@
 mod init;
 pub use init::*;
 
+mod collection;
+pub use collection::*;
+
 mod content;
 pub use content::*;
 

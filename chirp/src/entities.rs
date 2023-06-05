@@ -24,6 +24,15 @@ pub struct CollectionSettings {
 #[derive(Debug)]
 #[derive(Clone)]
 #[typeshare]
+#[derive(Serialize, Deserialize)]
+pub enum SettingsLayout {
+    ROWS,
+    CARDS
+}
+
+#[derive(Debug)]
+#[derive(Clone)]
+#[typeshare]
 #[derive(Serialize)]
 pub struct CollectionWidget {
     pub id: i32,
@@ -58,7 +67,7 @@ pub struct SourceDto {
 #[derive(Debug)]
 #[derive(Clone)]
 #[typeshare]
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize)]
 pub enum SourceKind {
     RSS,
     WEB

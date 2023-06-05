@@ -69,12 +69,24 @@ pub fn db_get_collection_settings(collection_ids: &Vec<i32>) -> Result<Vec<Colle
 
 pub fn db_set_collection_settings(cs: &CollectionSettings) -> Result<(), Box<dyn Error>> {
     let conn = db_connect()?;
-    conn.execute(
+    let res = match conn.execute(
         "UPDATE collection_settings
         SET layout = ?2
         WHERE collection_id = ?1;",
         (&cs.collection_id, &cs.layout)
-    )?;
+    ) {
+        Ok(updated) => {
+            println!("{} settings were updated", updated);
+            Ok(updated)
+        },
+        Err(err) => {
+            println!("update failed: {}", err);
+            Err(err)
+        },
+    };
+    if res.is_err() {
+        return Err(res.unwrap_err().into());
+    }
     _ = conn.close();
     Ok(())
 }

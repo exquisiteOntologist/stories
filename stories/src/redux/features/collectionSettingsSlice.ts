@@ -14,57 +14,17 @@ export const fetchCollectionSettings = createAsyncThunk(
     }
 )
 
-// export interface SourceForCollection {
-//     collectionIds: number[] | null,
-//     sourceUrl: string,
-//     otherParam: string
-// }
+export const setCollectionSettings = createAsyncThunk(
+    'collectionSettings/setCollectionSettings',
+    async (cs: CollectionSettings, { dispatch }) => {
+        await invoke('set_collection_settings', {
+            // object argument's name has to be property name
+            cs
+        })
 
-// export const addSourceToCollection: AsyncThunk<boolean, SourceForCollection, {}> = createAsyncThunk(
-//     'collectionSettings/addSourceToCollection',
-//     async (sourceForCollection: SourceForCollection, { dispatch }) => {
-//         const { collectionIds, sourceUrl, otherParam } = sourceForCollection
-        
-//         try {
-//             const source = await invoke('add_source', {
-//                 collectionIds,
-//                 sourceUrl,
-//                 additionalParam: otherParam,
-//             });
-
-//             if (!source) {
-//                 throw new Error("failed to add source!");
-                
-//             }
-    
-//             dispatch(setAllCollectionSettings([source] as SourceDto[]))
-//             return true
-//         } catch (e) {
-//             console.error('failed to add source', e)
-
-//             return false
-//         }
-//     }
-// )
-
-// export interface RemoveCollectionSettings {
-//     collectionId: number,
-//     sourceIds: number[]
-// }
-
-// export const removeCollectionSettings: AsyncThunk<boolean, RemoveCollectionSettings, {}> = createAsyncThunk(
-//     'collectionSettings/removeCollectionSettings',
-//     async (rmCollectionSettings: RemoveCollectionSettings, { dispatch }) => {
-//         try {
-//             await invoke('remove_collectionSettings', {...rmCollectionSettings})
-//             dispatch(fetchCollectionSettingsOfCollection([rmCollectionSettings.collectionId]))
-//             return true
-//         } catch (e) {
-//             console.error('failed to remove collectionSettings', e)
-//             return false
-//         }
-//     }
-// )
+        dispatch(fetchCollectionSettings([cs.collection_id]))
+    }
+)
 
 const collectionSettingsAdapter = createEntityAdapter<CollectionSettings>({
     selectId: (collectionSettings) => collectionSettings.collection_id

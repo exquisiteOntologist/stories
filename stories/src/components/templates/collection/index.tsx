@@ -14,7 +14,8 @@ import { IconAddCircle } from '../../atoms/icons/add-circle'
 import { IconShapes } from '../../atoms/icons/shapes'
 import { IconTickCircle } from '../../atoms/icons/tick-circle'
 import { collectionsSelectors, fetchCollection } from '../../../redux/features/collectionsSlice'
-import { collectionSettingsSelectors } from '../../../redux/features/collectionSettingsSlice'
+import { collectionSettingsSelectors, setCollectionSettings } from '../../../redux/features/collectionSettingsSlice'
+import { CollectionSettings, SettingsLayout } from '../../../data/chirp-types'
 
 interface CollectionViewProps {
     collectionId?: number | string,
@@ -31,13 +32,14 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
     // @TODO: List collections in this collection view in addition to sources/contents
     // const collections = useAppSelector(collectionsSelectors.selectAll)
     const collection = useAppSelector(s => collectionsSelectors.selectById(s, collectionId))
-    const collectionSettings = useAppSelector(collectionSettingsSelectors.selectAll)
+    const collectionSettings = useAppSelector(s => collectionSettingsSelectors.selectById(s, collectionId))
     const sources = useAppSelector(sourcesSelectors.selectAll)
     const contents = useAppSelector(contentsSelectors.selectAll).slice(0, clientItemsLimit)
 
     const title = customize ? 'edit' : 'hi'
 
     console.log('collection', collection)
+    console.log('collection settings', collectionSettings)
     
     useEffect(() => {
         // TODO: Replace with fetch_sources_of_collection, with default id as 0 (top-level/all)
@@ -59,7 +61,7 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
     }, [dispatch])
 
     const showCollectionEditor = customize
-    const viewIsList = true
+    const viewIsList = collectionSettings?.layout === SettingsLayout.ROWS
 
     const collectionEditor = (
         <div className="mb-6">
@@ -73,10 +75,10 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
                 <Button 
                     label={`View as ${viewIsList ? 'Cards' : 'List'}`}
                     Icon={viewIsList ? IconGrid : IconList}
-                    action={() => void 8 /* dispatch(removeSources({
-                        collectionId: currentCollection,
-                        sourceIds: selectedSourceIds
-                    })) */}
+                    action={() => dispatch(setCollectionSettings({
+                        ...collectionSettings,
+                        layout: viewIsList ? 'CARDS' : 'ROWS'
+                    } as CollectionSettings))}
                 />
                 <Button 
                     label="Add Widget"

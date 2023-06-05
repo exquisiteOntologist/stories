@@ -11,9 +11,7 @@ export const fetchCollection = createAsyncThunk(
             const collections = await invoke('get_collection', {
                 collectionIds: [collectionId]
             })
-    
-            console.log('collections retrieved', collections)
-    
+        
             dispatch(setAllCollections(collections as Collection[]))
             dispatch(fetchCollectionSettings([collectionId]))
         } catch (e) {

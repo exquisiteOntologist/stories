@@ -59,3 +59,8 @@ export interface ContentBody {
 	body_text: string;
 }
 
+export enum SettingsLayout {
+	ROWS = "ROWS",
+	CARDS = "CARDS",
+}
+

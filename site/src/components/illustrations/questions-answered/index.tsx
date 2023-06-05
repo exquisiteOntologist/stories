@@ -1,5 +1,5 @@
 export const QuestionsAnsweredText: React.FC = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 449 291" width="449"><text transform="translate(-869 -1247)" fill="currentColor" fillRule="evenodd" fontFamily="inherit" font-size="28" font-weight="500" opacity=".17">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 449 291" width="449"><text transform="translate(-869 -1247)" fill="currentColor" fillRule="evenodd" fontFamily="inherit" fontSize="28" fontWeight="500" opacity=".17">
         <tspan x="868" y="1272">“What are car batteries made out of?”</tspan>
         
         <tspan x="895.468" y="1338">“Where are mines for materials?”</tspan>

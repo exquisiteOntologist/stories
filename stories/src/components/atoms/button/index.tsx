@@ -2,7 +2,7 @@ import { Link } from '@reach/router'
 import React from 'react'
 import { ButtonProps } from './interfaces'
 
-export const buttonClassesPadding = 'px-5 py-2'
+export const buttonClassesPadding = 'px-3 py-2'
 // export const buttonClassesHollow = 'border border-slate-800 border-solid text-black'
 export const buttonClassesHollow = 'border border-current border-solid current'
 
@@ -10,7 +10,7 @@ export const buttonClassesHollow = 'border border-current border-solid current'
  * Button with icon and label.
  */
 export const Button: React.FC<ButtonProps> = ({ className, label, Icon, linkTo, href, action, sideAction, usePadding = true, disabled }) => {
-    const buttonIcon = Icon && <span className={`relative${label ? ' mr-5' : ''}`}><Icon /></span>
+    const buttonIcon = Icon && <span className={`relative${label ? ' mr-2' : ''}`}><Icon /></span>
     const buttonLabel = label && <span className="relative">{label}</span>
     const buttonInner = (
         <>

@@ -1,4 +1,6 @@
 import { createAsyncThunk, createEntityAdapter, createSlice } from "@reduxjs/toolkit";
+import { Collection } from "../../data/chirp-types";
+import { RootState } from "../store";
 
 export const fetchCollection = createAsyncThunk(
     'collections/fetchCollection',
@@ -17,8 +19,8 @@ export const fetchCollection = createAsyncThunk(
     }
 )
 
-const collectionsAdapter = createEntityAdapter<any /* CollectionDto type */>({
-    selectId: (collection) => collection.contentId
+const collectionsAdapter = createEntityAdapter<Collection>({
+    selectId: (collection) => collection.id
 })
 
 const collectionsSlice = createSlice({
@@ -31,5 +33,6 @@ const collectionsSlice = createSlice({
 })
 
 export const { setAllCollections } = collectionsSlice.actions
+export const collectionsSelectors = collectionsAdapter.getSelectors<RootState>((state) => state.collections)
 
 export const collectionsReducer = collectionsSlice.reducer

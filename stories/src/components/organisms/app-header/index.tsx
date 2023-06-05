@@ -37,18 +37,16 @@ const AppMenuActions: React.FC<AppHeaderProps> = ({location}) => (
             // linkTo={`${location.pathname}/edit`}
             linkTo={`/edit`}
         />
-        {/* <Button
+        <Button
             Icon={IconPaintRoller}
             label="Customize"
-            action={() => console.log('customize')}
-            disabled={true}
-        /> */}
-        {/* <Button
+            linkTo="/customize"
+        />
+        <Button
             Icon={IconWidgets}
             label="Widgets"
-            action={() => console.log('widgets')}
-            disabled={true}
-        /> */}
+            linkTo="/customize"
+        />
          {/* <Button
             Icon={IconMagic}
             label="Magic ID"

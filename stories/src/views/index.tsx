@@ -31,6 +31,7 @@ const AppPageInner = () => {
               {/* <NotFound default /> */}
               {/* <CollectionView default /> */}
               <CollectionView path="/" />
+              <CollectionView path="/customize" customize={true} />
               <CollectionEditView path="/edit" />
               {/* <CollectionEditView path="/:collectionId/edit" /> */}
               <ReaderView path="/reader/:contentId" />

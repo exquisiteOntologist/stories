@@ -46,6 +46,7 @@ const AppMenuActions: React.FC<AppHeaderProps> = ({location}) => (
             Icon={IconWidgets}
             label="Widgets"
             linkTo="/customize"
+            disabled={true}
         />
          {/* <Button
             Icon={IconMagic}

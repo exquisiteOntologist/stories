@@ -82,6 +82,12 @@ pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
     )?;
 
     conn.execute(
+        "INSERT INTO collection (id, name) VALUES (0, 'Home') 
+            ON CONFLICT DO NOTHING",
+        (),
+    )?;
+
+    conn.execute(
         "CREATE INDEX IF NOT EXISTS collection_id_index on
             collection (id)",
         (),
@@ -100,6 +106,12 @@ pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
             layout          TEXT,
             FOREIGN KEY (collection_id) REFERENCES collection(id) ON DELETE CASCADE
         )",
+        (),
+    )?;
+
+    conn.execute(
+        "INSERT INTO collection_settings (id, collection_id, layout) VALUES (0, 0, 'ROWS') 
+            ON CONFLICT DO NOTHING",
         (),
     )?;
 

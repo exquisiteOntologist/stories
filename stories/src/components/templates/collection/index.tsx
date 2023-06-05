@@ -13,6 +13,8 @@ import { IconList } from '../../atoms/icons/list'
 import { IconAddCircle } from '../../atoms/icons/add-circle'
 import { IconShapes } from '../../atoms/icons/shapes'
 import { IconTickCircle } from '../../atoms/icons/tick-circle'
+import { collectionsSelectors, fetchCollection } from '../../../redux/features/collectionsSlice'
+import { collectionSettingsSelectors } from '../../../redux/features/collectionSettingsSlice'
 
 interface CollectionViewProps {
     collectionId?: number | string,
@@ -24,15 +26,22 @@ const clientItemsLimit = 100
 const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
     const dispatch = useAppDispatch()
 
+    const collectionId: number = 0 // 0 is the root collection (seeded on Rust lib init)
+
     // @TODO: List collections in this collection view in addition to sources/contents
+    // const collections = useAppSelector(collectionsSelectors.selectAll)
+    const collection = useAppSelector(s => collectionsSelectors.selectById(s, collectionId))
+    const collectionSettings = useAppSelector(collectionSettingsSelectors.selectAll)
     const sources = useAppSelector(sourcesSelectors.selectAll)
     const contents = useAppSelector(contentsSelectors.selectAll).slice(0, clientItemsLimit)
 
-    const collectionId: number = 0
     const title = customize ? 'edit' : 'hi'
+
+    console.log('collection', collection)
     
     useEffect(() => {
         // TODO: Replace with fetch_sources_of_collection, with default id as 0 (top-level/all)
+        dispatch(fetchCollection(collectionId))
         dispatch(fetchSourcesOfCollection([collectionId]))
     }, [dispatch])
 
@@ -112,7 +121,7 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
             <div className="collection w-full max-w-7xl mx-4 h-min-content">
                 <hgroup className="mb-24">
                     <h1 className="text-4xl font-semibold">{title}</h1>
-                    <h2 className="text-2xl font-semibold"><span className="text-yellow-500">Home</span></h2>
+                    <h2 className="text-2xl font-semibold"><span className="text-yellow-500">{collection?.name}</span></h2>
                 </hgroup>
                 {collectionEditor}
                 {

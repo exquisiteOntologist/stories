@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { useEffect, useState } from 'react'
 import { SourceDto } from '../../../data/chirp-types'
+import { collectionsSelectors } from '../../../redux/features/collectionsSlice'
 // import Helmet from 'react-helmet'
 import { addSourceToCollection, fetchSourcesOfCollection, removeSources, sourcesSelectors } from '../../../redux/features/sourcesSlice'
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
@@ -13,27 +14,25 @@ interface CollectionEditViewProps {
 
 const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
     const dispatch = useAppDispatch()
+    const collectionId = 0 // TODO: Change collection id as collection is selected
+    const collection = useAppSelector(s => collectionsSelectors.selectById(s, collectionId))
     const [selectedSourceIds, setSelectedSourceIds] = useState<number[]>([])
     const [sourceUrlEntry, setSourceUrlEntry] = useState<string>('')
     const [otherParamEntry, setOtherParamEntry] = useState<string>('')
     const [addSourceMessage, setAddSourceMessage] = useState<[string, boolean]>(['', false])
-    // const collection = useAppSelector(contentsSelectors.selectAll)
     const sources = useAppSelector(sourcesSelectors.selectAll)
 
-    const currentCollection = 0 // TODO: Change collection id as collection is selected
-    const collectionTitle = 'Home'
-
     useEffect(() => {
-        dispatch(fetchSourcesOfCollection([currentCollection]))
+        dispatch(fetchSourcesOfCollection([collectionId]))
     }, [dispatch])
 
     const addToCollection = async (e: React.FormEvent) => {
         e.preventDefault()
         setAddSourceMessage(['Adding source...', false])
-        const success = (await dispatch(addSourceToCollection({collectionIds: [currentCollection], sourceUrl: sourceUrlEntry, otherParam: otherParamEntry }))).payload
+        const success = (await dispatch(addSourceToCollection({collectionIds: [collectionId], sourceUrl: sourceUrlEntry, otherParam: otherParamEntry }))).payload
         console.log('add source to collection after success', success)
         setAddSourceMessage([`${success ? 'Finished adding' : 'Failed to add'} source "${sourceUrlEntry}"`, !success])
-        dispatch(fetchSourcesOfCollection([currentCollection]))
+        dispatch(fetchSourcesOfCollection([collectionId]))
     }
 
     const [addMessageText, addMessageWasError] = addSourceMessage
@@ -91,7 +90,7 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
                 <title>Editing &ldquo;{collectionTitle}&rdquo; | Semblance</title>
             </Helmet> */}
             <div className="collection max-w-xl w-full h-min-content">
-                <h1 className="text-4xl font-semibold mb-24">Sources of <span className="text-yellow-500">{collectionTitle}</span> Collection</h1>
+                <h1 className="text-4xl font-semibold mb-24">Sources of <span className="text-yellow-500">{collection?.name}</span> Collection</h1>
                 {addSource}
                 {
                     sourceList?.length && (
@@ -117,7 +116,7 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
                     <Button 
                         Icon={IconRemove}
                         action={() => dispatch(removeSources({
-                            collectionId: currentCollection,
+                            collectionId: collectionId,
                             sourceIds: selectedSourceIds
                         }))}
                     />

@@ -1,21 +1,24 @@
 import { createAsyncThunk, createEntityAdapter, createSlice } from "@reduxjs/toolkit";
+import { invoke } from "@tauri-apps/api";
 import { Collection } from "../../data/chirp-types";
 import { RootState } from "../store";
+import { fetchCollectionSettings } from "./collectionSettingsSlice";
 
 export const fetchCollection = createAsyncThunk(
     'collections/fetchCollection',
-    async (collectionId: number | null, { dispatch }) => {
-        // @TODO: Check the localStorage first (or maybe simultaneously)
-        
-        // @TODO: Swap for collection retrieval instead of sources contents
-        // const collections = await getSourcesContents({
-        //     sourceIds: [collectionId]
-        // })
-
-        // const successful = collections.status === 200
-        // const data = collections.data
-
-        // dispatch(setAllCollections(data))
+    async (collectionId: number, { dispatch }) => {
+        try {
+            const collections = await invoke('get_collection', {
+                collectionIds: [collectionId]
+            })
+    
+            console.log('collections retrieved', collections)
+    
+            dispatch(setAllCollections(collections as Collection[]))
+            dispatch(fetchCollectionSettings([collectionId]))
+        } catch (e) {
+            console.error('Unable to fetch collection for', collectionId, e)
+        }
     }
 )
 

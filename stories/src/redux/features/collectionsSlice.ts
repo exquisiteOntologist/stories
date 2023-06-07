@@ -3,19 +3,34 @@ import { invoke } from "@tauri-apps/api";
 import { Collection } from "../../data/chirp-types";
 import { RootState } from "../store";
 import { fetchCollectionSettings } from "./collectionSettingsSlice";
+import { collectionToCollectionSelectors, fetchCollectionToCollection } from "./collectionToCollectionSlice";
 
 export const fetchCollection = createAsyncThunk(
     'collections/fetchCollection',
-    async (collectionId: number, { dispatch }) => {
+    async (collectionIds: number[], { dispatch }) => {
         try {
             const collections = await invoke('get_collection', {
-                collectionIds: [collectionId]
+                collectionIds: collectionIds
             })
         
             dispatch(setAllCollections(collections as Collection[]))
-            dispatch(fetchCollectionSettings([collectionId]))
+            dispatch(fetchCollectionSettings(collectionIds))
+            dispatch(fetchCollectionToCollection(collectionIds))
         } catch (e) {
-            console.error('Unable to fetch collection for', collectionId, e)
+            console.error('Unable to fetch collection for', collectionIds, e)
+        }
+    }
+)
+
+export const fetchNestedCollections = createAsyncThunk(
+    'collections/fetchNestedCollections',
+    async (parentIds: number[], { dispatch, getState }) => {
+        try {
+            const allCtoC = collectionToCollectionSelectors.selectAll(getState());
+            const children = allCtoC.filter(cToC => parentIds.includes(cToC.collection_parent_id))
+            dispatch(fetchCollection(children.map(c => c.collection_inside_id)))
+        } catch (e) {
+            console.error('Unable to fetch collection for', parentIds, e)
         }
     }
 )
@@ -34,7 +49,8 @@ export const addNewCollection = createAsyncThunk(
                 cParentId: newCollection.parentId
             })
         
-            dispatch(fetchCollection(newCollection.parentId))
+            dispatch(fetchCollection([newCollection.parentId]))
+            dispatch(fetchNestedCollections([newCollection.parentId]))
             return true
         } catch (e) {
             console.error('Unable to add new collection', newCollection, e)

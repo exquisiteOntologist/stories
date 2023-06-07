@@ -20,6 +20,9 @@ pub fn get_collection(collection_ids: Vec<i32>) -> Result<Vec<chirp::entities::C
 
 #[tauri::command]
 pub fn get_collection_settings(collection_ids: Vec<i32>) -> Result<Vec<chirp::entities::CollectionSettings>, String> {
+    if collection_ids.is_empty() {
+        return Err("No collection ids provided to fetch settings for".into());
+    }
     println!("Getting settings {:?}", &collection_ids.first().unwrap());
     let c_settings = chirp::actions::collections::collection_settings_get(&collection_ids).unwrap();
 
@@ -36,4 +39,11 @@ pub fn set_collection_settings(cs: chirp::entities::CollectionSettings) -> Resul
     }
 
     Ok(())
+}
+
+#[tauri::command]
+pub fn get_collection_to_collection(parent_ids: Vec<i32>) -> Result<Vec<chirp::entities::CollectionToCollection>, String> {
+    let c = chirp::actions::collections::collection_to_collection_get(&parent_ids).unwrap();
+
+    Ok(c)
 }

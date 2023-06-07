@@ -19,6 +19,7 @@ async fn main() {
             commands::collections::get_collection,
             commands::collections::get_collection_settings,
             commands::collections::set_collection_settings,
+            commands::collections::get_collection_to_collection,
             commands::content::list_content,
             commands::sources::add_source,
             commands::sources::list_sources,

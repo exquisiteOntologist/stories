@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useEffect, useState } from 'react'
 import { SourceDto } from '../../../data/chirp-types'
-import { addNewCollection, collectionsSelectors, NewCollection } from '../../../redux/features/collectionsSlice'
+import { addNewCollection, collectionsSelectors, fetchNestedCollections, NewCollection } from '../../../redux/features/collectionsSlice'
 import { addSourceToCollection, fetchSourcesOfCollection, removeSources, sourcesSelectors } from '../../../redux/features/sourcesSlice'
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
 import { Button, buttonClassesHollow } from '../../atoms/button'
@@ -28,6 +28,7 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
 
     useEffect(() => {
         dispatch(fetchSourcesOfCollection([collectionId]))
+        dispatch(fetchNestedCollections([collectionId]))
     }, [dispatch])
 
     const submitAddCollection = async (e: React.FormEvent) => {

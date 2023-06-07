@@ -5,10 +5,12 @@ import { contentsReducer } from './features/contentsSlice'
 import { contentBodiesReducer } from './features/contentBodiesSlice'
 import { sourcesReducer } from './features/sourcesSlice'
 import { themeReducer } from './features/themeSlice'
+import { collectionToCollectionReducer } from './features/collectionToCollectionSlice'
 
 export default combineReducers({
     collections: collectionsReducer,
     collectionSettings: collectionSettingsReducer,
+    collectionToCollection: collectionToCollectionReducer,
     sources: sourcesReducer,
     contents: contentsReducer,
     contentBodies: contentBodiesReducer,

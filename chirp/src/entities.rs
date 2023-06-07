@@ -41,6 +41,15 @@ pub struct CollectionWidget {
 }
 
 #[derive(Debug)]
+#[derive(Clone)]
+#[typeshare]
+#[derive(Serialize)]
+pub struct CollectionToCollection {
+    pub collection_parent_id: i32,
+    pub collection_inside_id: i32,
+}
+
+#[derive(Debug)]
 // #[typeshare] // <- cannot do tuples as in data:
 #[derive(Serialize)]
 pub struct Source {

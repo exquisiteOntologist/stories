@@ -20,6 +20,29 @@ export const fetchCollection = createAsyncThunk(
     }
 )
 
+export interface NewCollection {
+    collectionName: string,
+    parentId: number
+}
+
+export const addNewCollection = createAsyncThunk(
+    'collections/addNewCollection',
+    async (newCollection: NewCollection, { dispatch }) => {
+        try {
+            await invoke('add_collection', {
+                cName: newCollection.collectionName,
+                cParentId: newCollection.parentId
+            })
+        
+            dispatch(fetchCollection(newCollection.parentId))
+            return true
+        } catch (e) {
+            console.error('Unable to add new collection', newCollection, e)
+            return false
+        }
+    }
+)
+
 const collectionsAdapter = createEntityAdapter<Collection>({
     selectId: (collection) => collection.id
 })

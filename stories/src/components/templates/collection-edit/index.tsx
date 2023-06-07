@@ -1,12 +1,12 @@
 import * as React from 'react'
 import { useEffect, useState } from 'react'
 import { SourceDto } from '../../../data/chirp-types'
-import { collectionsSelectors } from '../../../redux/features/collectionsSlice'
-// import Helmet from 'react-helmet'
+import { addNewCollection, collectionsSelectors, NewCollection } from '../../../redux/features/collectionsSlice'
 import { addSourceToCollection, fetchSourcesOfCollection, removeSources, sourcesSelectors } from '../../../redux/features/sourcesSlice'
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
 import { Button, buttonClassesHollow } from '../../atoms/button'
 import { IconRemove } from '../../atoms/icons/remove'
+import { IconShapes } from '../../atoms/icons/shapes'
 
 interface CollectionEditViewProps {
     collectionId?: number | string
@@ -15,7 +15,11 @@ interface CollectionEditViewProps {
 const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
     const dispatch = useAppDispatch()
     const collectionId = 0 // TODO: Change collection id as collection is selected
+    
+    const [newCollectionName, setNewCollectionName] = useState<string>('')
+    const [newCollectionMessage, setNewCollectionMessage] = useState<[string, boolean]>(['', false])
     const collection = useAppSelector(s => collectionsSelectors.selectById(s, collectionId))
+    
     const [selectedSourceIds, setSelectedSourceIds] = useState<number[]>([])
     const [sourceUrlEntry, setSourceUrlEntry] = useState<string>('')
     const [otherParamEntry, setOtherParamEntry] = useState<string>('')
@@ -26,7 +30,16 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
         dispatch(fetchSourcesOfCollection([collectionId]))
     }, [dispatch])
 
-    const addToCollection = async (e: React.FormEvent) => {
+    const submitAddCollection = async (e: React.FormEvent) => {
+        e.preventDefault()
+        const success = (await dispatch(addNewCollection({
+            collectionName: newCollectionName,
+            parentId: collectionId
+        } as NewCollection))).payload
+        setNewCollectionMessage([`${success ? 'Succeeded' : 'Failed'} adding new collection "${newCollectionName}"`, !success])
+    }
+
+    const submitAddToCollection = async (e: React.FormEvent) => {
         e.preventDefault()
         setAddSourceMessage(['Adding source...', false])
         const success = (await dispatch(addSourceToCollection({collectionIds: [collectionId], sourceUrl: sourceUrlEntry, otherParam: otherParamEntry }))).payload
@@ -35,12 +48,28 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
         dispatch(fetchSourcesOfCollection([collectionId]))
     }
 
+    const [newCollectionMessageText, newCollectionMessageError] = newCollectionMessage
     const [addMessageText, addMessageWasError] = addSourceMessage
+
+    const addCollection = (
+        <div className="mb-10">
+            <h2 className="text-2xl font-semibold mb-2">Add a Collection</h2>
+            <form className="flex mb-2" onSubmit={submitAddCollection}>
+                <input className='block border border-slate-400 rounded-md w-full mr-2 px-4 py-2 bg-transparent' type="text" placeholder="Collection Name" spellCheck="false" value={newCollectionName} onChange={e => setNewCollectionName(e.currentTarget.value)} />
+                <Button className={`${buttonClassesHollow} whitespace-nowrap`} action={() => {}} label="Add" disabled={!newCollectionName}></Button>
+            </form>
+            {
+                newCollectionMessageText
+                    ? (<p className={`${newCollectionMessageError ? 'text-orange-700' : 'text-green-700'}`}>{newCollectionMessageText}&nbsp;</p>)
+                    : (<p className="text-gray-300"><span className="font-semibold">Note:</span> The collection will be nested within the current collection.</p>)
+            }
+        </div>
+    )
 
     const addSource = (
         <div className="mb-10">
             <h2 className='text-2xl font-semibold mb-2'>Add a Source</h2>
-            <form className='flex mb-2' onSubmit={e => addToCollection(e)}>
+            <form className='flex mb-2' onSubmit={submitAddToCollection}>
                 {/* <h3 className='text-xl'>Enter source URL</h3> */}
                 <input className='block border border-slate-400 rounded-md w-full mr-2 px-4 py-2 bg-transparent' type="text" placeholder="Enter Source URL" spellCheck="false" value={sourceUrlEntry} onChange={e => setSourceUrlEntry(e.currentTarget.value)} />
                 <input className='block border border-slate-400 rounded-md w-full mr-2 px-4 py-2 bg-transparent' type="text" placeholder="Article URL '/segment/'" spellCheck="false" value={otherParamEntry} onChange={e => setOtherParamEntry(e.currentTarget.value)} />
@@ -86,11 +115,9 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
 
     return (
         <>
-            {/* <Helmet>
-                <title>Editing &ldquo;{collectionTitle}&rdquo; | Semblance</title>
-            </Helmet> */}
             <div className="collection max-w-xl w-full h-min-content">
                 <h1 className="text-4xl font-semibold mb-24">Sources of <span className="text-yellow-500">{collection?.name}</span> Collection</h1>
+                {addCollection}
                 {addSource}
                 {
                     sourceList?.length && (
@@ -105,7 +132,7 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
                 {
                     nestedCollectionList?.length && (
                         <>
-                            <h2 className='text-2xl font-semibold'>Nested Collections</h2>
+                            <h2 className='text-2xl font-semibold'>Collections inside {collection?.name}</h2>
                             <div className='mb-10'>
                                 {/* Collections go here */}
                             </div>
@@ -113,6 +140,11 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
                     ) || null
                 }
                 <div className={`flex justify-center transition-all duration-0 ${showContextActions ? 'opacity-1' : 'opacity-0'}`}>
+                    {/* <Button 
+                        Icon={IconShapes}
+                        action={() => void 8}
+                        disabled={true}
+                    /> */}
                     <Button 
                         Icon={IconRemove}
                         action={() => dispatch(removeSources({

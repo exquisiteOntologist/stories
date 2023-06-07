@@ -15,6 +15,7 @@ async fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
             greet,
+            commands::collections::add_collection,
             commands::collections::get_collection,
             commands::collections::get_collection_settings,
             commands::collections::set_collection_settings,

@@ -1,5 +1,5 @@
 use std::{error::Error, rc::Rc};
-use rusqlite::{Connection, types::Value, Statement, Params};
+use rusqlite::{Connection, types::Value, Statement, Params, named_params, params};
 
 use crate::entities::{CollectionSettings, Collection};
 
@@ -32,6 +32,31 @@ pub fn db_map_collection_settings_query<P: Params>(s: &mut Statement, p: P) -> R
 	let collection_settings = mapped_cs.map(|x| x.unwrap()).collect::<Vec<CollectionSettings>>();
 
 	Ok(collection_settings)
+}
+
+pub fn db_collection_add(c_name: &String, c_parent_id: &i32) -> Result<(), Box<dyn Error>> {
+    let conn = db_connect()?;
+    if let Err(e) = conn.execute(
+        "INSERT INTO collection (name) VALUES (?1) 
+                ON CONFLICT DO NOTHING;
+  
+            ",
+        params![c_name]
+    ) {
+        println!("Error adding collection {:?}", e);
+        return Err(e.into());
+    };
+    if let Err(e) = conn.execute(
+        "INSERT INTO collection_to_collection (collection_parent_id, collection_inside_id) 
+            VALUES (?1, (SELECT id FROM collection ORDER BY id DESC LIMIT 1));",
+        params![&c_parent_id.to_string()]
+    ) {
+        println!("Error associating collections {:?}", e);
+        return Err(e.into());
+    };
+	_ = conn.close();
+
+	Ok(())
 }
 
 pub fn db_get_collection(collection_ids: &Vec<i32>) -> Result<Vec<Collection>, Box<dyn Error>> {
@@ -69,24 +94,15 @@ pub fn db_get_collection_settings(collection_ids: &Vec<i32>) -> Result<Vec<Colle
 
 pub fn db_set_collection_settings(cs: &CollectionSettings) -> Result<(), Box<dyn Error>> {
     let conn = db_connect()?;
-    let res = match conn.execute(
+    if let Err(e) = conn.execute(
         "UPDATE collection_settings
         SET layout = ?2
         WHERE collection_id = ?1;",
         (&cs.collection_id, &cs.layout)
     ) {
-        Ok(updated) => {
-            println!("{} settings were updated", updated);
-            Ok(updated)
-        },
-        Err(err) => {
-            println!("update failed: {}", err);
-            Err(err)
-        },
+        println!("update failed: {}", e);
+        return Err(e.into());
     };
-    if res.is_err() {
-        return Err(res.unwrap_err().into());
-    }
     _ = conn.close();
     Ok(())
 }

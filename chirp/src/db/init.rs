@@ -12,7 +12,7 @@ pub fn db_init() -> Result<(), Box<dyn Error>> {
 pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
     conn.execute(
         "CREATE TABLE IF NOT EXISTS source (
-            id          INTEGER PRIMARY KEY UNIQUE,
+            id          INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
             name        TEXT NOT NULL,
             url         TEXT NOT NULL UNIQUE,
             site_url    TEXT NOT NULL,
@@ -41,7 +41,7 @@ pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
 
     conn.execute(
         "CREATE TABLE IF NOT EXISTS source_data_web (
-            source_id               INTEGER PRIMARY KEY UNIQUE,
+            source_id               INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
             article_url_segment     TEXT NOT NULL,
             FOREIGN KEY (source_id) REFERENCES source(id) ON DELETE CASCADE
         )",
@@ -50,7 +50,7 @@ pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
 
     conn.execute(
         "CREATE TABLE IF NOT EXISTS retrieval (
-            source_id               INTEGER PRIMARY KEY UNIQUE,
+            source_id               INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
             date_last_success       TEXT,
             date_last_attempt       TEXT,
             fails_since_success     INTEGER NOT NULL,
@@ -75,7 +75,7 @@ pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
 
     conn.execute(
         "CREATE TABLE IF NOT EXISTS collection (
-            id          INTEGER PRIMARY KEY UNIQUE,
+            id          INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
             name        TEXT NOT NULL
         )",
         (),
@@ -101,7 +101,7 @@ pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
 
     conn.execute(
         "CREATE TABLE IF NOT EXISTS collection_settings (
-            id              INTEGER PRIMARY KEY UNIQUE,
+            id              INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
             collection_id   INTEGER NOT NULL UNIQUE,
             layout          TEXT,
             FOREIGN KEY (collection_id) REFERENCES collection(id) ON DELETE CASCADE
@@ -117,7 +117,7 @@ pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
 
     conn.execute(
         "CREATE TABLE IF NOT EXISTS collection_widget (
-            id              INTEGER PRIMARY KEY UNIQUE,
+            id              INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
             collection_id   INTEGER NOT NULL UNIQUE,
             widget          TEXT NOT NULL,
             FOREIGN KEY (collection_id) REFERENCES collection(id) ON DELETE CASCADE
@@ -143,8 +143,19 @@ pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
     )?;
 
     conn.execute(
+        "CREATE TABLE IF NOT EXISTS collection_to_collection (
+            collection_parent_id                INTEGER NOT NULL,
+            collection_inside_id                INTEGER NOT NULL,
+            PRIMARY KEY (collection_parent_id, collection_inside_id),
+            FOREIGN KEY (collection_parent_id) REFERENCES collection(id) ON DELETE CASCADE,
+            FOREIGN KEY (collection_inside_id) REFERENCES collection(id) ON DELETE CASCADE
+        )",
+        (),
+    )?;
+
+    conn.execute(
         "CREATE TABLE IF NOT EXISTS content (
-            id               INTEGER PRIMARY KEY UNIQUE,
+            id               INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
             source_id        INTEGER NOT NULL,
             title            TEXT NOT NULL,
             url              TEXT NOT NULL UNIQUE,
@@ -175,7 +186,7 @@ pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
 
     conn.execute(
         "CREATE TABLE IF NOT EXISTS content_body (
-            id           INTEGER PRIMARY KEY UNIQUE,
+            id           INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
             content_id   INTEGER NOT NULL UNIQUE,
             body_text    TEXT,
             FOREIGN KEY (content_id) REFERENCES content(id) ON DELETE CASCADE
@@ -197,7 +208,7 @@ pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
 
     conn.execute(
         "CREATE TABLE IF NOT EXISTS content_media (
-            id           INTEGER PRIMARY KEY UNIQUE,
+            id           INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
             content_id   INTEGER NOT NULL UNIQUE,
             src          TEXT,
             kind   INTEGER NOT NULL,

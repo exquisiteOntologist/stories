@@ -1,6 +1,17 @@
 
 
 #[tauri::command]
+pub fn add_collection(c_name: String, c_parent_id: i32) -> Result<(), String> {
+    let c_res = chirp::actions::collections::collection_add(&c_name, &c_parent_id);
+
+    if c_res.is_err() {
+        return Err(format!("Cannot add collection {c_name} with given name").into());
+    }
+
+    Ok(())
+}
+
+#[tauri::command]
 pub fn get_collection(collection_ids: Vec<i32>) -> Result<Vec<chirp::entities::Collection>, String> {
     let c = chirp::actions::collections::collection_get(&collection_ids).unwrap();
 

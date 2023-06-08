@@ -21,7 +21,7 @@ export interface NavState {
 
 const initialNavState: NavState = {
     selectionKind: SelectionKind.COLLECTION,
-    submergeHistory: [],
+    submergeHistory: [0],
     collectionId: 0,
     priorCollId: 0,
     sourceId: 0,

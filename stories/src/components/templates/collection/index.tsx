@@ -103,7 +103,7 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
         </div>
     )
 
-    const nestedCollectionsRows = nestedCollections.map((nCollection, cI) => (
+    const nestedCollectionsRows = nestedCollections.map(nCollection => (
         <ListingRow
             key={nCollection.id}
             id={nCollection.id}

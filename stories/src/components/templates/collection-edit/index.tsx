@@ -40,6 +40,7 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
             parentId: collectionId
         } as NewCollection))).payload
         setNewCollectionMessage([`${success ? 'Succeeded' : 'Failed'} adding new collection "${newCollectionName}"`, !success])
+        if (success) setNewCollectionName('')
     }
 
     const submitAddToCollection = async (e: React.FormEvent) => {
@@ -49,6 +50,10 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
         console.log('add source to collection after success', success)
         setAddSourceMessage([`${success ? 'Finished adding' : 'Failed to add'} source "${sourceUrlEntry}"`, !success])
         dispatch(fetchSourcesOfCollection([collectionId]))
+        if (success) {
+            setSourceUrlEntry('')
+            setOtherParamEntry('')
+        }
     }
 
     const [newCollectionMessageText, newCollectionMessageError] = newCollectionMessage

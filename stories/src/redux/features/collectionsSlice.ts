@@ -48,8 +48,8 @@ export const addNewCollection = createAsyncThunk(
                 cParentId: newCollection.parentId
             })
         
-            dispatch(fetchCollection([newCollection.parentId]))
-            dispatch(fetchNestedCollections([newCollection.parentId]))
+            await dispatch(fetchCollection([newCollection.parentId]))
+            await dispatch(fetchNestedCollections([newCollection.parentId]))
             return true
         } catch (e) {
             console.error('Unable to add new collection', newCollection, e)

@@ -14,9 +14,9 @@ import { IconAddCircle } from '../../atoms/icons/add-circle'
 import { IconShapes } from '../../atoms/icons/shapes'
 import { IconTickCircle } from '../../atoms/icons/tick-circle'
 import { collectionsSelectors, fetchCollection, fetchNestedCollections, selectNestedCollections } from '../../../redux/features/collectionsSlice'
-import { collectionSettingsSelectors, setCollectionSettings } from '../../../redux/features/collectionSettingsSlice'
-import { CollectionSettings, SettingsLayout } from '../../../data/chirp-types'
-import { chooseCollection, selectCollectionId, selectPriorCollId } from '../../../redux/features/navSlice'
+import { collectionSettingsSelectors, fetchCollectionSettings, setCollectionSettings } from '../../../redux/features/collectionSettingsSlice'
+import { Collection, CollectionSettings, SettingsLayout } from '../../../data/chirp-types'
+import { chooseCollection, selectCollectionId, selectHistory as selectHistoryIds, selectPriorCollId } from '../../../redux/features/navSlice'
 
 interface CollectionViewProps {
     collectionId?: number | string,
@@ -31,6 +31,8 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
     const collectionId = useAppSelector(selectCollectionId)
     const collection = useAppSelector(s => collectionsSelectors.selectById(s, collectionId))
     const priorCollection = useAppSelector(s => collectionsSelectors.selectById(s, selectPriorCollId(s)))
+    const submergeHistoryIds = useAppSelector(selectHistoryIds)
+    const submergeHistoryItems = useAppSelector(s => submergeHistoryIds.map(id => collectionsSelectors.selectById(s, id))).filter(x => typeof x !== 'undefined') as Collection[]
     const nestedCollections = useAppSelector(selectNestedCollections)
     const collectionSettings = useAppSelector(s => collectionSettingsSelectors.selectById(s, collectionId))
     const sources = useAppSelector(sourcesSelectors.selectAll)
@@ -58,6 +60,10 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
 
     useEffect(() => {
     }, [contents])
+
+    useEffect(() => {
+        dispatch(fetchCollection(submergeHistoryIds))
+    }, [submergeHistoryIds])
 
     useEffect(() => {
         dispatch(resetThemeColours())
@@ -128,13 +134,20 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
         />
     ))
 
+    const historyItems = submergeHistoryItems.map(hi => (
+        <span className="text-current cursor-pointer mr-3" onClick={() => dispatch(chooseCollection(hi.id))}>
+            {hi.name}
+        </span>
+    ))
+
     return (
         <>
             <div className="collection w-full max-w-7xl mx-4 h-min-content">
                 <hgroup className="mb-24">
                     <h1 className="text-4xl font-semibold">{title}</h1>
                     <h2 className="text-2xl font-semibold">
-                        {priorCollection?.id !== collection?.id && <span className="text-current cursor-pointer" onClick={() => !!priorCollection && dispatch(chooseCollection(priorCollection.id))}>{priorCollection?.name} . </span>}
+                        {/* {priorCollection?.id !== collection?.id && <span className="text-current cursor-pointer" onClick={() => !!priorCollection && dispatch(chooseCollection(priorCollection.id))}>{priorCollection?.name} . </span>} */}
+                        {historyItems}
                         <span className="text-yellow-500">{collection?.name}</span>
                     </h2>
                 </hgroup>

@@ -36,7 +36,7 @@ pub fn db_sources_of_collections_retrieve(collection_ids: &Vec<i32>) -> Result<V
 	let c_id_values = Rc::new(collection_ids.to_owned().into_iter().map(Value::from).collect::<Vec<Value>>());
 	let mut sources_query: Statement = conn.prepare(
 		"SELECT * FROM source 
-			WHERE id IN ((SELECT collection_inside_id WHERE collection_parent_id in (SELECT * FROM rarray(?1)))) 
+			WHERE id IN ((SELECT source_id FROM collection_to_source WHERE collection_id in (SELECT * FROM rarray(?1)))) 
 			LIMIT 2000"
 	)?;
 	let sources = db_map_sources_query(&mut sources_query, params![c_id_values])?;

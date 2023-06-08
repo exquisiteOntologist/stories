@@ -19,13 +19,18 @@ import { RootState } from "../store";
 
 export const fetchSourcesOfCollection = createAsyncThunk(
     'sources/fetchSourcesOfCollection',
-    async (collectionIds: number[] | null, { dispatch }) => {
-        // TODO: Do by collection ids argument
-        const sources = await invoke('list_source_of_collections', {
-            collectionIds: collectionIds
-        })
+    async (collectionIds: number[], { dispatch }) => {
+        try {
+            const sources = await invoke('list_source_of_collections', {
+                collectionIds: collectionIds
+            })
 
-        dispatch(setAllSources(sources as SourceDto[]))
+            dispatch(upsertSources(sources as SourceDto[]))
+            return true
+        } catch (e) {
+            console.error('failed to fetch sources of collection', e)
+            return false
+        }
     }
 )
 
@@ -49,10 +54,9 @@ export const addSourceToCollection: AsyncThunk<boolean, SourceForCollection, {}>
 
             if (!source) {
                 throw new Error("failed to add source!");
-                
             }
     
-            dispatch(setAllSources([source] as SourceDto[]))
+            dispatch(upsertSources([source] as SourceDto[]))
             return true
         } catch (e) {
             console.error('failed to add source', e)
@@ -89,12 +93,13 @@ const sourcesSlice = createSlice({
     name: 'sources',
     initialState: sourcesAdapter.getInitialState(),
     reducers: {
-        setAllSources: sourcesAdapter.setAll
+        setAllSources: sourcesAdapter.setAll,
+        upsertSources: sourcesAdapter.upsertMany
     },
     extraReducers: {}
 })
 
-export const { setAllSources } = sourcesSlice.actions
+export const { setAllSources, upsertSources } = sourcesSlice.actions
 export const sourcesSelectors = sourcesAdapter.getSelectors<RootState>((state) => state.sources)
 
 export const sourcesReducer = sourcesSlice.reducer

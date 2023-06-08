@@ -2,6 +2,7 @@ import { createAsyncThunk, createEntityAdapter, createSlice } from "@reduxjs/too
 import { invoke } from "@tauri-apps/api";
 import { CollectionToSource } from "../../data/chirp-types";
 import { RootState } from "../store";
+import { fetchSourcesOfCollection } from "./sourcesSlice";
 
 export const fetchCollectionToSource = createAsyncThunk(
     'collectionToSource/fetchCollectionToSource',
@@ -13,7 +14,8 @@ export const fetchCollectionToSource = createAsyncThunk(
 
             console.log('received C to S items:', collectionIds, collectionToSourceItems)
         
-            dispatch(upsertCollectionToSource(collectionToSourceItems as CollectionToSource[]))
+            await dispatch(upsertCollectionToSource(collectionToSourceItems as CollectionToSource[]))
+            await dispatch(fetchSourcesOfCollection(collectionIds))
         } catch (e) {
             console.error('Unable to fetch Collection to Source mappings for', collectionIds, e)
             throw new Error("Unable to fetch Collection to Source");

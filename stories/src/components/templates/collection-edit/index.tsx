@@ -1,7 +1,8 @@
 import * as React from 'react'
 import { useEffect, useState } from 'react'
 import { SourceDto } from '../../../data/chirp-types'
-import { addNewCollection, collectionsSelectors, fetchNestedCollections, NewCollection, selectNestedCollections } from '../../../redux/features/collectionsSlice'
+import { addNewCollection, collectionsSelectors, fetchCollection, fetchNestedCollections, NewCollection, selectNestedCollections } from '../../../redux/features/collectionsSlice'
+import { collectionToSourceSelectors } from '../../../redux/features/collectionToSourceSlice'
 import { selectCollectionId } from '../../../redux/features/navSlice'
 import { addSourceToCollection, fetchSourcesOfCollection, removeSources, sourcesSelectors } from '../../../redux/features/sourcesSlice'
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
@@ -26,12 +27,18 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
     const [sourceUrlEntry, setSourceUrlEntry] = useState<string>('')
     const [otherParamEntry, setOtherParamEntry] = useState<string>('')
     const [addSourceMessage, setAddSourceMessage] = useState<[string, boolean]>(['', false])
+    const collectionToSources = useAppSelector(collectionToSourceSelectors.selectAll)
     const sources = useAppSelector(sourcesSelectors.selectAll)
 
     useEffect(() => {
-        dispatch(fetchSourcesOfCollection([collectionId]))
+        dispatch(fetchCollection([collectionId]))
         dispatch(fetchNestedCollections([collectionId]))
-    }, [dispatch])
+        dispatch(fetchSourcesOfCollection([collectionId]))
+    }, [dispatch, collectionId])
+
+    useEffect(() => {
+        dispatch(fetchSourcesOfCollection([collectionId]))
+    }, [dispatch, collection, collectionToSources])
 
     const submitAddCollection = async (e: React.FormEvent) => {
         e.preventDefault()

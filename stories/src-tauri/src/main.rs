@@ -24,6 +24,7 @@ async fn main() {
             commands::content::list_content,
             commands::sources::add_source,
             commands::sources::list_sources,
+            commands::sources::list_source_of_collections,
             commands::sources::remove_sources,
         ])
         .setup(|_app| {

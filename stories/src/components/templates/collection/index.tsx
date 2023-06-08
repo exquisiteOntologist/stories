@@ -105,6 +105,15 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
         </div>
     )
 
+    const nestedCollectionsRows = nestedCollections.map((nCollection, cI) => (
+        <ListingRow
+            key={nCollection.id}
+            id={nCollection.id}
+            title={nCollection.name}
+            action={() => console.log('that is collection', nCollection)}
+        />
+    ))
+
     const contentRows = contents.map((content, cI) => (
         <ListingRow
             key={content.id}
@@ -114,7 +123,7 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
             content={content}
             source={sources?.find(s => s?.id == content.source_id)}
         />
-    ));
+    ))
 
     const contentCards = contents.map((content, cI) => (
         <ListingCard
@@ -135,6 +144,7 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
                     <h2 className="text-2xl font-semibold"><span className="text-yellow-500">{collection?.name}</span></h2>
                 </hgroup>
                 {collectionEditor}
+                {nestedCollectionsRows}
                 {
                     viewIsList
                         ? (

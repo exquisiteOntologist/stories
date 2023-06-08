@@ -2,7 +2,7 @@ import { Link } from '@reach/router'
 import React from 'react'
 import { ListingRowProps } from './interfaces'
 
-export const ListingRow: React.FC<ListingRowProps> = ({ title, linkUrl, content, source }) => {
+export const ListingRow: React.FC<ListingRowProps> = ({ title, linkUrl, action, content, source }) => {
     // @TODO: Make `sourceLink` responsive!
     // const sourceLink = source && (
     //     <a
@@ -25,14 +25,28 @@ export const ListingRow: React.FC<ListingRowProps> = ({ title, linkUrl, content,
         </span>
     )
 
+    const actionInner = (
+        <>
+            {title}
+            {description}
+        </>
+    )
+
+    const titleInner = linkUrl ? (
+        <a href={linkUrl} target="_blank">
+            {actionInner}
+        </a>
+    ) : (action && (
+        <div className="cursor-pointer" onClick={action}>
+            {actionInner}
+        </div>
+    ))
+
     return (
         <article className="relative group border-b border-gray-100">
             <h1 className="text-base mx-0 my-2">
                 {/* {sourceLink} */}
-                <a href={linkUrl} target="_blank">
-                    {title}
-                    {description}
-                </a>
+                {titleInner}
             </h1>
         </article>
     )

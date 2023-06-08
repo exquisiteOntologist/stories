@@ -16,7 +16,7 @@ export const fetchCollection = createAsyncThunk(
         
             dispatch(setAllCollections(collections as Collection[]))
             dispatch(fetchCollectionSettings(collectionIds))
-            dispatch(fetchCollectionToCollection(collectionIds))
+            await dispatch(fetchCollectionToCollection(collectionIds))
         } catch (e) {
             console.error('Unable to fetch collection for', collectionIds, e)
         }

@@ -10,17 +10,19 @@ export enum SelectionKind {
 
 export interface NavState {
     selectionKind: SelectionKind,
+    /**
+     * 0 is the root collection (seeded on Rust lib init)
+     */
     collectionId: number,
+    priorCollId: number,
     sourceId: number,
     contentId: number
 }
 
 const initialNavState: NavState = {
     selectionKind: SelectionKind.COLLECTION,
-    /**
-     * 0 is the root collection (seeded on Rust lib init)
-     */
     collectionId: 0,
+    priorCollId: 0,
     sourceId: 0,
     contentId: 0
 }

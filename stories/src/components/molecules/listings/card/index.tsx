@@ -47,7 +47,7 @@ export const ListingCard: React.FC<ListingCardProps> = ({ title, linkUrl, conten
                     {coverImage}
                 </picture>
             </a>
-            <h1 className="grow mx-0 my-2">
+            <h1 className="grow mx-0 my-2 text-sm">
                 <a className='grow font-semibold text-current opacity-70 group-hover:opacity-100 transition-all duration-50' href={linkUrl} target="_blank">
                     {title}
                     {/* {description} */}

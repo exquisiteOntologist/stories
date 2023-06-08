@@ -16,8 +16,7 @@ import { IconTickCircle } from '../../atoms/icons/tick-circle'
 import { collectionsSelectors, fetchCollection, fetchNestedCollections, selectNestedCollections } from '../../../redux/features/collectionsSlice'
 import { collectionSettingsSelectors, setCollectionSettings } from '../../../redux/features/collectionSettingsSlice'
 import { CollectionSettings, SettingsLayout } from '../../../data/chirp-types'
-import { collectionToCollectionSelectors, selectNestedCollectionIds } from '../../../redux/features/collectionToCollectionSlice'
-import { selectCollectionId } from '../../../redux/features/navSlice'
+import { chooseCollection, selectCollectionId, selectPriorCollId } from '../../../redux/features/navSlice'
 
 interface CollectionViewProps {
     collectionId?: number | string,
@@ -30,26 +29,21 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
     const dispatch = useAppDispatch()
 
     const collectionId = useAppSelector(selectCollectionId)
-
-    // @TODO: List collections in this collection view in addition to sources/contents
-    // const collections = useAppSelector(collectionsSelectors.selectAll)
     const collection = useAppSelector(s => collectionsSelectors.selectById(s, collectionId))
-    // const nestedCollectionIds = useAppSelector(selectNestedCollectionIds)
-    // const nestedCollectionIds = useAppSelector(s => collectionToCollectionSelectors.selectAll(s)).filter(cToC => cToC.collection_parent_id === collectionId).map(ncm => ncm.collection_inside_id)
+    const priorCollection = useAppSelector(s => collectionsSelectors.selectById(s, selectPriorCollId(s)))
     const nestedCollections = useAppSelector(selectNestedCollections)
-    // const nestedCollections = useAppSelector(s => collectionsSelectors.selectAll(s).filter(c => nestedCollectionIds.includes(c.id)))
     const collectionSettings = useAppSelector(s => collectionSettingsSelectors.selectById(s, collectionId))
     const sources = useAppSelector(sourcesSelectors.selectAll)
     const contents = useAppSelector(contentsSelectors.selectAll).slice(0, clientItemsLimit)
 
     const title = customize ? 'edit' : 'hi'
 
-    // console.log('collection', collection)
+    // console.log('collection', collectionId, collection)
     // console.log('collection settings', collectionSettings)
     // console.log('nested collections', nestedCollections)
+    console.log('prior collection', priorCollection)
     
     useEffect(() => {
-        // TODO: Replace with fetch_sources_of_collection, with default id as 0 (top-level/all)
         dispatch(fetchCollection([collectionId]))
         dispatch(fetchSourcesOfCollection([collectionId]))
     }, [dispatch])
@@ -74,7 +68,6 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
 
     const collectionEditor = (
         <div className="mb-6">
-            {/* <h3 className="text-1xl font-semibold">Edit Collection</h3> */}
             <div className={`flex justify-start transition-all duration-0 ${showCollectionEditor ? 'opacity-1' : 'opacity-0'}`}>
             <Button
                     label="Done"
@@ -98,7 +91,6 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
                 <Button
                     Icon={IconShapes}
                     label="Sources"
-                    // linkTo={`${location.pathname}/edit`}
                     linkTo={`/edit`}
                 />
             </div>
@@ -110,7 +102,7 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
             key={nCollection.id}
             id={nCollection.id}
             title={nCollection.name}
-            action={() => console.log('that is collection', nCollection)}
+            action={() => dispatch(chooseCollection(nCollection.id))}
         />
     ))
 
@@ -119,7 +111,7 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
             key={content.id}
             id={content.id}
             title={content.title}
-            linkUrl={content.url /* `/reader/${content.id}` */}
+            linkUrl={content.url}
             content={content}
             source={sources?.find(s => s?.id == content.source_id)}
         />
@@ -130,7 +122,7 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
             key={content.id}
             id={content.id}
             title={content.title}
-            linkUrl={content.url /* `/reader/${content.id}` */}
+            linkUrl={content.url}
             content={content}
             source={sources?.find(s => s?.id == content.source_id)}
         />
@@ -141,10 +133,19 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
             <div className="collection w-full max-w-7xl mx-4 h-min-content">
                 <hgroup className="mb-24">
                     <h1 className="text-4xl font-semibold">{title}</h1>
-                    <h2 className="text-2xl font-semibold"><span className="text-yellow-500">{collection?.name}</span></h2>
+                    <h2 className="text-2xl font-semibold">
+                        {priorCollection?.id !== collection?.id && <span className="text-current cursor-pointer" onClick={() => !!priorCollection && dispatch(chooseCollection(priorCollection.id))}>{priorCollection?.name} . </span>}
+                        <span className="text-yellow-500">{collection?.name}</span>
+                    </h2>
                 </hgroup>
                 {collectionEditor}
-                {nestedCollectionsRows}
+                {
+                    nestedCollectionsRows.length ? (
+                        <div className="grid grid-cols-3 mb-12">
+                            {nestedCollectionsRows}
+                        </div>
+                    ) : null
+                }
                 {
                     viewIsList
                         ? (

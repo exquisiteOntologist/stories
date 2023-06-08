@@ -1,10 +1,9 @@
 import { createAsyncThunk, createEntityAdapter, createSelector, createSlice } from "@reduxjs/toolkit";
 import { invoke } from "@tauri-apps/api";
 import { Collection } from "../../data/chirp-types";
-import { useAppSelector } from "../hooks";
 import { RootState } from "../store";
 import { fetchCollectionSettings } from "./collectionSettingsSlice";
-import { collectionToCollectionSelectors, fetchCollectionToCollection, selectNestedCollectionIds } from "./collectionToCollectionSlice";
+import { fetchCollectionToCollection, selectNestedCollectionIds } from "./collectionToCollectionSlice";
 
 export const fetchCollection = createAsyncThunk(
     'collections/fetchCollection',
@@ -14,7 +13,7 @@ export const fetchCollection = createAsyncThunk(
                 collectionIds: collectionIds
             })
         
-            dispatch(setAllCollections(collections as Collection[]))
+            dispatch(upsertCollections(collections as Collection[]))
             dispatch(fetchCollectionSettings(collectionIds))
             await dispatch(fetchCollectionToCollection(collectionIds))
         } catch (e) {
@@ -67,12 +66,15 @@ const collectionsSlice = createSlice({
     name: 'collections',
     initialState: collectionsAdapter.getInitialState(),
     reducers: {
-        setAllCollections: collectionsAdapter.setAll
+        setAllCollections: collectionsAdapter.setAll,
+        addCollections: collectionsAdapter.addMany,
+        updateCollections: collectionsAdapter.updateMany,
+        upsertCollections: collectionsAdapter.upsertMany
     },
     extraReducers: {}
 })
 
-export const { setAllCollections } = collectionsSlice.actions
+export const { setAllCollections, addCollections, updateCollections, upsertCollections } = collectionsSlice.actions
 export const collectionsSelectors = collectionsAdapter.getSelectors<RootState>((state) => state.collections)
 
 /**

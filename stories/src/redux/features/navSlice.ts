@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ContentColours } from "../../utilities/graphics/colours";
 import { RootState } from "../store";
 
 export enum SelectionKind {
@@ -34,25 +33,19 @@ const navSlice = createSlice({
     name: 'nav',
     initialState: initialNavState,
     reducers: {
-        // increment: (state, action: PayloadAction<number>) => state + action.payload,
-        // setNavColours: (state, action: PayloadAction<ContentColours>) => ({
-        //     ...state,
-        //     colours: {
-        //         ...state.colours,
-        //         ...action.payload
-        //     }
-        // }),
-        // resetNavColours: (state, action: PayloadAction) => ({
-        //     ...state,
-        //     colours: {}
-        // }),
+        chooseCollection (state, action: PayloadAction<number>) {
+            console.log('choosing collection', action.payload)
+            state.priorCollId = state.collectionId
+            state.collectionId = action.payload
+        }
     },
     extraReducers: {}
 })
 
-export const { /* setNavColours, resetNavColours */ } = navSlice.actions
+export const { chooseCollection } = navSlice.actions
 export const selectNav = (state: RootState) => state.nav
 export const selectCollectionId = (state: RootState) => state.nav.collectionId
+export const selectPriorCollId = (state: RootState) => state.nav.priorCollId
 export const selectSourceId = (state: RootState) => state.nav.sourceId
 export const selectContentId = (state: RootState) => state.nav.contentId
 

@@ -10,7 +10,9 @@ export const fetchCollectionSettings = createAsyncThunk(
             collectionIds: collection_ids
         })
 
-        dispatch(setAllCollectionSettings(collectionSettings as CollectionSettings[]))
+        console.log('new settings', collection_ids, collectionSettings)
+
+        dispatch(upsertCollectionSettings(collectionSettings as CollectionSettings[]))
     }
 )
 
@@ -34,12 +36,14 @@ const collectionSettingsSlice = createSlice({
     name: 'collectionSettings',
     initialState: collectionSettingsAdapter.getInitialState(),
     reducers: {
-        setAllCollectionSettings: collectionSettingsAdapter.setAll
+        setAllCollectionSettings: collectionSettingsAdapter.setAll,
+        addCollectionSettings: collectionSettingsAdapter.addMany,
+        upsertCollectionSettings: collectionSettingsAdapter.upsertMany
     },
     extraReducers: {}
 })
 
-export const { setAllCollectionSettings } = collectionSettingsSlice.actions
+export const { setAllCollectionSettings, addCollectionSettings, upsertCollectionSettings } = collectionSettingsSlice.actions
 export const collectionSettingsSelectors = collectionSettingsAdapter.getSelectors<RootState>((state) => state.collectionSettings)
 
 export const collectionSettingsReducer = collectionSettingsSlice.reducer

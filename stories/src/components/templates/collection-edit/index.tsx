@@ -64,7 +64,7 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
             {
                 newCollectionMessageText
                     ? (<p className={`${newCollectionMessageError ? 'text-orange-700' : 'text-green-700'}`}>{newCollectionMessageText}&nbsp;</p>)
-                    : (<p className="text-gray-300"><span className="font-semibold">Note:</span> The collection will be nested within the current collection.</p>)
+                    : (<p className="text-gray-300"><span className="font-semibold">Note:</span> The new collection will be nested within the current collection.</p>)
             }
         </div>
     )
@@ -118,9 +118,6 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
             <input className="hidden" type="checkbox" id={c.id.toString()} name={c.id.toString()} onChange={e => console.error('selecting collections not supported')} />
             <label htmlFor={c.id.toString()} className={`block p-2 p2-3 px-2 -mt-2 -ml-2 -mr-2 max-w-none rounded-md ${sourceChecked(c.id) ? 'bg-yellow-200' : ''}`}>
                 <h3 className={`${sourceChecked(c.id) ? 'text-gray-900' : 'text-current'}`}>{c.name}</h3>
-                {/* <p className={`${sourceChecked(c.id) ? 'text-gray-900' : 'text-current'} opacity-30`} title={`ID ${c.id}`}><span className={`font-bold ${kindClass(c.kind)}`}>{c.kind}&nbsp;</span>{c.url}</p> */}
-                {/* <p className="text-gray-900 opacity-30 mix-blend-multiply" title={`ID ${s.id}`}><span className={`font-bold ${kindClass(s.kind)}`}>{s.kind}&nbsp;</span>{s.url}</p> */}
-                {/* <p className="text-gray-300" title={`ID ${s.id}`}><span className="font-bold">{s.kind}&nbsp;</span>{s.url}</p> */}
             </label>
         </div>
     ))
@@ -132,27 +129,19 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
             <div className="collection max-w-xl w-full h-min-content">
                 <h1 className="text-4xl font-semibold mb-24">Sources of <span className="text-yellow-500">{collection?.name}</span> Collection</h1>
                 {addSource}
-                {
-                    sourceList?.length && (
-                        <>
-                            <h2 className='text-2xl font-semibold mb-2'>Sources</h2>
-                            <div className='mb-10'>
-                                {sourceList}
-                            </div>
-                        </>
-                    ) || null
-                }
+                <>
+                    <h2 className='text-2xl font-semibold mb-2'><span className="text-green-500">{sourceList?.length}</span> Sources</h2>
+                    <div className='mb-10'>
+                        {sourceList}
+                    </div>
+                </>
                 {addCollection}
-                {
-                    nestedCollectionList?.length && (
-                        <>
-                            <h2 className='text-2xl font-semibold'>Collections inside {collection?.name}</h2>
-                            <div className='mb-10'>
-                                {nestedCollectionList}
-                            </div>
-                        </>
-                    ) || null
-                }
+                <>
+                    <h2 className='text-2xl font-semibold mb-2'><span className="text-blue-500">{nestedCollectionList.length}</span> Collections</h2>
+                    <div className='mb-10'>
+                        {nestedCollectionList}
+                    </div>
+                </>
                 <div className={`flex justify-center transition-all duration-0 ${showContextActions ? 'opacity-1' : 'opacity-0'}`}>
                     {/* <Button 
                         Icon={IconShapes}

@@ -52,7 +52,7 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
 
     useEffect(() => {
         dispatch(fetchNestedCollections([collectionId]))
-    }, [collection])
+    }, [collection, collectionSettings])
 
     useEffect(() => {
         dispatch(fetchContent())

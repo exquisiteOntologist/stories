@@ -54,7 +54,6 @@ pub fn db_collection_add(c_name: &String, c_parent_id: &i32) -> Result<(), Box<d
     if let Err(e) = conn.execute(
         "INSERT INTO collection (name) VALUES (?1) 
                 ON CONFLICT DO NOTHING;
-  
             ",
         params![c_name]
     ) {
@@ -68,6 +67,15 @@ pub fn db_collection_add(c_name: &String, c_parent_id: &i32) -> Result<(), Box<d
         params![&c_parent_id.to_string()]
     ) {
         println!("Error associating collections {:?}", e);
+        return Err(e.into());
+    };
+
+    if let Err(e) = conn.execute(
+        "INSERT INTO collection_settings (collection_id, layout) 
+            VALUES ((SELECT id FROM collection ORDER BY id DESC LIMIT 1), 'ROWS');",
+        params![]
+    ) {
+        println!("Error adding settings entry for new collection {:?}", e);
         return Err(e.into());
     };
 

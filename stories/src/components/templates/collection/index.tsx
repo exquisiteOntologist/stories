@@ -134,21 +134,23 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
         />
     ))
 
-    const historyItems = submergeHistoryItems.map(hi => (
-        <span className="text-current cursor-pointer mr-3" onClick={() => dispatch(chooseCollection(hi.id))}>
-            {hi.name}
-        </span>
-    ))
+    const historyItems = submergeHistoryItems.map(hi => {
+        const last = collectionId === hi.id
+        const colour = last ? 'text-yellow-500' : 'inherit'
+        return (
+            <span key={hi.id} className={`text-current cursor-pointer mr-3 ${colour}`} onClick={() => dispatch(chooseCollection(hi.id))}>
+                {hi.name}
+            </span>
+        )
+    })
 
     return (
         <>
             <div className="collection w-full max-w-7xl mx-4 h-min-content">
                 <hgroup className="mb-24">
                     <h1 className="text-4xl font-semibold">{title}</h1>
-                    <h2 className="text-2xl font-semibold">
-                        {/* {priorCollection?.id !== collection?.id && <span className="text-current cursor-pointer" onClick={() => !!priorCollection && dispatch(chooseCollection(priorCollection.id))}>{priorCollection?.name} . </span>} */}
+                    <h2 className="text-2xl font-semibold select-none">
                         {historyItems}
-                        <span className="text-yellow-500">{collection?.name}</span>
                     </h2>
                 </hgroup>
                 {collectionEditor}

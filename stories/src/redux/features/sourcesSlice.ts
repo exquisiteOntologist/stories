@@ -30,7 +30,7 @@ export const fetchSourcesOfCollection = createAsyncThunk(
 )
 
 export interface SourceForCollection {
-    collectionIds: number[] | null,
+    collectionId: number,
     sourceUrl: string,
     otherParam: string
 }
@@ -38,11 +38,11 @@ export interface SourceForCollection {
 export const addSourceToCollection: AsyncThunk<boolean, SourceForCollection, {}> = createAsyncThunk(
     'sources/addSourceToCollection',
     async (sourceForCollection: SourceForCollection, { dispatch }) => {
-        const { collectionIds, sourceUrl, otherParam } = sourceForCollection
+        const { collectionId, sourceUrl, otherParam } = sourceForCollection
         
         try {
             const source = await invoke('add_source', {
-                collectionIds,
+                collectionId,
                 sourceUrl,
                 additionalParam: otherParam,
             });

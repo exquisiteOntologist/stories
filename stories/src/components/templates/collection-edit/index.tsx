@@ -46,7 +46,7 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
     const submitAddToCollection = async (e: React.FormEvent) => {
         e.preventDefault()
         setAddSourceMessage(['Adding source...', false])
-        const success = (await dispatch(addSourceToCollection({collectionIds: [collectionId], sourceUrl: sourceUrlEntry, otherParam: otherParamEntry }))).payload
+        const success = (await dispatch(addSourceToCollection({collectionId: collectionId, sourceUrl: sourceUrlEntry, otherParam: otherParamEntry }))).payload
         console.log('add source to collection after success', success)
         setAddSourceMessage([`${success ? 'Finished adding' : 'Failed to add'} source "${sourceUrlEntry}"`, !success])
         dispatch(fetchSourcesOfCollection([collectionId]))

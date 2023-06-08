@@ -14,8 +14,8 @@ pub fn list_source_of_collections(collection_ids: Vec<i32>) -> Vec<chirp::entiti
 }
 
 #[tauri::command]
-pub async fn add_source(_collection_ids: Vec<i32>, source_url: String, additional_param: String) -> Result<chirp::entities::SourceDto, String> {
-    let s_res = chirp::actions::add::source_add(&source_url, &additional_param).await;
+pub async fn add_source(collection_id: i32, source_url: String, additional_param: String) -> Result<chirp::entities::SourceDto, String> {
+    let s_res = chirp::actions::add::source_add(&source_url, &additional_param, &collection_id).await;
     if s_res.is_err() {
         return Err("Cannot add source".into());
     }

@@ -127,11 +127,11 @@ pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
 
     conn.execute(
         "CREATE TABLE IF NOT EXISTS collection_to_source (
-            collection_id   INTEGER NOT NULL UNIQUE,
-            source_id       INTEGER NOT NULL UNIQUE,
+            collection_id                       INTEGER NOT NULL,
+            source_id                           INTEGER NOT NULL,
             PRIMARY KEY (collection_id, source_id),
-            FOREIGN KEY (collection_id) REFERENCES collection(id) ON DELETE CASCADE,
-            FOREIGN KEY (source_id) REFERENCES source(id) ON DELETE CASCADE
+            FOREIGN KEY (collection_id) REFERENCES collection(id)   ON DELETE CASCADE,
+            FOREIGN KEY (source_id)     REFERENCES source(id)       ON DELETE CASCADE
         )",
         (),
     )?;

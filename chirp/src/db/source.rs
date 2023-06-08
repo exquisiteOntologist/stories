@@ -50,7 +50,7 @@ pub fn db_sources_retrieve_outdated() -> Result<Vec<Source>, Box<dyn Error>> {
 	Ok(sources)
 }
 
-pub fn db_source_add(source: &Source) -> Result<(), Box<dyn Error>> {
+pub fn db_source_add(source: &Source, collection_id: &i32) -> Result<(), Box<dyn Error>> {
 	let source_kind = match source.kind {
         SourceKind::RSS => 0,
         SourceKind::WEB => 1
@@ -61,6 +61,11 @@ pub fn db_source_add(source: &Source) -> Result<(), Box<dyn Error>> {
 		"INSERT INTO source (name, url, site_url, kind) VALUES (?1, ?2, ?3, ?4) 
 			ON CONFLICT DO NOTHING",
 		(&source.name, &source.url, &source.site_url, &source_kind),
+	)?;
+	conn.execute(
+		"INSERT INTO collection_to_source (collection_id, source_id) 
+			VALUES (?1, (SELECT id FROM source ORDER BY id DESC LIMIT 1))",
+		params![collection_id]
 	)?;
 	_ = conn.close();
 

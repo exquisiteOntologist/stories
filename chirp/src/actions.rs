@@ -16,7 +16,7 @@ pub async fn take_command() -> Result<(), Box<dyn Error>> {
 
     match args[1].as_str() {
         "help" => intro(),
-        "add" => source_add_action(args).await,
+        "add" => source_add_cli(args).await,
         "remove" => source_remove_action(args),
         "rename" => todo!(),
         "sources" => list_sources_action(),

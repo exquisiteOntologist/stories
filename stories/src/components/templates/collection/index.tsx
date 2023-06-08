@@ -30,7 +30,6 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
 
     const collectionId = useAppSelector(selectCollectionId)
     const collection = useAppSelector(s => collectionsSelectors.selectById(s, collectionId))
-    const priorCollection = useAppSelector(s => collectionsSelectors.selectById(s, selectPriorCollId(s)))
     const submergeHistoryIds = useAppSelector(selectHistoryIds)
     const submergeHistoryItems = useAppSelector(s => submergeHistoryIds.map(id => collectionsSelectors.selectById(s, id))).filter(x => typeof x !== 'undefined') as Collection[]
     const nestedCollections = useAppSelector(selectNestedCollections)
@@ -43,7 +42,6 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
     // console.log('collection', collectionId, collection)
     // console.log('collection settings', collectionSettings)
     // console.log('nested collections', nestedCollections)
-    console.log('prior collection', priorCollection)
     
     useEffect(() => {
         dispatch(fetchCollection([collectionId]))

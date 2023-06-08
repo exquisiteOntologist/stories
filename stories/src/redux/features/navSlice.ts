@@ -35,9 +35,7 @@ const navSlice = createSlice({
     name: 'nav',
     initialState: initialNavState,
     reducers: {
-        chooseCollection (state, action: PayloadAction<number>) {
-            console.log('choosing collection', state.collectionId, action.payload)
-            
+        chooseCollection (state, action: PayloadAction<number>) {            
             // See if the current item is in history (before setting new item)
 
             if (!state.submergeHistory.includes(state.collectionId)) state.submergeHistory.push(state.collectionId)
@@ -50,7 +48,6 @@ const navSlice = createSlice({
             if (inHistory) state.submergeHistory.splice(historyIndexPos, state.submergeHistory.length - historyIndexPos)
             state.submergeHistory.push(action.payload)
             
-            // state.priorCollId = state.collectionId
             state.collectionId = action.payload
         }
     },

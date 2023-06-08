@@ -3,7 +3,7 @@ use rusqlite::{Connection, types::Value, Statement, Params, params};
 
 use crate::entities::{CollectionSettings, Collection, CollectionToCollection};
 
-use super::db_connect;
+use super::{db_connect, load_rarray_table};
 
 pub fn db_map_collection_query<P: Params>(s: &mut Statement, p: P) -> Result<Vec<Collection>, Box<dyn Error>> {
 	// assumes used a SELECT *
@@ -149,6 +149,3 @@ pub fn db_get_collection_to_collection(parent_ids: &Vec<i32>) -> Result<Vec<Coll
     Ok(c_to_c)
 }
 
-pub fn load_rarray_table(conn: &Connection) -> Result<(), rusqlite::Error> {
-    rusqlite::vtab::array::load_module(&conn) // <- Adds "rarray" table function
-}

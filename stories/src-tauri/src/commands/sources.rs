@@ -7,6 +7,13 @@ pub fn list_sources() -> Vec<chirp::entities::SourceDto> {
 }
 
 #[tauri::command]
+pub fn list_source_of_collections(collection_ids: Vec<i32>) -> Vec<chirp::entities::SourceDto> {
+    let sources = chirp::actions::sources::list_sources_of_collections(&collection_ids).unwrap();
+    let s_dtos: Vec<chirp::entities::SourceDto> = sources.into_iter().map(|s| source_to_dto(s)).collect();
+    s_dtos
+}
+
+#[tauri::command]
 pub async fn add_source(_collection_ids: Vec<i32>, source_url: String, additional_param: String) -> Result<chirp::entities::SourceDto, String> {
     let s_res = chirp::actions::add::source_add(&source_url, &additional_param).await;
     if s_res.is_err() {

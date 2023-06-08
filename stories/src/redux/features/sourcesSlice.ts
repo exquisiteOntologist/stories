@@ -3,25 +3,27 @@ import { invoke } from "@tauri-apps/api";
 import { SourceDto } from "../../data/chirp-types";
 import { RootState } from "../store";
 
-/**
- * Fetch sources.
- * If no ID is specified, then recent sources are fetched.
- */
-export const fetchSources = createAsyncThunk(
-    'sources/fetchSources',
-    async (sourceIds: number[] | null | undefined, { dispatch }) => {
-        // TODO: Do by sourceIds argument
-        const sources = await invoke('list_sources')
+// /**
+//  * Fetch sources.
+//  * If no ID is specified, then recent sources are fetched.
+//  */
+// export const fetchSources = createAsyncThunk(
+//     'sources/fetchSources',
+//     async (sourceIds: number[] | null | undefined, { dispatch }) => {
+//         // TODO: Do by sourceIds argument
+//         const sources = await invoke('list_sources')
 
-        dispatch(setAllSources(sources as SourceDto[]))
-    }
-)
+//         dispatch(setAllSources(sources as SourceDto[]))
+//     }
+// )
 
 export const fetchSourcesOfCollection = createAsyncThunk(
     'sources/fetchSourcesOfCollection',
     async (collectionIds: number[] | null, { dispatch }) => {
         // TODO: Do by collection ids argument
-        const sources = await invoke('list_sources')
+        const sources = await invoke('list_source_of_collections', {
+            collectionIds: collectionIds
+        })
 
         dispatch(setAllSources(sources as SourceDto[]))
     }

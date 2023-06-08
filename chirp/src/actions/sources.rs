@@ -1,6 +1,6 @@
 use std::error::Error;
 
-use crate::{db::{db_sources_retrieve}, entities::{SourceKind, self}};
+use crate::{db::{db_sources_retrieve, db_sources_of_collections_retrieve}, entities::{SourceKind, self}};
 
 pub fn list_sources_action() -> Result<(), Box<dyn Error>> {
     let sources: Vec<entities::Source> = list_sources()?;
@@ -22,6 +22,12 @@ pub fn list_sources_action() -> Result<(), Box<dyn Error>> {
 
 pub fn list_sources() -> Result<Vec<entities::Source>, Box<dyn Error>> {
     let sources = db_sources_retrieve()?;
+
+    Ok(sources)
+}
+
+pub fn list_sources_of_collections(collection_ids: &Vec<i32>) -> Result<Vec<entities::Source>, Box<dyn Error>> {
+    let sources = db_sources_of_collections_retrieve(collection_ids)?;
 
     Ok(sources)
 }

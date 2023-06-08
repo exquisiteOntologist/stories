@@ -1,8 +1,8 @@
 use std::{error::Error, rc::Rc};
-use rusqlite::{Params, Statement, Connection, types::Value};
+use rusqlite::{Params, Statement, Connection, types::Value, params};
 
 use crate::entities::{Source, SourceKind, select_source_kind};
-use super::{db_connect, db_retrievals_outdated_sources};
+use super::{db_connect, db_retrievals_outdated_sources, load_rarray_table};
 
 pub fn db_map_sources_query<P: Params>(s: &mut Statement, p: P) -> Result<Vec<Source>, Box<dyn Error>> {
 	// assumes used a SELECT *
@@ -26,6 +26,20 @@ pub fn db_sources_retrieve() -> Result<Vec<Source>, Box<dyn Error>> {
 	let conn = db_connect()?;
 	let mut sources_query: Statement = conn.prepare("SELECT * FROM source LIMIT 2000")?;
 	let sources = db_map_sources_query(&mut sources_query, [])?;
+
+	Ok(sources)
+}
+
+pub fn db_sources_of_collections_retrieve(collection_ids: &Vec<i32>) -> Result<Vec<Source>, Box<dyn Error>> {
+	let conn: Connection = db_connect()?;
+	load_rarray_table(&conn)?;
+	let c_id_values = Rc::new(collection_ids.to_owned().into_iter().map(Value::from).collect::<Vec<Value>>());
+	let mut sources_query: Statement = conn.prepare(
+		"SELECT * FROM source 
+			WHERE id IN ((SELECT collection_inside_id WHERE collection_parent_id in (SELECT * FROM rarray(?1)))) 
+			LIMIT 2000"
+	)?;
+	let sources = db_map_sources_query(&mut sources_query, params![c_id_values])?;
 
 	Ok(sources)
 }

@@ -1,7 +1,7 @@
 use std::{error::Error, rc::Rc};
 use rusqlite::{Connection, types::Value, Statement, Params, params};
 
-use crate::entities::{CollectionSettings, Collection, CollectionToCollection};
+use crate::entities::{CollectionSettings, Collection, CollectionToCollection, CollectionToSource};
 
 use super::{db_connect, load_rarray_table};
 
@@ -46,6 +46,20 @@ pub fn db_map_collection_to_collection_query<P: Params>(s: &mut Statement, p: P)
 	let c_to_c = mapped_cs.map(|x| x.unwrap()).collect::<Vec<CollectionToCollection>>();
 
 	Ok(c_to_c)
+}
+
+pub fn db_map_collection_to_source_query<P: Params>(s: &mut Statement, p: P) -> Result<Vec<CollectionToSource>, Box<dyn Error>> {
+	// assumes used a SELECT *
+	let mapped_cs = s.query_map(p, |row| {
+		Ok(CollectionToSource {
+			collection_id: row.get(0)?,
+			source_id: row.get(1)?
+		})
+	})?;
+
+	let c_to_s = mapped_cs.map(|x| x.unwrap()).collect::<Vec<CollectionToSource>>();
+
+	Ok(c_to_s)
 }
 
 pub fn db_collection_add(c_name: &String, c_parent_id: &i32) -> Result<(), Box<dyn Error>> {
@@ -149,3 +163,18 @@ pub fn db_get_collection_to_collection(parent_ids: &Vec<i32>) -> Result<Vec<Coll
     Ok(c_to_c)
 }
 
+pub fn db_get_collection_to_source(collection_ids: &Vec<i32>) -> Result<Vec<CollectionToSource>, Box<dyn Error>> {
+    let conn: Connection = db_connect()?;
+	load_rarray_table(&conn)?;
+
+	let c_id_values = Rc::new(collection_ids.to_owned().into_iter().map(Value::from).collect::<Vec<Value>>());
+
+    let mut c_to_s_query: Statement = conn.prepare(
+        // using collection_id instead of id
+		"SELECT * FROM collection_to_source WHERE collection_id IN (SELECT * FROM rarray(?1))"
+	)?;
+
+    let c_to_s = db_map_collection_to_source_query(&mut c_to_s_query, params![c_id_values])?;
+
+    Ok(c_to_s)
+}

@@ -4,6 +4,7 @@ import { Collection } from "../../data/chirp-types";
 import { RootState } from "../store";
 import { fetchCollectionSettings } from "./collectionSettingsSlice";
 import { fetchCollectionToCollection, selectNestedCollectionIds } from "./collectionToCollectionSlice";
+import { fetchCollectionToSource } from "./collectionToSourceSlice";
 
 export const fetchCollection = createAsyncThunk(
     'collections/fetchCollection',
@@ -16,6 +17,7 @@ export const fetchCollection = createAsyncThunk(
             dispatch(upsertCollections(collections as Collection[]))
             dispatch(fetchCollectionSettings(collectionIds))
             await dispatch(fetchCollectionToCollection(collectionIds))
+            await dispatch(fetchCollectionToSource(collectionIds))
         } catch (e) {
             console.error('Unable to fetch collection for', collectionIds, e)
         }

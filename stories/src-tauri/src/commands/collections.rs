@@ -47,3 +47,10 @@ pub fn get_collection_to_collection(parent_ids: Vec<i32>) -> Result<Vec<chirp::e
 
     Ok(c)
 }
+
+#[tauri::command]
+pub fn get_collection_to_source(collection_ids: Vec<i32>) -> Vec<chirp::entities::CollectionToSource> {
+    let collection_to_source = chirp::actions::collections::collection_to_source_get(&collection_ids).unwrap();
+    // println!("Collection to sources found {:?}", collection_to_source.clone().len());
+    collection_to_source
+}

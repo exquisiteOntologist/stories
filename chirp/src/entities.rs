@@ -50,6 +50,15 @@ pub struct CollectionToCollection {
 }
 
 #[derive(Debug)]
+#[derive(Clone)]
+#[typeshare]
+#[derive(Serialize)]
+pub struct CollectionToSource {
+    pub collection_id: i32,
+    pub source_id: i32,
+}
+
+#[derive(Debug)]
 // #[typeshare] // <- cannot do tuples as in data:
 #[derive(Serialize)]
 pub struct Source {

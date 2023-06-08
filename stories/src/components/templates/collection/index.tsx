@@ -17,6 +17,7 @@ import { collectionsSelectors, fetchCollection, fetchNestedCollections, selectNe
 import { collectionSettingsSelectors, fetchCollectionSettings, setCollectionSettings } from '../../../redux/features/collectionSettingsSlice'
 import { Collection, CollectionSettings, SettingsLayout } from '../../../data/chirp-types'
 import { chooseCollection, selectCollectionId, selectHistory as selectHistoryIds, selectPriorCollId } from '../../../redux/features/navSlice'
+import { collectionToSourceSelectors } from '../../../redux/features/collectionToSourceSlice'
 
 interface CollectionViewProps {
     collectionId?: number | string,
@@ -34,6 +35,7 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
     const submergeHistoryItems = useAppSelector(s => submergeHistoryIds.map(id => collectionsSelectors.selectById(s, id))).filter(x => typeof x !== 'undefined') as Collection[]
     const nestedCollections = useAppSelector(selectNestedCollections)
     const collectionSettings = useAppSelector(s => collectionSettingsSelectors.selectById(s, collectionId))
+    const collectionToSources = useAppSelector(collectionToSourceSelectors.selectAll)
     const sources = useAppSelector(sourcesSelectors.selectAll)
     const contents = useAppSelector(contentsSelectors.selectAll).slice(0, clientItemsLimit)
 
@@ -42,6 +44,7 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
     // console.log('collection', collectionId, collection)
     // console.log('collection settings', collectionSettings)
     // console.log('nested collections', nestedCollections)
+    console.log('collection to source maps', collectionToSources)
     
     useEffect(() => {
         dispatch(fetchCollection([collectionId]))

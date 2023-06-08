@@ -12,7 +12,7 @@ export const fetchCollectionToCollection = createAsyncThunk(
                 parentIds: parentCollectionIds
             })
         
-            dispatch(addManyCollectionToCollection(collectionToCollectionItems as CollectionToCollection[]))
+            dispatch(upsertCollectionToCollection(collectionToCollectionItems as CollectionToCollection[]))
         } catch (e) {
             console.error('Unable to fetch Collection to Collection mappings for', parentCollectionIds, e)
             throw new Error("Unable to fetch Collection to Collection");
@@ -30,12 +30,13 @@ const collectionToCollectionSlice = createSlice({
     initialState: collectionToCollectionAdapter.getInitialState(),
     reducers: {
         setAllCollectionToCollection: collectionToCollectionAdapter.setAll,
-        addManyCollectionToCollection: collectionToCollectionAdapter.addMany
+        addManyCollectionToCollection: collectionToCollectionAdapter.addMany,
+        upsertCollectionToCollection: collectionToCollectionAdapter.upsertMany
     },
     extraReducers: {}
 })
 
-export const { setAllCollectionToCollection, addManyCollectionToCollection } = collectionToCollectionSlice.actions
+export const { setAllCollectionToCollection, addManyCollectionToCollection, upsertCollectionToCollection } = collectionToCollectionSlice.actions
 export const collectionToCollectionSelectors = collectionToCollectionAdapter.getSelectors<RootState>((state) => state.collectionToCollection)
 
 /**

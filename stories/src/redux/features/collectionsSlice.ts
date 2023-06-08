@@ -1,9 +1,10 @@
-import { createAsyncThunk, createEntityAdapter, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createEntityAdapter, createSelector, createSlice } from "@reduxjs/toolkit";
 import { invoke } from "@tauri-apps/api";
 import { Collection } from "../../data/chirp-types";
+import { useAppSelector } from "../hooks";
 import { RootState } from "../store";
 import { fetchCollectionSettings } from "./collectionSettingsSlice";
-import { collectionToCollectionSelectors, fetchCollectionToCollection } from "./collectionToCollectionSlice";
+import { collectionToCollectionSelectors, fetchCollectionToCollection, selectNestedCollectionIds } from "./collectionToCollectionSlice";
 
 export const fetchCollection = createAsyncThunk(
     'collections/fetchCollection',
@@ -26,9 +27,8 @@ export const fetchNestedCollections = createAsyncThunk(
     'collections/fetchNestedCollections',
     async (parentIds: number[], { dispatch, getState }) => {
         try {
-            const allCtoC = collectionToCollectionSelectors.selectAll(getState());
-            const children = allCtoC.filter(cToC => parentIds.includes(cToC.collection_parent_id))
-            dispatch(fetchCollection(children.map(c => c.collection_inside_id)))
+            const nestedCollectionIds = selectNestedCollectionIds(getState() as RootState)
+            dispatch(fetchCollection(nestedCollectionIds))
         } catch (e) {
             console.error('Unable to fetch collection for', parentIds, e)
         }
@@ -74,5 +74,23 @@ const collectionsSlice = createSlice({
 
 export const { setAllCollections } = collectionsSlice.actions
 export const collectionsSelectors = collectionsAdapter.getSelectors<RootState>((state) => state.collections)
+
+/**
+ * Select the nested collection IDs within the current collection
+ */
+export const selectNestedCollections = createSelector(
+    // First, pass one or more "input selector" functions:
+    collectionsSelectors.selectAll,
+    // State selector (in this case all state to use with other slice's selectors)
+    (s: RootState) => s,
+    // Then, an "output selector" that receives all the input results as arguments
+    // and returns a final result value
+    (collections, s) => {
+        const nestedCollectionIds: number[] = selectNestedCollectionIds(s)
+        const nestedCollections: Collection[] = collections.filter(c => nestedCollectionIds.includes(c.id))
+
+        return nestedCollections
+    }
+)
 
 export const collectionsReducer = collectionsSlice.reducer

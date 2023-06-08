@@ -13,10 +13,11 @@ import { IconList } from '../../atoms/icons/list'
 import { IconAddCircle } from '../../atoms/icons/add-circle'
 import { IconShapes } from '../../atoms/icons/shapes'
 import { IconTickCircle } from '../../atoms/icons/tick-circle'
-import { collectionsSelectors, fetchCollection, fetchNestedCollections } from '../../../redux/features/collectionsSlice'
+import { collectionsSelectors, fetchCollection, fetchNestedCollections, selectNestedCollections } from '../../../redux/features/collectionsSlice'
 import { collectionSettingsSelectors, setCollectionSettings } from '../../../redux/features/collectionSettingsSlice'
 import { CollectionSettings, SettingsLayout } from '../../../data/chirp-types'
-import { collectionToCollectionSelectors } from '../../../redux/features/collectionToCollectionSlice'
+import { collectionToCollectionSelectors, selectNestedCollectionIds } from '../../../redux/features/collectionToCollectionSlice'
+import { selectCollectionId } from '../../../redux/features/navSlice'
 
 interface CollectionViewProps {
     collectionId?: number | string,
@@ -28,37 +29,40 @@ const clientItemsLimit = 100
 const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
     const dispatch = useAppDispatch()
 
-    const collectionId: number = 0 // 0 is the root collection (seeded on Rust lib init)
+    const collectionId = useAppSelector(selectCollectionId)
 
     // @TODO: List collections in this collection view in addition to sources/contents
     // const collections = useAppSelector(collectionsSelectors.selectAll)
     const collection = useAppSelector(s => collectionsSelectors.selectById(s, collectionId))
-    const nestedCollectionIds = useAppSelector(s => collectionToCollectionSelectors.selectAll(s)).filter(cToC => cToC.collection_parent_id === collectionId).map(ncm => ncm.collection_inside_id)
-    const nestedCollections = useAppSelector(s => collectionsSelectors.selectAll(s).filter(c => nestedCollectionIds.includes(c.id)))
+    // const nestedCollectionIds = useAppSelector(selectNestedCollectionIds)
+    // const nestedCollectionIds = useAppSelector(s => collectionToCollectionSelectors.selectAll(s)).filter(cToC => cToC.collection_parent_id === collectionId).map(ncm => ncm.collection_inside_id)
+    const nestedCollections = useAppSelector(selectNestedCollections)
+    // const nestedCollections = useAppSelector(s => collectionsSelectors.selectAll(s).filter(c => nestedCollectionIds.includes(c.id)))
     const collectionSettings = useAppSelector(s => collectionSettingsSelectors.selectById(s, collectionId))
     const sources = useAppSelector(sourcesSelectors.selectAll)
     const contents = useAppSelector(contentsSelectors.selectAll).slice(0, clientItemsLimit)
 
     const title = customize ? 'edit' : 'hi'
 
-    console.log('collection', collection)
-    console.log('collection settings', collectionSettings)
-    console.log('nested collections', nestedCollections)
+    // console.log('collection', collection)
+    // console.log('collection settings', collectionSettings)
+    // console.log('nested collections', nestedCollections)
     
     useEffect(() => {
         // TODO: Replace with fetch_sources_of_collection, with default id as 0 (top-level/all)
         dispatch(fetchCollection([collectionId]))
         dispatch(fetchSourcesOfCollection([collectionId]))
-        dispatch(fetchNestedCollections([collectionId]))
     }, [dispatch])
 
     useEffect(() => {
-        // console.log('source ids in use effect', sources)
+        dispatch(fetchNestedCollections([collectionId]))
+    }, [collection])
+
+    useEffect(() => {
         dispatch(fetchContent())
     }, [sources])
 
     useEffect(() => {
-        // console.log('contents for given sources in view', contents)
     }, [contents])
 
     useEffect(() => {

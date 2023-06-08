@@ -6,6 +6,7 @@ import { contentBodiesReducer } from './features/contentBodiesSlice'
 import { sourcesReducer } from './features/sourcesSlice'
 import { themeReducer } from './features/themeSlice'
 import { collectionToCollectionReducer } from './features/collectionToCollectionSlice'
+import { navReducer } from './features/navSlice'
 
 export default combineReducers({
     collections: collectionsReducer,
@@ -14,5 +15,6 @@ export default combineReducers({
     sources: sourcesReducer,
     contents: contentsReducer,
     contentBodies: contentBodiesReducer,
+    nav: navReducer,
     theme: themeReducer
 })

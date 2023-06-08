@@ -2,6 +2,7 @@ import { createAsyncThunk, createEntityAdapter, createSelector, createSlice } fr
 import { invoke } from "@tauri-apps/api";
 import { CollectionToCollection } from "../../data/chirp-types";
 import { RootState } from "../store";
+import { selectCollectionId } from "./navSlice";
 
 export const fetchCollectionToCollection = createAsyncThunk(
     'collectionToCollection/fetchCollectionToCollection',
@@ -37,12 +38,31 @@ const collectionToCollectionSlice = createSlice({
 export const { setAllCollectionToCollection, addManyCollectionToCollection } = collectionToCollectionSlice.actions
 export const collectionToCollectionSelectors = collectionToCollectionAdapter.getSelectors<RootState>((state) => state.collectionToCollection)
 
-export const selectCollectionToCollectionParentIds = createSelector(
+/**
+ * Select the nested collection IDs within the current collection
+ */
+export const selectNestedCollectionIds = createSelector(
     // First, pass one or more "input selector" functions:
     collectionToCollectionSelectors.selectAll,
+    // State selector (in this case all state to use with other slice's selectors)
+    (s: RootState) => s,
     // Then, an "output selector" that receives all the input results as arguments
     // and returns a final result value
-    cToCs => cToCs.map(cToC => cToC.collection_parent_id)
+    (cToCs, s) => {
+        const currentCollectionId = selectCollectionId(s)
+        const nestedCollections = cToCs.filter(cToC => currentCollectionId === cToC.collection_parent_id)
+        const nestedCollectionIds: number[] = nestedCollections.map(cToC => cToC.collection_inside_id)
+
+        return nestedCollectionIds
+    }
 )
+
+// export const selectCollectionToCollectionParentIds = createSelector(
+//     // First, pass one or more "input selector" functions:
+//     collectionToCollectionSelectors.selectAll,
+//     // Then, an "output selector" that receives all the input results as arguments
+//     // and returns a final result value
+//     cToCs => cToCs.map(cToC => cToC.collection_parent_id)
+// )
 
 export const collectionToCollectionReducer = collectionToCollectionSlice.reducer

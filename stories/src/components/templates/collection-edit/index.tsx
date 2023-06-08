@@ -1,7 +1,8 @@
 import * as React from 'react'
 import { useEffect, useState } from 'react'
 import { SourceDto } from '../../../data/chirp-types'
-import { addNewCollection, collectionsSelectors, fetchNestedCollections, NewCollection } from '../../../redux/features/collectionsSlice'
+import { addNewCollection, collectionsSelectors, fetchNestedCollections, NewCollection, selectNestedCollections } from '../../../redux/features/collectionsSlice'
+import { selectCollectionId } from '../../../redux/features/navSlice'
 import { addSourceToCollection, fetchSourcesOfCollection, removeSources, sourcesSelectors } from '../../../redux/features/sourcesSlice'
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
 import { Button, buttonClassesHollow } from '../../atoms/button'
@@ -14,11 +15,12 @@ interface CollectionEditViewProps {
 
 const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
     const dispatch = useAppDispatch()
-    const collectionId = 0 // TODO: Change collection id as collection is selected
+    const collectionId = useAppSelector(selectCollectionId)
     
     const [newCollectionName, setNewCollectionName] = useState<string>('')
     const [newCollectionMessage, setNewCollectionMessage] = useState<[string, boolean]>(['', false])
     const collection = useAppSelector(s => collectionsSelectors.selectById(s, collectionId))
+    const nestedCollections = useAppSelector(selectNestedCollections)
     
     const [selectedSourceIds, setSelectedSourceIds] = useState<number[]>([])
     const [sourceUrlEntry, setSourceUrlEntry] = useState<string>('')
@@ -110,7 +112,18 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
         </div>
     ))
 
-    const nestedCollectionList = []
+    console.log('nested collections', nestedCollections)
+    const nestedCollectionList = nestedCollections.sort((cA, cB) => (cA.name || '').localeCompare(cB.name || '')).map(c => (
+        <div className="select-none" key={c.id}>
+            <input className="hidden" type="checkbox" id={c.id.toString()} name={c.id.toString()} onChange={e => console.error('selecting collections not supported')} />
+            <label htmlFor={c.id.toString()} className={`block p-2 p2-3 px-2 -mt-2 -ml-2 -mr-2 max-w-none rounded-md ${sourceChecked(c.id) ? 'bg-yellow-200' : ''}`}>
+                <h3 className={`${sourceChecked(c.id) ? 'text-gray-900' : 'text-current'}`}>{c.name}</h3>
+                {/* <p className={`${sourceChecked(c.id) ? 'text-gray-900' : 'text-current'} opacity-30`} title={`ID ${c.id}`}><span className={`font-bold ${kindClass(c.kind)}`}>{c.kind}&nbsp;</span>{c.url}</p> */}
+                {/* <p className="text-gray-900 opacity-30 mix-blend-multiply" title={`ID ${s.id}`}><span className={`font-bold ${kindClass(s.kind)}`}>{s.kind}&nbsp;</span>{s.url}</p> */}
+                {/* <p className="text-gray-300" title={`ID ${s.id}`}><span className="font-bold">{s.kind}&nbsp;</span>{s.url}</p> */}
+            </label>
+        </div>
+    ))
 
     const showContextActions: boolean = !!selectedSourceIds.length
 
@@ -118,7 +131,6 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
         <>
             <div className="collection max-w-xl w-full h-min-content">
                 <h1 className="text-4xl font-semibold mb-24">Sources of <span className="text-yellow-500">{collection?.name}</span> Collection</h1>
-                {addCollection}
                 {addSource}
                 {
                     sourceList?.length && (
@@ -130,12 +142,13 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
                         </>
                     ) || null
                 }
+                {addCollection}
                 {
                     nestedCollectionList?.length && (
                         <>
                             <h2 className='text-2xl font-semibold'>Collections inside {collection?.name}</h2>
                             <div className='mb-10'>
-                                {/* Collections go here */}
+                                {nestedCollectionList}
                             </div>
                         </>
                     ) || null

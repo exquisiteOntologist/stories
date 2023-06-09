@@ -57,7 +57,7 @@ export const addSourceToCollection: AsyncThunk<boolean, SourceForCollection, {}>
                 throw new Error("failed to add source!");
             }
     
-            dispatch(upsertSources([source] as SourceDto[]))
+            await dispatch(fetchCollectionToSource([sourceForCollection.collectionId]))
             return true
         } catch (e) {
             console.error('failed to add source', e)

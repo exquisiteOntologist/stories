@@ -1,6 +1,6 @@
 use std::error::Error;
 
-use crate::db::{db_set_collection_settings, db_get_collection, db_get_collection_settings, db_collection_add, db_get_collection_to_collection, db_get_collection_to_source};
+use crate::db::{db_set_collection_settings, db_get_collection, db_get_collection_settings, db_collection_add, db_get_collection_to_collection, db_get_collection_to_source, db_collection_rename};
 use crate::entities::{Collection, CollectionToCollection, CollectionToSource};
 use crate::{entities::CollectionSettings};
 
@@ -10,6 +10,10 @@ pub fn collection_get(collection_ids: &Vec<i32>) -> Result<Vec<Collection>, Box<
 
 pub fn collection_add(c_name: &String, c_parent_id: &i32) -> Result<(), Box<dyn Error>> {
     db_collection_add(c_name, c_parent_id)
+}
+
+pub fn collection_rename(collection_id: &i32, name: &String) -> Result<(), Box<dyn Error>> {
+    db_collection_rename(collection_id, name)
 }
 
 pub fn collection_settings_get(collection_ids: &Vec<i32>) -> Result<Vec<CollectionSettings>, Box<dyn Error>> {

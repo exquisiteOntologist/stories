@@ -60,6 +60,28 @@ export const addNewCollection = createAsyncThunk(
     }
 )
 
+export interface RenameCollection {
+    collectionId: number,
+    name: string
+}
+
+export const renameCollection = createAsyncThunk(
+    'collections/renameCollection',
+    async (rename: RenameCollection, { dispatch }) => {
+        try {
+            await invoke('rename_collection', {
+                ...rename
+            })
+        
+            await dispatch(fetchCollection([rename.collectionId]))
+            return true
+        } catch (e) {
+            console.error('Failed to rename collection', rename, e)
+            return false
+        }
+    }
+)
+
 const collectionsAdapter = createEntityAdapter<Collection>({
     selectId: (collection) => collection.id
 })

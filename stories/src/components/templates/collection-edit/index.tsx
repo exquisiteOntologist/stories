@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useEffect, useState } from 'react'
 import { SourceDto } from '../../../data/chirp-types'
-import { addNewCollection, collectionsSelectors, fetchCollection, fetchNestedCollections, NewCollection, selectNestedCollections } from '../../../redux/features/collectionsSlice'
+import { addNewCollection, collectionsSelectors, fetchCollection, fetchNestedCollections, NewCollection, selectNestedCollections, renameCollection, RenameCollection } from '../../../redux/features/collectionsSlice'
 import { collectionToSourceSelectors } from '../../../redux/features/collectionToSourceSlice'
 import { selectCollectionId } from '../../../redux/features/navSlice'
 import { addSourceToCollection, fetchSourcesOfCollection, removeSources, sourcesSelectors } from '../../../redux/features/sourcesSlice'
@@ -17,6 +17,9 @@ interface CollectionEditViewProps {
 const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
     const dispatch = useAppDispatch()
     const collectionId = useAppSelector(selectCollectionId)
+
+    const [renameCollectionName, setRenameCollectionName] = useState<string>('')
+    const [renameCollectionMessage, setRenameCollectionMessage] = useState<[string, boolean]>(['', false])
     
     const [newCollectionName, setNewCollectionName] = useState<string>('')
     const [newCollectionMessage, setNewCollectionMessage] = useState<[string, boolean]>(['', false])
@@ -40,6 +43,39 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
         dispatch(fetchSourcesOfCollection([collectionId]))
     }, [dispatch, collection, collectionToSources])
 
+    useEffect(() => {
+        setRenameCollectionName(collection?.name ?? renameCollectionName)
+    }, [collection])
+
+    // NOTE: Current collection name is this collection's name, & new collection name is for any collection being added new to this collection
+
+    const submitRenameCollection = async (e: React.FormEvent) => {
+        e.preventDefault()
+        setRenameCollectionMessage(['Renaming collection...', false])
+        const success = (await dispatch(renameCollection({collectionId: collectionId, name: renameCollectionName } as RenameCollection))).payload
+        console.log('rename success?', success)
+        setRenameCollectionMessage([`${success ? 'Finished renaming' : 'Failed to rename'} collection "${collectionId}"`, !success])
+        dispatch(fetchSourcesOfCollection([collectionId]))
+    }
+
+    const [renameCollectionMessageText, renameCollectionMessageError] = renameCollectionMessage
+
+    const renameCollectionSection = (
+        <div className="mb-10">
+            <h2 className="text-2xl font-semibold mb-2">Rename Collection</h2>
+            <form className="flex mb-2" onSubmit={submitRenameCollection}>
+                <input className='block border border-slate-400 rounded-md w-full mr-2 px-4 py-2 bg-transparent' type="text" placeholder="Collection Name" spellCheck="false" value={renameCollectionName} onChange={e => setRenameCollectionName(e.currentTarget.value)} />
+                <Button className={`${buttonClassesHollow} whitespace-nowrap`} action={() => {}} label="Add" disabled={!renameCollectionName}></Button>
+            </form>
+            {
+                renameCollectionMessageText
+                    ? (<p className={`${renameCollectionMessageError ? 'text-orange-700' : 'text-green-700'}`}>{renameCollectionMessageText}&nbsp;</p>)
+                    : <p>&nbsp;</p>
+                    // : (<p className="text-gray-300"><span className="font-semibold">Note:</span> The new collection will be nested within the current collection.</p>)
+            }
+        </div>
+    )
+
     const submitAddCollection = async (e: React.FormEvent) => {
         e.preventDefault()
         const success = (await dispatch(addNewCollection({
@@ -50,21 +86,7 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
         if (success) setNewCollectionName('')
     }
 
-    const submitAddToCollection = async (e: React.FormEvent) => {
-        e.preventDefault()
-        setAddSourceMessage(['Adding source...', false])
-        const success = (await dispatch(addSourceToCollection({collectionId: collectionId, sourceUrl: sourceUrlEntry, otherParam: otherParamEntry }))).payload
-        console.log('add source to collection after success', success)
-        setAddSourceMessage([`${success ? 'Finished adding' : 'Failed to add'} source "${sourceUrlEntry}"`, !success])
-        dispatch(fetchSourcesOfCollection([collectionId]))
-        if (success) {
-            setSourceUrlEntry('')
-            setOtherParamEntry('')
-        }
-    }
-
     const [newCollectionMessageText, newCollectionMessageError] = newCollectionMessage
-    const [addMessageText, addMessageWasError] = addSourceMessage
 
     const addCollection = (
         <div className="mb-10">
@@ -80,6 +102,21 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
             }
         </div>
     )
+
+    const submitAddToCollection = async (e: React.FormEvent) => {
+        e.preventDefault()
+        setAddSourceMessage(['Adding source...', false])
+        const success = (await dispatch(addSourceToCollection({collectionId: collectionId, sourceUrl: sourceUrlEntry, otherParam: otherParamEntry }))).payload
+        console.log('add source to collection after success', success)
+        setAddSourceMessage([`${success ? 'Finished adding' : 'Failed to add'} source "${sourceUrlEntry}"`, !success])
+        dispatch(fetchSourcesOfCollection([collectionId]))
+        if (success) {
+            setSourceUrlEntry('')
+            setOtherParamEntry('')
+        }
+    }
+
+    const [addMessageText, addMessageWasError] = addSourceMessage
 
     const addSource = (
         <div className="mb-10">
@@ -124,7 +161,7 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
         </div>
     ))
 
-    console.log('nested collections', nestedCollections)
+    // console.log('nested collections', nestedCollections)
     const nestedCollectionList = nestedCollections.sort((cA, cB) => (cA.name || '').localeCompare(cB.name || '')).map(c => (
         <div className="select-none" key={c.id}>
             <input className="hidden" type="checkbox" id={c.id.toString()} name={c.id.toString()} onChange={e => console.error('selecting collections not supported')} />
@@ -139,7 +176,8 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
     return (
         <>
             <div className="collection max-w-xl w-full h-min-content">
-                <h1 className="text-4xl font-semibold mb-24">Sources of <span className="text-yellow-500">{collection?.name}</span> Collection</h1>
+                <h1 className="text-4xl font-semibold mb-24">Material of <span className="text-yellow-500">{collection?.name}</span> Collection</h1>
+                {renameCollectionSection}               
                 {addSource}
                 <>
                     <h2 className='text-2xl font-semibold mb-2'><span className="text-green-500">{sourceList?.length}</span> Sources</h2>

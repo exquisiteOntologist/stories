@@ -12,6 +12,17 @@ pub fn add_collection(c_name: String, c_parent_id: i32) -> Result<(), String> {
 }
 
 #[tauri::command]
+pub fn rename_collection(collection_id: i32, name: String) -> Result<(), String> {
+    let c_res = chirp::actions::collections::collection_rename(&collection_id, &name);
+
+    if c_res.is_err() {
+        return Err(format!("Cannot change collection {collection_id} name").into());
+    }
+
+    Ok(())
+}
+
+#[tauri::command]
 pub fn get_collection(collection_ids: Vec<i32>) -> Result<Vec<chirp::entities::Collection>, String> {
     let c = chirp::actions::collections::collection_get(&collection_ids).unwrap();
 

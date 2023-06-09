@@ -98,6 +98,25 @@ pub fn db_collection_add(c_name: &String, c_parent_id: &i32) -> Result<(), Box<d
 	Ok(())
 }
 
+pub fn db_collection_rename(collection_id: &i32, name: &String) -> Result<(), Box<dyn Error>> {
+    let conn = db_connect()?;
+
+    if let Err(e) = conn.execute(
+        "UPDATE collection 
+            SET name = ?1 
+            WHERE id = ?2;
+        ",
+        params![name, collection_id]
+    ) {
+        println!("Error adding collection {:?}", e);
+        return Err(e.into());
+    };
+
+	_ = conn.close();
+
+	Ok(())
+}
+
 pub fn db_get_collection(collection_ids: &Vec<i32>) -> Result<Vec<Collection>, Box<dyn Error>> {
     let conn: Connection = db_connect()?;
 	load_rarray_table(&conn)?;

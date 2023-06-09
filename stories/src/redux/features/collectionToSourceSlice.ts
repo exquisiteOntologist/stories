@@ -12,7 +12,7 @@ export const fetchCollectionToSource = createAsyncThunk(
                 collectionIds: collectionIds
             })
 
-            console.log('received C to S items:', collectionIds, collectionToSourceItems)
+            // console.log('received C to S items:', collectionIds, collectionToSourceItems)
         
             await dispatch(upsertCollectionToSource(collectionToSourceItems as CollectionToSource[]))
             await dispatch(fetchSourcesOfCollection(collectionIds))

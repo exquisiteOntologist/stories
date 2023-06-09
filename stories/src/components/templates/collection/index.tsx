@@ -2,7 +2,7 @@ import * as React from 'react'
 import { useEffect } from 'react'
 import ListingsContainer from '../../molecules/listings/listings-container'
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
-import { contentsSelectors, fetchContent } from '../../../redux/features/contentsSlice'
+import { fetchContent, selectContentOfCollection } from '../../../redux/features/contentsSlice'
 import { ListingRow } from '../../molecules/listings/row'
 import { fetchSourcesOfCollection, sourcesSelectors } from '../../../redux/features/sourcesSlice'
 import { ListingCard } from '../../molecules/listings/card'
@@ -14,9 +14,9 @@ import { IconAddCircle } from '../../atoms/icons/add-circle'
 import { IconShapes } from '../../atoms/icons/shapes'
 import { IconTickCircle } from '../../atoms/icons/tick-circle'
 import { collectionsSelectors, fetchCollection, fetchNestedCollections, selectNestedCollections } from '../../../redux/features/collectionsSlice'
-import { collectionSettingsSelectors, fetchCollectionSettings, setCollectionSettings } from '../../../redux/features/collectionSettingsSlice'
+import { collectionSettingsSelectors, setCollectionSettings } from '../../../redux/features/collectionSettingsSlice'
 import { Collection, CollectionSettings, SettingsLayout } from '../../../data/chirp-types'
-import { chooseCollection, selectCollectionId, selectHistory as selectHistoryIds, selectPriorCollId } from '../../../redux/features/navSlice'
+import { chooseCollection, selectCollectionId, selectHistory as selectHistoryIds } from '../../../redux/features/navSlice'
 import { collectionToSourceSelectors } from '../../../redux/features/collectionToSourceSlice'
 
 interface CollectionViewProps {
@@ -24,7 +24,7 @@ interface CollectionViewProps {
     customize?: boolean
 }
 
-const clientItemsLimit = 100
+const clientItemsLimit: number = 100
 
 const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
     const dispatch = useAppDispatch()
@@ -35,16 +35,15 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
     const submergeHistoryItems = useAppSelector(s => submergeHistoryIds.map(id => collectionsSelectors.selectById(s, id))).filter(x => typeof x !== 'undefined') as Collection[]
     const nestedCollections = useAppSelector(selectNestedCollections)
     const collectionSettings = useAppSelector(s => collectionSettingsSelectors.selectById(s, collectionId))
-    const collectionToSources = useAppSelector(collectionToSourceSelectors.selectAll)
     const sources = useAppSelector(sourcesSelectors.selectAll)
-    const contents = useAppSelector(contentsSelectors.selectAll).slice(0, clientItemsLimit)
+    const contents = useAppSelector(selectContentOfCollection).slice(0, clientItemsLimit)
 
     const title = customize ? 'edit' : 'hi'
 
     // console.log('collection', collectionId, collection)
     // console.log('collection settings', collectionSettings)
     // console.log('nested collections', nestedCollections)
-    console.log('collection to source maps', collectionToSources)
+    // console.log('collection to source maps', collectionToSources)
     
     useEffect(() => {
         dispatch(fetchCollection([collectionId]))

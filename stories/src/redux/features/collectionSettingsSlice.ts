@@ -10,7 +10,7 @@ export const fetchCollectionSettings = createAsyncThunk(
             collectionIds: collection_ids
         })
 
-        console.log('new settings', collection_ids, collectionSettings)
+        // console.log('new settings', collection_ids, collectionSettings)
 
         dispatch(upsertCollectionSettings(collectionSettings as CollectionSettings[]))
     }

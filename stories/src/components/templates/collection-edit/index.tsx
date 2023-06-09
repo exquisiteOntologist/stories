@@ -65,7 +65,7 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
             <h2 className="text-2xl font-semibold mb-2">Rename Collection</h2>
             <form className="flex mb-2" onSubmit={submitRenameCollection}>
                 <input className='block border border-slate-400 rounded-md w-full mr-2 px-4 py-2 bg-transparent' type="text" placeholder="Collection Name" spellCheck="false" value={renameCollectionName} onChange={e => setRenameCollectionName(e.currentTarget.value)} />
-                <Button className={`${buttonClassesHollow} whitespace-nowrap`} action={() => {}} label="Add" disabled={!renameCollectionName}></Button>
+                <Button className={`${buttonClassesHollow} whitespace-nowrap`} action={() => {}} label="Rename" disabled={!renameCollectionName}></Button>
             </form>
             {
                 renameCollectionMessageText

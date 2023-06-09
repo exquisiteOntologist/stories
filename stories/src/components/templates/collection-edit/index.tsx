@@ -181,18 +181,11 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
                 {addSource}
                 <>
                     <h2 className='text-2xl font-semibold mb-2'><span className="text-green-500">{sourceList?.length}</span> Sources</h2>
-                    <div className='mb-10'>
+                    <div className='mb-5'>
                         {sourceList}
                     </div>
                 </>
-                {addCollection}
-                <>
-                    <h2 className='text-2xl font-semibold mb-2'><span className="text-blue-500">{nestedCollectionList.length}</span> Collections</h2>
-                    <div className='mb-10'>
-                        {nestedCollectionList}
-                    </div>
-                </>
-                <div className={`flex justify-center transition-all duration-0 ${showContextActions ? 'opacity-1' : 'opacity-0'}`}>
+                <div className={`flex justify-center my-5 transition-all duration-0 ${showContextActions ? 'opacity-1' : 'opacity-0'}`}>
                     {/* <Button 
                         Icon={IconShapes}
                         action={() => void 8}
@@ -206,6 +199,13 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
                         }))}
                     />
                 </div>
+                {addCollection}
+                <>
+                    <h2 className='text-2xl font-semibold mb-2'><span className="text-blue-500">{nestedCollectionList.length}</span> Collections</h2>
+                    <div className='mb-10'>
+                        {nestedCollectionList}
+                    </div>
+                </>
             </div>
         </>
     )

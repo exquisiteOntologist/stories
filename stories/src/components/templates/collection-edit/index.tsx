@@ -4,11 +4,11 @@ import { SourceDto } from '../../../data/chirp-types'
 import { addNewCollection, collectionsSelectors, fetchCollection, fetchNestedCollections, NewCollection, selectNestedCollections, renameCollection, RenameCollection } from '../../../redux/features/collectionsSlice'
 import { collectionToSourceSelectors } from '../../../redux/features/collectionToSourceSlice'
 import { selectCollectionId } from '../../../redux/features/navSlice'
-import { addSourceToCollection, fetchSourcesOfCollection, removeSources, sourcesSelectors } from '../../../redux/features/sourcesSlice'
+import { addSourceToCollection, fetchSourcesOfCollection, removeSources, selectNestedSources, sourcesSelectors } from '../../../redux/features/sourcesSlice'
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
 import { Button, buttonClassesHollow } from '../../atoms/button'
 import { IconRemove } from '../../atoms/icons/remove'
-import { IconShapes } from '../../atoms/icons/shapes'
+import { ListActionBar } from '../../molecules/list-action-bar'
 
 interface CollectionEditViewProps {
     collectionId?: number | string
@@ -31,7 +31,7 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
     const [otherParamEntry, setOtherParamEntry] = useState<string>('')
     const [addSourceMessage, setAddSourceMessage] = useState<[string, boolean]>(['', false])
     const collectionToSources = useAppSelector(collectionToSourceSelectors.selectAll)
-    const sources = useAppSelector(sourcesSelectors.selectAll)
+    const sources = useAppSelector(selectNestedSources)
 
     useEffect(() => {
         dispatch(fetchCollection([collectionId]))
@@ -173,6 +173,8 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
 
     const showContextActions: boolean = !!selectedSourceIds.length
 
+    const clearSelection = () => setSelectedSourceIds([])
+
     return (
         <>
             <div className="collection max-w-xl w-full h-min-content">
@@ -184,21 +186,18 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
                     <div className='mb-5'>
                         {sourceList}
                     </div>
-                </>
-                <div className={`flex justify-center my-5 transition-all duration-0 ${showContextActions ? 'opacity-1' : 'opacity-0'}`}>
-                    {/* <Button 
-                        Icon={IconShapes}
-                        action={() => void 8}
-                        disabled={true}
-                    /> */}
-                    <Button 
-                        Icon={IconRemove}
-                        action={() => dispatch(removeSources({
-                            collectionId: collectionId,
-                            sourceIds: selectedSourceIds
-                        }))}
+                    <ListActionBar
+                        show={showContextActions}
+                        deleteAction={async () => {
+                            await dispatch(removeSources({
+                                collectionId: collectionId,
+                                sourceIds: selectedSourceIds
+                            }))
+
+                            clearSelection()
+                        }}
                     />
-                </div>
+                </>
                 {addCollection}
                 <>
                     <h2 className='text-2xl font-semibold mb-2'><span className="text-blue-500">{nestedCollectionList.length}</span> Collections</h2>

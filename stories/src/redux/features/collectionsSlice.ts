@@ -102,7 +102,7 @@ export const { setAllCollections, addCollections, updateCollections, upsertColle
 export const collectionsSelectors = collectionsAdapter.getSelectors<RootState>((state) => state.collections)
 
 /**
- * Select the nested collection IDs within the current collection
+ * Select the nested collections within the current collection
  */
 export const selectNestedCollections = createSelector(
     // First, pass one or more "input selector" functions:

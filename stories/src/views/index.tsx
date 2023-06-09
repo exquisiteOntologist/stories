@@ -24,21 +24,24 @@ const AppPageInner = () => {
 
   return (
     <Location>
-      {({ location }) => (
-        <main className="w-screen flex flex-col min-h-screen overscroll-none transition-all duration-1000" style={elMainStyle}>
-          <AppHeader location={location} />
-          <Router location={location} className={routerClassNames}>
-              {/* <NotFound default /> */}
-              {/* <CollectionView default /> */}
-              <CollectionView path="/" />
-              <CollectionView path="/customize" customize={true} />
-              <CollectionEditView path="/edit" />
-              {/* <CollectionEditView path="/:collectionId/edit" /> */}
-              <ReaderView path="/reader/:contentId" />
-              {/* <CollectionView path="/:collectionId" /> */}
-          </Router>
-        </main>
-      )}
+      {({ location }) => {
+        scrollTo(0,0) // because router primary={true} scrolls down from top to nested path component
+        return (
+          <main className="w-screen flex flex-col min-h-screen overscroll-none transition-all duration-1000" style={elMainStyle}>
+            <AppHeader location={location} />
+            <Router location={location} className={routerClassNames} primary={false}>
+                {/* <NotFound default /> */}
+                {/* <CollectionView default /> */}
+                <CollectionView path="/" />
+                <CollectionView path="/customize" customize={true} />
+                <CollectionEditView path="/edit" />
+                {/* <CollectionEditView path="/:collectionId/edit" /> */}
+                <ReaderView path="/reader/:contentId" />
+                {/* <CollectionView path="/:collectionId" /> */}
+            </Router>
+          </main>
+        )
+      }}
     </Location>
   )
 }

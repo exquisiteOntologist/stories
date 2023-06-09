@@ -1,8 +1,8 @@
 use std::{error::Error, rc::Rc};
-use rusqlite::{Params, Statement, Connection, types::Value};
+use rusqlite::{Params, Statement, Connection, types::Value, params};
 
 use crate::entities::{Source, SourceKind, select_source_kind};
-use super::{db_connect, db_retrievals_outdated_sources};
+use super::{db_connect, db_retrievals_outdated_sources, load_rarray_table};
 
 pub fn db_map_sources_query<P: Params>(s: &mut Statement, p: P) -> Result<Vec<Source>, Box<dyn Error>> {
 	// assumes used a SELECT *
@@ -30,13 +30,27 @@ pub fn db_sources_retrieve() -> Result<Vec<Source>, Box<dyn Error>> {
 	Ok(sources)
 }
 
+pub fn db_sources_of_collections_retrieve(collection_ids: &Vec<i32>) -> Result<Vec<Source>, Box<dyn Error>> {
+	let conn: Connection = db_connect()?;
+	load_rarray_table(&conn)?;
+	let c_id_values = Rc::new(collection_ids.to_owned().into_iter().map(Value::from).collect::<Vec<Value>>());
+	let mut sources_query: Statement = conn.prepare(
+		"SELECT * FROM source 
+			WHERE id IN ((SELECT source_id FROM collection_to_source WHERE collection_id in (SELECT * FROM rarray(?1)))) 
+			LIMIT 2000"
+	)?;
+	let sources = db_map_sources_query(&mut sources_query, params![c_id_values])?;
+
+	Ok(sources)
+}
+
 pub fn db_sources_retrieve_outdated() -> Result<Vec<Source>, Box<dyn Error>> {
 	let sources = db_retrievals_outdated_sources()?;
 
 	Ok(sources)
 }
 
-pub fn db_source_add(source: &Source) -> Result<(), Box<dyn Error>> {
+pub fn db_source_add(source: &Source, collection_id: &i32) -> Result<(), Box<dyn Error>> {
 	let source_kind = match source.kind {
         SourceKind::RSS => 0,
         SourceKind::WEB => 1
@@ -47,6 +61,11 @@ pub fn db_source_add(source: &Source) -> Result<(), Box<dyn Error>> {
 		"INSERT INTO source (name, url, site_url, kind) VALUES (?1, ?2, ?3, ?4) 
 			ON CONFLICT DO NOTHING",
 		(&source.name, &source.url, &source.site_url, &source_kind),
+	)?;
+	conn.execute(
+		"INSERT INTO collection_to_source (collection_id, source_id) 
+			VALUES (?1, (SELECT id FROM source ORDER BY id DESC LIMIT 1))",
+		params![collection_id]
 	)?;
 	_ = conn.close();
 

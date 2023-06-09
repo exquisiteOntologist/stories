@@ -4,7 +4,7 @@ use crate::db::{db_source_add, db_content_add, db_source_get_id, db_source_retri
 use crate::entities::{FullContent, Source};
 use crate::feed::feed_fetch;
 
-pub async fn source_add_action(args: Vec<String>) -> Result<(), Box<dyn Error>> {
+pub async fn source_add_cli(args: Vec<String>) -> Result<(), Box<dyn Error>> {
     if args.len() < 3 {
         println!("When using \"add\" you also need to provide a source URL");
         return Ok(());
@@ -17,12 +17,12 @@ pub async fn source_add_action(args: Vec<String>) -> Result<(), Box<dyn Error>> 
         other_param = &args[3];
     };
 
-    source_add(url, other_param).await?;
+    source_add(url, other_param, &0).await?;
 
     Ok(())
 }
 
-pub async fn source_add(url: &String, other_param: &String) -> Result<Source, Box<dyn Error>> {
+pub async fn source_add(url: &String, other_param: &String, collection_id: &i32) -> Result<Source, Box<dyn Error>> {
     println!("Adding source \"{}\"", url);
 
     let feed_result = feed_fetch(0, url.to_owned(), &other_param).await;
@@ -34,7 +34,7 @@ pub async fn source_add(url: &String, other_param: &String) -> Result<Source, Bo
 
     let (source, feed_contents) = feed_result.unwrap();
 
-    db_source_add(&source)?;
+    db_source_add(&source, collection_id)?;
     
     let source_id_res = db_source_get_id(&source);
     if source_id_res.is_err() {

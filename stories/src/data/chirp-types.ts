@@ -19,6 +19,16 @@ export interface CollectionWidget {
 	widget: string;
 }
 
+export interface CollectionToCollection {
+	collection_parent_id: number;
+	collection_inside_id: number;
+}
+
+export interface CollectionToSource {
+	collection_id: number;
+	source_id: number;
+}
+
 export enum SourceKind {
 	RSS = "RSS",
 	WEB = "WEB",

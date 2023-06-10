@@ -7,7 +7,7 @@ import { ListingRow } from '../../molecules/listings/row'
 import { fetchSourcesOfCollection, sourcesSelectors } from '../../../redux/features/sourcesSlice'
 import { ListingCard } from '../../molecules/listings/card'
 import { resetThemeColours } from '../../../redux/features/themeSlice'
-import { Button } from '../../atoms/button'
+import { Button, buttonClassesHollow } from '../../atoms/button'
 import { IconGrid } from '../../atoms/icons/grid'
 import { IconList } from '../../atoms/icons/list'
 import { IconAddCircle } from '../../atoms/icons/add-circle'
@@ -17,7 +17,6 @@ import { collectionsSelectors, fetchCollection, fetchNestedCollections, selectNe
 import { collectionSettingsSelectors, setCollectionSettings } from '../../../redux/features/collectionSettingsSlice'
 import { Collection, CollectionSettings, SettingsLayout } from '../../../data/chirp-types'
 import { chooseCollection, selectCollectionId, selectHistory as selectHistoryIds } from '../../../redux/features/navSlice'
-import { collectionToSourceSelectors } from '../../../redux/features/collectionToSourceSlice'
 
 interface CollectionViewProps {
     collectionId?: number | string,
@@ -103,7 +102,17 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
         </div>
     )
 
-    const nestedCollectionsRows = nestedCollections.map(nCollection => (
+    const emptyCollectionMessage = (!nestedCollections.length && !contents.length) && (
+        <div>
+            <h3 className='text-2xl font-semibold mb-2 text-current'>Add Something to <span className="text-yellow-500">{collection?.name}</span>?</h3>
+            <p className="text-current mb-6">This collection is empty. There are no sources &amp; no nested collections.</p>
+            <div className="flex">
+                <Button className={`${buttonClassesHollow} whitespace-nowrap`} linkTo="/edit" label="Edit Sources"></Button>
+            </div>
+        </div>
+    )
+
+    const nestedCollectionsRows = nestedCollections.map((nCollection) => (
         <ListingRow
             key={nCollection.id}
             id={nCollection.id}
@@ -154,12 +163,13 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
                     </h2>
                 </hgroup>
                 {collectionEditor}
+                {emptyCollectionMessage}
                 {
-                    nestedCollectionsRows.length ? (
+                    nestedCollectionsRows.length && (
                         <div className="grid grid-cols-3 mb-12">
                             {nestedCollectionsRows}
                         </div>
-                    ) : null
+                    )
                 }
                 {
                     viewIsList

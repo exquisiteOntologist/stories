@@ -21,7 +21,7 @@ export const Button: React.FC<ButtonProps> = ({ className, label, Icon, linkTo, 
 
     const classNames: string[] = [
         'flex items-center relative',
-        disabled ? '' : 'cursor-pointer',
+        disabled ? 'cursor-default pointer-events-none' : 'cursor-pointer',
         'select-none',
         usePadding ? buttonClassesPadding : '',
         'rounded-md contrast-200', // brightness-150 contrast-200

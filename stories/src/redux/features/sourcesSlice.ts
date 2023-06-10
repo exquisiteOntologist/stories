@@ -1,7 +1,8 @@
-import { AsyncThunk, createAsyncThunk, createEntityAdapter, createSlice } from "@reduxjs/toolkit";
+import { AsyncThunk, createAsyncThunk, createEntityAdapter, createSelector, createSlice } from "@reduxjs/toolkit";
 import { invoke } from "@tauri-apps/api";
 import { SourceDto } from "../../data/chirp-types";
 import { RootState } from "../store";
+import { fetchCollectionToSource, removeCollectionToSource, selectNestedSourceIds } from "./collectionToSourceSlice";
 
 // /**
 //  * Fetch sources.
@@ -56,7 +57,7 @@ export const addSourceToCollection: AsyncThunk<boolean, SourceForCollection, {}>
                 throw new Error("failed to add source!");
             }
     
-            dispatch(upsertSources([source] as SourceDto[]))
+            await dispatch(fetchCollectionToSource([sourceForCollection.collectionId]))
             return true
         } catch (e) {
             console.error('failed to add source', e)
@@ -76,7 +77,8 @@ export const removeSources: AsyncThunk<boolean, RemoveSources, {}> = createAsync
     async (rmSources: RemoveSources, { dispatch }) => {
         try {
             await invoke('remove_sources', {...rmSources})
-            dispatch(fetchSourcesOfCollection([rmSources.collectionId]))
+            await dispatch(removeCollectionToSource(rmSources.sourceIds))
+            await dispatch(fetchCollectionToSource([rmSources.collectionId]))
             return true
         } catch (e) {
             console.error('failed to remove sources', e)
@@ -101,5 +103,23 @@ const sourcesSlice = createSlice({
 
 export const { setAllSources, upsertSources } = sourcesSlice.actions
 export const sourcesSelectors = sourcesAdapter.getSelectors<RootState>((state) => state.sources)
+
+/**
+ * Select the nested sources within the current collection
+ */
+export const selectNestedSources = createSelector(
+    // First, pass one or more "input selector" functions:
+    sourcesSelectors.selectAll,
+    // State selector (in this case all state to use with other slice's selectors)
+    (s: RootState) => s,
+    // Then, an "output selector" that receives all the input results as arguments
+    // and returns a final result value
+    (sources, s) => {
+        const nestedSourceIds: number[] = selectNestedSourceIds(s)
+        const nestedSources: SourceDto[] = sources.filter(c => nestedSourceIds.includes(c.id))
+
+        return nestedSources
+    }
+)
 
 export const sourcesReducer = sourcesSlice.reducer

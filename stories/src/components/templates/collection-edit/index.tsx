@@ -4,7 +4,7 @@ import { SourceDto } from '../../../data/chirp-types'
 import { addNewCollection, collectionsSelectors, fetchCollection, fetchNestedCollections, NewCollection, selectNestedCollections, renameCollection, RenameCollection } from '../../../redux/features/collectionsSlice'
 import { collectionToSourceSelectors } from '../../../redux/features/collectionToSourceSlice'
 import { selectCollectionId } from '../../../redux/features/navSlice'
-import { addSourceToCollection, fetchSourcesOfCollection, removeSources, selectNestedSources, sourcesSelectors } from '../../../redux/features/sourcesSlice'
+import { addSourceToCollection, fetchSourcesOfCollection, removeSources, selectNestedSources } from '../../../redux/features/sourcesSlice'
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
 import { Button, buttonClassesHollow } from '../../atoms/button'
 import { ListActionBar } from '../../molecules/list-action-bar'
@@ -67,7 +67,6 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
                 renameCollectionMessageText
                     ? (<p className={`${renameCollectionMessageError ? 'text-orange-700' : 'text-green-700'}`}>{renameCollectionMessageText}&nbsp;</p>)
                     : <p>&nbsp;</p>
-                    // : (<p className="text-gray-300"><span className="font-semibold">Note:</span> The new collection will be nested within the current collection.</p>)
             }
         </div>
     )

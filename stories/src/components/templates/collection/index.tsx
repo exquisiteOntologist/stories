@@ -17,8 +17,6 @@ import { collectionsSelectors, fetchCollection, fetchNestedCollections, selectNe
 import { collectionSettingsSelectors, setCollectionSettings } from '../../../redux/features/collectionSettingsSlice'
 import { Collection, CollectionSettings, SettingsLayout } from '../../../data/chirp-types'
 import { chooseCollection, selectCollectionId, selectHistory as selectHistoryIds } from '../../../redux/features/navSlice'
-import { collectionToSourceSelectors } from '../../../redux/features/collectionToSourceSlice'
-import { Link } from '@reach/router'
 
 interface CollectionViewProps {
     collectionId?: number | string,
@@ -114,7 +112,7 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
         </div>
     )
 
-    const nestedCollectionsRows = nestedCollections.map(nCollection => (
+    const nestedCollectionsRows = nestedCollections.map((nCollection) => (
         <ListingRow
             key={nCollection.id}
             id={nCollection.id}
@@ -167,11 +165,11 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
                 {collectionEditor}
                 {emptyCollectionMessage}
                 {
-                    nestedCollectionsRows.length ? (
+                    nestedCollectionsRows.length && (
                         <div className="grid grid-cols-3 mb-12">
                             {nestedCollectionsRows}
                         </div>
-                    ) : null
+                    )
                 }
                 {
                     viewIsList

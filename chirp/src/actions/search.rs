@@ -1,6 +1,6 @@
 use std::{error::Error};
 use rusqlite::{Result};
-use crate::db::{db_search};
+use crate::{db::{db_search}, entities::SearchResultsDto};
 
 pub fn search_cli(args: Vec<String>) -> Result<(), Box<dyn Error>> {
     if args.len() < 3 {
@@ -27,4 +27,9 @@ pub fn search_cli(args: Vec<String>) -> Result<(), Box<dyn Error>> {
     println!("Use view {{Result ID}} to view ");
 
     Ok(())
+}
+
+pub fn search(search_phrase: &String) -> Result<SearchResultsDto, Box<dyn Error>> {
+    // eventually the interface may have additional fields
+    db_search(search_phrase)
 }

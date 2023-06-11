@@ -6,24 +6,24 @@ import { ListingsContainerContentProps } from './interfaces'
 
 export const ListingsContainerContent: React.FC<ListingsContainerContentProps> = ({view, contents, sources}) => (
     <ListingsContainer view={view}>
-        {view === 'CARDS' ? contents.map((content, cI) => (
-        <ListingCard
-            key={content.id}
-            id={content.id}
-            title={content.title}
-            linkUrl={content.url}
-            content={content}
-            source={sources?.find(s => s?.id == content.source_id)}
-        />
-    )) : contents.map((content, cI) => (
-        <ListingRow
-            key={content.id}
-            id={content.id}
-            title={content.title}
-            linkUrl={content.url}
-            content={content}
-            source={sources?.find(s => s?.id == content.source_id)}
-        />
-    ))}
+        {view === 'CARDS' ? contents.map((c, cI) => (
+            <ListingCard
+                key={c.id}
+                id={c.id}
+                title={c.title}
+                linkUrl={c.url}
+                content={c}
+                source={sources?.find(s => s?.id == c.source_id)}
+            />
+        )) : contents.map((c, cI) => (
+            <ListingRow
+                key={c.id}
+                id={c.id}
+                title={c.title}
+                linkUrl={c.url}
+                content={c}
+                source={sources?.find(s => s?.id == c.source_id)}
+            />
+        ))}
     </ListingsContainer>
 )

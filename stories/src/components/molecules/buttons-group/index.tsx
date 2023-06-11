@@ -13,6 +13,7 @@ export const ButtonsGroup: React.FC<ButtonGroupProps> = ({ children, className, 
             'group-hover:translate-x-0 group-hover:opacity-100',
             // note that sometimes it seems Tailwind doesn't add the duration classes in
             `transition ease-in-out`,
+            'pb-2'
         ]
 
         return buttonWrapperClassNames.join(' ');

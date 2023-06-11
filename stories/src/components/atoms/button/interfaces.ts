@@ -2,6 +2,7 @@ export interface ButtonProps {
     className?: string
     label?: string
     Icon?: React.FC
+    PopoverIcon?: React.FC
     /** For internal links */
     linkTo?: string
     /** For external links */

@@ -102,7 +102,7 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
         </div>
     )
 
-    const emptyCollectionMessage = (!nestedCollections.length && !contents.length) && (
+    const emptyCollectionMessage = (!nestedCollections.length && !contents.length) ? (
         <div>
             <h3 className='text-2xl font-semibold mb-2 text-current'>Add Something to <span className="text-yellow-500">{collection?.name}</span>?</h3>
             <p className="text-current mb-6">This collection is empty. There are no sources &amp; no nested collections.</p>
@@ -110,7 +110,7 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
                 <Button className={`${buttonClassesHollow} whitespace-nowrap`} linkTo="/edit" label="Edit Sources"></Button>
             </div>
         </div>
-    )
+    ) : null
 
     const nestedCollectionsRows = nestedCollections.map((nCollection) => (
         <ListingRow
@@ -165,11 +165,11 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
                 {collectionEditor}
                 {emptyCollectionMessage}
                 {
-                    nestedCollectionsRows.length && (
+                    nestedCollectionsRows.length ? (
                         <div className="grid grid-cols-3 mb-12">
                             {nestedCollectionsRows}
                         </div>
-                    )
+                    ) : null
                 }
                 {
                     viewIsList

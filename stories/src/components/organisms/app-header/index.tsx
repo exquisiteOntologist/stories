@@ -9,6 +9,7 @@ import { IconPaintRoller } from "../../atoms/icons/paint-roller";
 import { IconSearch } from "../../atoms/icons/search";
 import { IconShapes } from "../../atoms/icons/shapes";
 import { IconWidgets } from "../../atoms/icons/widgets";
+import { IconShortcutSearch } from '../../atoms/icons/shortcuts/shortcut-cmd-f'
 import { ShutEye } from "../../atoms/logo/shut-eye";
 import { ButtonsGroup } from "../../molecules/buttons-group";
 
@@ -54,12 +55,13 @@ const AppMenuActions: React.FC<AppHeaderProps> = ({location}) => (
             action={() => console.log('magic ID')}
             disabled={true}
         /> */}
-        {/* <Button
+        <Button
             Icon={IconSearch}
+            PopoverIcon={IconShortcutSearch}
             label="Search"
             action={() => console.log('search')}
-            disabled={true}
-        /> */}
+            disabled={false}
+        />
     </ButtonsGroup>
 )
 

@@ -3,7 +3,7 @@ use std::{error::Error};
 use rusqlite::Connection;
 use super::db_connect;
 
-pub fn db_search(user_query: &String) -> Result<(), Box<dyn Error>> {
+pub fn db_search(user_query: &String) -> Result<SearchResultsDto, Box<dyn Error>> {
     let conn = db_connect()?;
 
     let sources: Vec<Source> = db_search_sources(&conn, user_query)?;
@@ -11,11 +11,6 @@ pub fn db_search(user_query: &String) -> Result<(), Box<dyn Error>> {
     let contents: Vec<Content> = db_search_content(&conn, user_query)?;
     let contents_dtos: Vec<ContentDto> = contents.into_iter().map(content_to_dto).collect();
     let bodies: Vec<ContentBody> = db_search_content_body(&conn, user_query)?;
-
-    println!("sources {:?}", &sources_dtos.len());
-    println!("title {:?}", &contents_dtos.len());
-    println!("articles {:?}", &bodies.len());
-    print!("\n");
 
     _ = conn.close();
 
@@ -27,14 +22,7 @@ pub fn db_search(user_query: &String) -> Result<(), Box<dyn Error>> {
         bodies: bodies
     };
 
-    _ = &(results.sources).into_iter().for_each(|s| println!("source {:1}:     \"{:2}\"\n", s.id, s.name));
-    _ = &(results.contents).into_iter().for_each(|c| println!("title of {:1}:      \"{:2}\"\n", c.id, c.title));
-    _ = &(results.bodies).into_iter().for_each(|c| println!("article of {:1}\n", c.content_id));
-    
-    print!("\n");
-    println!("Use view {{Result ID}} to view ");
-
-    Ok(())
+    Ok(results)
 }
 
 pub fn db_search_sources(conn: &Connection, user_query: &String) -> Result<Vec<Source>, Box<dyn Error>> {

@@ -69,6 +69,14 @@ export interface ContentBody {
 	body_text: string;
 }
 
+export interface SearchResultsDto {
+	search_phrase: string;
+	collections: Collection[];
+	sources: SourceDto[];
+	contents: ContentDto[];
+	bodies: ContentBody[];
+}
+
 export enum SettingsLayout {
 	ROWS = "ROWS",
 	CARDS = "CARDS",

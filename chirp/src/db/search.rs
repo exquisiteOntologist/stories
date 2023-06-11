@@ -1,4 +1,4 @@
-use crate::{entities::{Content, Source, ContentBody}, db::{db_query_as_like, db_map_sources_query, db_query_as_like_exact, db_map_content_query, db_map_content_body_query}};
+use crate::{entities::{Content, Source, ContentBody, SearchResultsDto, SourceDto, ContentDto, source_to_dto, content_to_dto}, db::{db_query_as_like, db_map_sources_query, db_query_as_like_exact, db_map_content_query, db_map_content_body_query}};
 use std::{error::Error};
 use rusqlite::Connection;
 use super::db_connect;
@@ -6,23 +6,33 @@ use super::db_connect;
 pub fn db_search(user_query: &String) -> Result<(), Box<dyn Error>> {
     let conn = db_connect()?;
 
-    let sources = db_search_sources(&conn, user_query)?;
-    let content: Vec<Content> = db_search_content(&conn, user_query)?;
+    let sources: Vec<Source> = db_search_sources(&conn, user_query)?;
+    let sources_dtos: Vec<SourceDto> = sources.into_iter().map(source_to_dto).collect();
+    let contents: Vec<Content> = db_search_content(&conn, user_query)?;
+    let contents_dtos: Vec<ContentDto> = contents.into_iter().map(content_to_dto).collect();
     let bodies: Vec<ContentBody> = db_search_content_body(&conn, user_query)?;
 
-    println!("sources {:?}", sources.len());
-    println!("title {:?}", content.len());
-    println!("articles {:?}", bodies.len());
+    println!("sources {:?}", &sources_dtos.len());
+    println!("title {:?}", &contents_dtos.len());
+    println!("articles {:?}", &bodies.len());
     print!("\n");
 
-    sources.into_iter().for_each(|s| println!("source {:1}:     \"{:2}\"\n", s.id, s.name));
-    content.into_iter().for_each(|c| println!("title of {:1}:      \"{:2}\"\n", c.id, c.title));
-    bodies.into_iter().for_each(|c| println!("article of {:1}\n", c.content_id));
+    _ = conn.close();
+
+    let results = SearchResultsDto {
+        search_phrase: user_query.into(),
+        collections: vec![],
+        sources: sources_dtos,
+        contents: contents_dtos,
+        bodies: bodies
+    };
+
+    _ = &(results.sources).into_iter().for_each(|s| println!("source {:1}:     \"{:2}\"\n", s.id, s.name));
+    _ = &(results.contents).into_iter().for_each(|c| println!("title of {:1}:      \"{:2}\"\n", c.id, c.title));
+    _ = &(results.bodies).into_iter().for_each(|c| println!("article of {:1}\n", c.content_id));
     
     print!("\n");
     println!("Use view {{Result ID}} to view ");
-
-    _ = conn.close();
 
     Ok(())
 }

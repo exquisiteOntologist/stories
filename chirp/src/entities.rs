@@ -2,6 +2,9 @@ use chrono::{DateTime, Utc};
 use serde::{Serialize, Deserialize};
 use typeshare::typeshare;
 
+mod dto_maps;
+pub use dto_maps::*;
+
 #[derive(Debug)]
 #[derive(Clone)]
 #[typeshare]
@@ -193,7 +196,7 @@ pub struct WebPage {
 #[derive(Clone)]
 #[typeshare]
 #[derive(Serialize)]
-pub struct SearchResults {
+pub struct SearchResultsDto {
     pub search_phrase: String,
     pub collections: Vec<Collection>,
     pub sources: Vec<SourceDto>,

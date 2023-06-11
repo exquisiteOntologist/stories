@@ -1,5 +1,5 @@
-import { Link } from '@reach/router'
 import React from 'react'
+import { SourceLink } from '../source-link/source-link'
 import { ListingCardProps } from './interfaces'
 
 export const ListingCard: React.FC<ListingCardProps> = ({ title, linkUrl, content, source }) => {
@@ -19,26 +19,11 @@ export const ListingCard: React.FC<ListingCardProps> = ({ title, linkUrl, conten
         />
     ) : null
 
-    // const sourceLink = source && (
-    //     <a
-    //         className='block text-violet-100 group-hover:text-violet-600 transition-all duration-100'
-    //         href={source.siteUrl}
-    //         target="_blank"
-    //         style={{ color: source?.metaBrand?.colourPrimary }}
-    //     >
-    //         {source.title.split(' ').map((word, i) =>
-    //             <span key={i} className='inline-block first-letter:text-violet-200 group-hover:first-letter:text-violet-700'>
-    //                 {`${word}`}&nbsp;
-    //             </span>
-    //         )}
-    //     </a>
+    // const description = content && (
+    //     <span className='font-normal ml-6 text-gray-300'>
+    //         {/* {content?.description?.slice(0, 100)} */}
+    //     </span>
     // )
-
-    const description = content && (
-        <span className='font-normal ml-6 text-gray-300'>
-            {/* {content?.description?.slice(0, 100)} */}
-        </span>
-    )
 
     return (
         <article className='group flex flex-col text-center mb-6'>
@@ -52,7 +37,7 @@ export const ListingCard: React.FC<ListingCardProps> = ({ title, linkUrl, conten
                     {title}
                     {/* {description} */}
                 </a>
-                {/* {sourceLink} */}
+                <SourceLink source={source} isBlock={true} />
             </h1>
         </article>
     )

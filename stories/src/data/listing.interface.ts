@@ -1,4 +1,4 @@
-import { ContentDto } from "./chirp-types";
+import { ContentDto, SourceDto } from "./chirp-types";
 
 export interface Listing {
     id: string | number
@@ -6,5 +6,5 @@ export interface Listing {
     linkUrl?: string
     action?: () => any
     content?: ContentDto
-    source?: any
+    source?: SourceDto
 }

@@ -1,17 +1,18 @@
 import React from 'react'
+import { SourceLink } from '../source-link/source-link'
 import { ListingRowProps } from './interfaces'
 
 export const ListingRow: React.FC<ListingRowProps> = ({ title, linkUrl, action, content, source }) => {
-    const description = content && (
-        <span className='font-normal ml-6 text-gray-300'>
-            {/* {content?.description?.slice(0, 100)} */}
-        </span>
-    )
+    // const description = content && (
+    //     <span className='font-normal ml-6 text-gray-300'>
+    //         {/* {content?.description?.slice(0, 100)} */}
+    //     </span>
+    // )
 
     const actionInner = (
         <>
             {title}
-            {description}
+            {/* {description} */}
         </>
     )
 
@@ -28,8 +29,8 @@ export const ListingRow: React.FC<ListingRowProps> = ({ title, linkUrl, action, 
     return (
         <article className="relative group border-b border-gray-100">
             <h1 className="text-base mx-0 my-2">
-                {/* {sourceLink} */}
                 {titleInner}
+                <SourceLink source={source} isBlock={false} />
             </h1>
         </article>
     )

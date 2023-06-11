@@ -1,11 +1,9 @@
 import * as React from 'react'
 import { useEffect } from 'react'
-import ListingsContainer from '../../molecules/listings/listings-container'
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
 import { fetchContent, selectContentOfCollection } from '../../../redux/features/contentsSlice'
 import { ListingRow } from '../../molecules/listings/row'
 import { fetchSourcesOfCollection, sourcesSelectors } from '../../../redux/features/sourcesSlice'
-import { ListingCard } from '../../molecules/listings/card'
 import { resetThemeColours } from '../../../redux/features/themeSlice'
 import { Button, buttonClassesHollow } from '../../atoms/button'
 import { IconGrid } from '../../atoms/icons/grid'
@@ -17,6 +15,7 @@ import { collectionsSelectors, fetchCollection, fetchNestedCollections, selectNe
 import { collectionSettingsSelectors, setCollectionSettings } from '../../../redux/features/collectionSettingsSlice'
 import { Collection, CollectionSettings, SettingsLayout } from '../../../data/chirp-types'
 import { chooseCollection, selectCollectionId, selectHistory as selectHistoryIds } from '../../../redux/features/navSlice'
+import { ListingsContainerContent } from '../../molecules/listings/listings-container-content'
 
 interface CollectionViewProps {
     collectionId?: number | string,
@@ -121,28 +120,6 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
         />
     ))
 
-    const contentRows = contents.map((content, cI) => (
-        <ListingRow
-            key={content.id}
-            id={content.id}
-            title={content.title}
-            linkUrl={content.url}
-            content={content}
-            source={sources?.find(s => s?.id == content.source_id)}
-        />
-    ))
-
-    const contentCards = contents.map((content, cI) => (
-        <ListingCard
-            key={content.id}
-            id={content.id}
-            title={content.title}
-            linkUrl={content.url}
-            content={content}
-            source={sources?.find(s => s?.id == content.source_id)}
-        />
-    ))
-
     const historyItems = submergeHistoryItems.map(hi => {
         const last = collectionId === hi.id
         const colour = last ? 'text-yellow-500' : 'inherit'
@@ -171,18 +148,11 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
                         </div>
                     ) : null
                 }
-                {
-                    viewIsList
-                        ? (
-                            <ListingsContainer view='Rows'>
-                                {contentRows}
-                            </ListingsContainer>
-                        ) : (
-                            <ListingsContainer view='Cards'>
-                                {contentCards}
-                            </ListingsContainer>
-                        )
-                }
+                <ListingsContainerContent
+                    view={collectionSettings?.layout as SettingsLayout}
+                    contents={contents}
+                    sources={sources}
+                />
             </div>
         </>
     )

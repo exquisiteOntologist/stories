@@ -188,3 +188,15 @@ pub struct WebPage {
     pub body_text: String,
     pub cover_img: Option<String>
 }
+
+#[derive(Debug)]
+#[derive(Clone)]
+#[typeshare]
+#[derive(Serialize)]
+pub struct SearchResults {
+    pub search_phrase: String,
+    pub collections: Vec<Collection>,
+    pub sources: Vec<SourceDto>,
+    pub contents: Vec<ContentDto>,
+    pub bodies: Vec<ContentBody>
+}

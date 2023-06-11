@@ -23,7 +23,7 @@ pub async fn take_command() -> Result<(), Box<dyn Error>> {
         "content" => list_content_action(),
         "content-full" => list_content_full_action(),
         "update" => update_action().await,
-        "search" => search(args),
+        "search" => search_cli(args),
         "search_entity" => todo!(),
         "find_in_catalogue" => todo!(),
         "view" => view_content(args).await, // visit URL by C ID

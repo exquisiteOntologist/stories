@@ -77,3 +77,7 @@ h1 {
     }
 }
 
+input:focus,
+button:focus {
+    outline: none;
+}

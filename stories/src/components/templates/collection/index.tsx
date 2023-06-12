@@ -16,6 +16,7 @@ import { collectionSettingsSelectors, setCollectionSettings } from '../../../red
 import { Collection, CollectionSettings, SettingsLayout } from '../../../data/chirp-types'
 import { chooseCollection, selectCollectionId, selectHistory as selectHistoryIds } from '../../../redux/features/navSlice'
 import { ListingsContainerContent } from '../../molecules/listings/listings-container-content'
+import { IconSearch } from '../../atoms/icons/search'
 
 interface CollectionViewProps {
     collectionId?: number | string,
@@ -39,7 +40,7 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize, searchMode}) 
 
     const [searchPhrase, setSearchPhrase] = React.useState<string>('')
 
-    const title = customize ? 'edit' : (searchMode ? 'finding' : 'hi')
+    const title = customize ? 'edit' : (searchMode ? 'find' : 'hi')
 
     // console.log('collection', collectionId, collection)
     // console.log('collection settings', collectionSettings)
@@ -74,7 +75,7 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize, searchMode}) 
     const viewIsList = collectionSettings?.layout === SettingsLayout.ROWS
 
     const collectionEditor = (
-        <div className="mb-6">
+        <div className="">
             <div className={`flex justify-start transition-all duration-0 ${showCollectionEditor ? 'opacity-1' : 'opacity-0'}`}>
             <Button
                     label="Done"
@@ -107,11 +108,14 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize, searchMode}) 
     const submitSearch = (e: React.FormEvent) => e.preventDefault()
 
     const collectionSearcher = (
-        <div className={`mb-6 ${searchMode ? 'opacity-100' : 'opacity-0'}`}>
-            {/* <h2 className="text-2xl font-semibold mb-2">Search Collection</h2> */}
+        <div className={`${searchMode ? 'opacity-100' : 'opacity-0'} transition-opacity duration-150`}>
+            <h2 className="text-2xl font-semibold mb-2">Search {searchPhrase && (<span className="text-blue-500">&ldquo;{searchPhrase}&rdquo;</span>)}</h2>
             <form className="flex mb-2" onSubmit={submitSearch}>
-                <input className='block border border-slate-400 rounded-md w-full mr-2 px-4 py-2 bg-transparent' type="text" placeholder="Enter a search phrase" spellCheck="false" value={searchPhrase} onChange={e => setSearchPhrase(e.currentTarget.value)} />
-                <Button className={`${buttonClassesHollow} whitespace-nowrap`} action={() => console.log('pinning not yet supported :)')} label="Pin Search" disabled={!searchPhrase}></Button>
+                <div className="relative w-full mr-2">
+                    <span className="absolute top-1/2 left-3 -translate-y-1/2 text-blue-500 pointer-events-none"><IconSearch /></span>
+                    <input className='block border border-slate-400 w-full mr-2 px-4 py-2 pl-12 bg-transparent rounded-xl' type="text" placeholder="" autoFocus spellCheck="false" value={searchPhrase} onChange={e => setSearchPhrase(e.currentTarget.value)} />
+                </div>
+                <Button className={`${buttonClassesHollow} whitespace-nowrap`} action={() => console.log('pinning not yet supported :)')} label="Pin it" disabled={!searchPhrase}></Button>
             </form>
         </div>
     )
@@ -156,7 +160,7 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize, searchMode}) 
                         {historyItems}
                     </h2>
                 </hgroup>
-                <div className="h-16">
+                <div className="h-16 mb-12">
                     {topActionSet} 
                 </div>
                 {emptyCollectionMessage}

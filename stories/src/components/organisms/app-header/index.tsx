@@ -59,7 +59,7 @@ const AppMenuActions: React.FC<AppHeaderProps> = ({location}) => (
             Icon={IconSearch}
             PopoverIcon={IconShortcutSearch}
             label="Search"
-            action={() => console.log('search')}
+            linkTo="/search"
             disabled={false}
         />
     </ButtonsGroup>

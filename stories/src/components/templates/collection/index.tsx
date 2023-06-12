@@ -19,12 +19,13 @@ import { ListingsContainerContent } from '../../molecules/listings/listings-cont
 
 interface CollectionViewProps {
     collectionId?: number | string,
-    customize?: boolean
+    customize?: boolean,
+    searchMode?: boolean
 }
 
 const clientItemsLimit: number = 100
 
-const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
+const CollectionView: React.FC<CollectionViewProps> = ({customize, searchMode}) => {
     const dispatch = useAppDispatch()
 
     const collectionId = useAppSelector(selectCollectionId)
@@ -36,7 +37,9 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
     const sources = useAppSelector(sourcesSelectors.selectAll)
     const contents = useAppSelector(selectContentOfCollection).slice(0, clientItemsLimit)
 
-    const title = customize ? 'edit' : 'hi'
+    const [searchPhrase, setSearchPhrase] = React.useState<string>('')
+
+    const title = customize ? 'edit' : (searchMode ? 'finding' : 'hi')
 
     // console.log('collection', collectionId, collection)
     // console.log('collection settings', collectionSettings)
@@ -101,6 +104,20 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
         </div>
     )
 
+    const submitSearch = (e: React.FormEvent) => e.preventDefault()
+
+    const collectionSearcher = (
+        <div className={`mb-6 ${searchMode ? 'opacity-100' : 'opacity-0'}`}>
+            {/* <h2 className="text-2xl font-semibold mb-2">Search Collection</h2> */}
+            <form className="flex mb-2" onSubmit={submitSearch}>
+                <input className='block border border-slate-400 rounded-md w-full mr-2 px-4 py-2 bg-transparent' type="text" placeholder="Enter a search phrase" spellCheck="false" value={searchPhrase} onChange={e => setSearchPhrase(e.currentTarget.value)} />
+                <Button className={`${buttonClassesHollow} whitespace-nowrap`} action={() => console.log('pinning not yet supported :)')} label="Pin Search" disabled={!searchPhrase}></Button>
+            </form>
+        </div>
+    )
+
+    const topActionSet = searchMode ? collectionSearcher : collectionEditor
+
     const emptyCollectionMessage = (!nestedCollections.length && !contents.length) ? (
         <div>
             <h3 className='text-2xl font-semibold mb-2 text-current'>Add Something to <span className="text-yellow-500">{collection?.name}</span>?</h3>
@@ -139,7 +156,9 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize}) => {
                         {historyItems}
                     </h2>
                 </hgroup>
-                {collectionEditor}
+                <div className="h-16">
+                    {topActionSet} 
+                </div>
                 {emptyCollectionMessage}
                 {
                     nestedCollectionsRows.length ? (

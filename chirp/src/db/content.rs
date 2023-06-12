@@ -7,16 +7,23 @@ use super::db_connect;
 
 const DATE_FROM_FORMAT: &str = "%F %T%.6f %Z";
 
+pub fn content_title_clean(mut title: String) -> String {
+	let pipe_offset = title.find("|").unwrap_or(title.len());
+	title.replace_range(pipe_offset.., "");
+	title
+}
+
 pub fn db_map_content_query<P: Params>(s: &mut Statement, p: P) -> Result<Vec<Content>, Box<dyn Error>> {
 	// assumes used a "SELECT * FROM content"
 	let content_rows = s.query_map(p, |row| {
+		let title: String = row.get(2)?;
 		let date_published: String = row.get(4)?;
 		let date_retrieved: String = row.get(5)?;
 	
 		Ok(Content {
 			id: row.get(0)?,
 			source_id: row.get(1)?,
-			title: row.get(2)?,
+			title: content_title_clean(title), // row.get(2)?,
 			url: row.get(3)?,
 			date_published: Utc.datetime_from_str(&date_published, &DATE_FROM_FORMAT).unwrap_or_default().into(),
 			date_retrieved: Utc.datetime_from_str(&date_retrieved, &DATE_FROM_FORMAT).unwrap_or_default().into()

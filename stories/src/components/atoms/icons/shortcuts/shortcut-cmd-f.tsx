@@ -11,7 +11,7 @@ const ctrlF = (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 53 24" width={sizeWidth}><path d="M47 0a6 6 0 0 1 6 6v12a6 6 0 0 1-6 6H6a6 6 0 0 1-6-6V6a6 6 0 0 1 6-6h41Zm-3.962 5.266h-8.295V19h2.436v-5.733h4.998v-2.058h-4.998V7.324h5.859V5.266ZM17 5l-7 7 1.41 1.41L17 7.83l5.59 5.58L24 12l-7-7Z" fill="currentColor" fillRule="evenodd"/></svg>
 )
 
-export const IconShortcutSearch: React.FC = () => {
+export const ShortcutCommandF: React.FC = () => {
     const [mac, setMac] = useState<boolean>(false)
 
     if (!mac) isMac().then(() => setMac(true))

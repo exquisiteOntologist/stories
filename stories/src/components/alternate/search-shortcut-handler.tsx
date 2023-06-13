@@ -7,7 +7,7 @@ export interface SearchShortcutHandlersProps {
 export const SearchShortcutHandlers: React.FC<SearchShortcutHandlersProps> = ({action}) => {
     const listenerKeyDown = useCallback((e: KeyboardEvent) => {
         const shortcutPressed = (e.ctrlKey || e.metaKey) && e.key === 'f'
-        console.log('key down', e, shortcutPressed)
+        // console.log('key down', e, shortcutPressed)
         if (shortcutPressed) action()
     }, [])
     

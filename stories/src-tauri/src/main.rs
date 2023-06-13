@@ -28,6 +28,7 @@ async fn main() {
             commands::sources::list_sources,
             commands::sources::list_source_of_collections,
             commands::sources::remove_sources,
+            commands::search::search
         ])
         .setup(|_app| {
             // if it can't spawn due to lack of send due to bug in chirp most likely

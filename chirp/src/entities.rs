@@ -2,6 +2,9 @@ use chrono::{DateTime, Utc};
 use serde::{Serialize, Deserialize};
 use typeshare::typeshare;
 
+mod dto_maps;
+pub use dto_maps::*;
+
 #[derive(Debug)]
 #[derive(Clone)]
 #[typeshare]
@@ -56,6 +59,15 @@ pub struct CollectionToCollection {
 pub struct CollectionToSource {
     pub collection_id: i32,
     pub source_id: i32,
+}
+
+#[derive(Debug)]
+#[derive(Clone)]
+#[typeshare]
+#[derive(Serialize)]
+pub struct CollectionToSearch {
+    pub collection_id: i32,
+    pub search_id: i32,
 }
 
 #[derive(Debug)]
@@ -187,4 +199,46 @@ pub struct WebPage {
     pub title: String,
     pub body_text: String,
     pub cover_img: Option<String>
+}
+
+#[derive(Debug)]
+#[derive(Clone)]
+#[typeshare]
+#[derive(Serialize)]
+pub struct Search {
+    pub id: i32,
+    pub search_phrase: String,
+    // pub collection_ids: Vec<i32>,
+    // pub sources_ids: Vec<i32>,
+}
+
+#[derive(Debug)]
+#[derive(Clone)]
+#[typeshare]
+#[derive(Serialize, Deserialize)]
+pub struct SearchQueryDto {
+    pub search_id: i32,
+    pub search_phrase: String,
+    pub collections_ids: Vec<i32>,
+    pub sources_ids: Vec<i32>
+}
+
+#[derive(Debug)]
+#[derive(Clone)]
+#[typeshare]
+#[derive(Serialize)]
+pub struct SearchResultsDto {
+    pub search_id: i32,
+    pub search_phrase: String,
+    pub collections: Vec<Collection>,
+    pub sources: Vec<SourceDto>,
+    pub contents: Vec<ContentDto>,
+    pub body_content_ids: Vec<i32>,
+    pub entity_people: Vec<i32>,
+    pub entity_places: Vec<i32>,
+    pub entity_brands: Vec<i32>,
+    pub entity_chemicals: Vec<i32>,
+    pub entity_materials: Vec<i32>,
+    pub entity_concepts: Vec<i32>,
+    pub mean_temperament: i32
 }

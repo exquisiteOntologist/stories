@@ -3,24 +3,25 @@ import React from 'react'
 import { ButtonProps } from './interfaces'
 
 export const buttonClassesPadding = 'px-3 py-2'
-// export const buttonClassesHollow = 'border border-slate-800 border-solid text-black'
 export const buttonClassesHollow = 'border border-current border-solid current'
 
 /**
  * Button with icon and label.
  */
-export const Button: React.FC<ButtonProps> = ({ className, label, Icon, linkTo, href, action, sideAction, usePadding = true, disabled }) => {
+export const Button: React.FC<ButtonProps> = ({ className, label, Icon, PopoverIcon, linkTo, href, action, sideAction, usePadding = true, disabled }) => {
     const buttonIcon = Icon && <span className={`relative${label ? ' mr-2' : ''}`}><Icon /></span>
     const buttonLabel = label && <span className="relative">{label}</span>
+    const buttonPopoverIcon = PopoverIcon && <span className="absolute -bottom-6 right-2 opacity-0 group-hover:opacity-100 transition-all duration-100"><PopoverIcon /></span>
     const buttonInner = (
         <>
             { buttonIcon }
             { buttonLabel }
+            { buttonPopoverIcon }
         </>
     )
 
     const classNames: string[] = [
-        'flex items-center relative',
+        'flex items-center relative group',
         disabled ? 'cursor-default pointer-events-none' : 'cursor-pointer',
         'select-none',
         usePadding ? buttonClassesPadding : '',

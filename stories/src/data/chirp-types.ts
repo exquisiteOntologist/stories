@@ -69,6 +69,29 @@ export interface ContentBody {
 	body_text: string;
 }
 
+export interface SearchQueryDto {
+	search_id: number;
+	search_phrase: string;
+	collections_ids: number[];
+	sources_ids: number[];
+}
+
+export interface SearchResultsDto {
+	search_id: number;
+	search_phrase: string;
+	collections: Collection[];
+	sources: SourceDto[];
+	contents: ContentDto[];
+	body_content_ids: number[];
+	entity_people: number[];
+	entity_places: number[];
+	entity_brands: number[];
+	entity_chemicals: number[];
+	entity_materials: number[];
+	entity_concepts: number[];
+	mean_temperament: number;
+}
+
 export enum SettingsLayout {
 	ROWS = "ROWS",
 	CARDS = "CARDS",

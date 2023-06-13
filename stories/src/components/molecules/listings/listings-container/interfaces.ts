@@ -1,8 +1,7 @@
 import { ReactNode } from "react";
-
-export type ListingViews = 'Rows' | 'Cards'
+import { SettingsLayout } from "../../../../data/chirp-types";
 
 export interface ListingsContainerProps {
     children: ReactNode
-    view: ListingViews
+    view?: SettingsLayout
 }

@@ -13,8 +13,6 @@ export const search = createAsyncThunk(
 
             dispatch(setSearchResults(results as SearchResultsDto))
 
-            console.log('results', results)
-
             return true
         } catch (e) {
             console.error('Failed to get search results')

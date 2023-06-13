@@ -3,6 +3,7 @@ import * as React from "react"
 import { AppHeader } from "../components/organisms/app-header";
 import CollectionView from "../components/templates/collection"
 import CollectionEditView from "../components/templates/collection-edit"
+import CollectionSearchView from "../components/templates/collection-search";
 import ReaderView from "../components/templates/reader"
 import { selectColours } from "../redux/features/themeSlice"
 import { useAppSelector } from "../redux/hooks"
@@ -34,7 +35,7 @@ const AppPageInner = () => {
                 {/* <CollectionView default /> */}
                 <CollectionView path="/" />
                 <CollectionView path="/customize" customize={true} />
-                <CollectionView path="/search" searchMode={true} />
+                <CollectionSearchView path="/search" searchMode={true} />
                 <CollectionEditView path="/edit" />
                 {/* <CollectionEditView path="/:collectionId/edit" /> */}
                 <ReaderView path="/reader/:contentId" />

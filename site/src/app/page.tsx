@@ -44,8 +44,8 @@ export default function Home() {
           <p>Any word, concept, or context has associated words, concepts, and contexts. You can dive deeper into anything. An article could lead to an academic paper and a video, or a wiki.</p>
           {chipComingSoon}
         </div>
-        <div>
-          {/*  */}
+        <div className={styles.middle}>
+          <img className={styles.floating} src="/images/early-screenshot-find.png" alt="Find things that are associated" width={1200/3} height={1000/3} />
         </div>
       </section>
       <section>

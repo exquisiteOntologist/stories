@@ -1,7 +1,7 @@
 import { LogoAlt } from '@/components/logos/logo-alt'
 import Image from 'next/image'
 import styles from './page.module.css'
-import { Me } from '../components/illustrations/me'
+import { Me, MeDouble } from '../components/illustrations/me'
 import { QuestionsAnsweredText } from '../components/illustrations/questions-answered'
 import { AppIcon } from '../components/logos/app-icon'
 import { Chip } from '../components/chip'
@@ -71,7 +71,7 @@ export default function Home() {
           <AppIcon />
         </div>
         <div className={styles.topCenter}>
-          <Me />
+          <MeDouble />
         </div>
       </section>
       <footer>

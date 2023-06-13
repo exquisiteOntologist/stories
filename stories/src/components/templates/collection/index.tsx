@@ -20,6 +20,7 @@ import { IconSearch } from '../../atoms/icons/search'
 import { LabelAdd } from '../../atoms/icons/label-add'
 import { search, selectSearchResults } from '../../../redux/features/searchSlice'
 import { debounce } from 'lodash'
+import { TitleCrumbs } from '../../organisms/title-crumbs'
 
 interface CollectionViewProps {
     collectionId?: number | string,
@@ -34,8 +35,6 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize, searchMode}) 
 
     const collectionId = useAppSelector(selectCollectionId)
     const collection = useAppSelector(s => collectionsSelectors.selectById(s, collectionId))
-    const submergeHistoryIds = useAppSelector(selectHistoryIds)
-    const submergeHistoryItems = useAppSelector(s => submergeHistoryIds.map(id => collectionsSelectors.selectById(s, id))).filter(x => typeof x !== 'undefined') as Collection[]
     const nestedCollections = useAppSelector(selectNestedCollections)
     const collectionSettings = useAppSelector(s => collectionSettingsSelectors.selectById(s, collectionId))
     const sources = useAppSelector(sourcesSelectors.selectAll)
@@ -67,10 +66,6 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize, searchMode}) 
 
     useEffect(() => {
     }, [contents])
-
-    useEffect(() => {
-        dispatch(fetchCollection(submergeHistoryIds))
-    }, [submergeHistoryIds])
 
     useEffect(() => {
         dispatch(resetThemeColours())
@@ -113,7 +108,7 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize, searchMode}) 
 
     const submitSearch = (e: React.FormEvent) => e.preventDefault()
 
-    const dispatchSearch = debounce((phrase: string) => dispatch(search(phrase)), 100)
+    const dispatchSearch = debounce((phrase: string) => dispatch(search(phrase)), 150)
 
     const updateSearch = (phrase: string) => {
         setSearchPhrase(phrase)
@@ -164,29 +159,10 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize, searchMode}) 
         />
     ))
 
-    const historyItems = submergeHistoryItems.map(hi => {
-        const last = collectionId === hi.id
-        const colour = last ? 'text-yellow-500' : 'inherit'
-        return (
-            <span key={hi.id} className={`text-current cursor-pointer mr-3 ${colour}`} onClick={() => dispatch(chooseCollection(hi.id))}>
-                {hi.name}
-            </span>
-        )
-    })
-
-    const titleWithHistory = (
-        <hgroup className="mb-24">
-            <h1 className="text-4xl font-semibold">{title}</h1>
-            <h2 className="text-2xl font-semibold select-none">
-                {historyItems}
-            </h2>
-        </hgroup>
-    )
-
     return (
         <>
             <div className="collection w-full max-w-7xl mx-4 h-min-content">
-                {titleWithHistory}
+                <TitleCrumbs collectionId={collectionId} title={title} />
                 <div className="mb-6">
                     {topActionSet} 
                 </div>

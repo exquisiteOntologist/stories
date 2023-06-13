@@ -1,36 +1,18 @@
 import * as React from 'react'
 import { useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
-import { fetchContent, selectContentOfCollection } from '../../../redux/features/contentsSlice'
-import { ListingRow } from '../../molecules/listings/row'
-import { fetchSourcesOfCollection, sourcesSelectors } from '../../../redux/features/sourcesSlice'
 import { resetThemeColours } from '../../../redux/features/themeSlice'
-import { Button, buttonClassesHollow } from '../../atoms/button'
-import { IconGrid } from '../../atoms/icons/grid'
-import { IconList } from '../../atoms/icons/list'
-import { IconAddCircle } from '../../atoms/icons/add-circle'
-import { IconShapes } from '../../atoms/icons/shapes'
-import { IconTickCircle } from '../../atoms/icons/tick-circle'
 import { collectionsSelectors, fetchCollection, fetchNestedCollections, selectNestedCollections } from '../../../redux/features/collectionsSlice'
 import { collectionSettingsSelectors, setCollectionSettings } from '../../../redux/features/collectionSettingsSlice'
 import { Collection, CollectionSettings, SettingsLayout } from '../../../data/chirp-types'
-import { chooseCollection, selectCollectionId, selectHistory as selectHistoryIds } from '../../../redux/features/navSlice'
+import { chooseCollection, selectCollectionId } from '../../../redux/features/navSlice'
 import { ListingsContainerContent } from '../../molecules/listings/listings-container-content'
+import { ResultsCountTitle } from '../../molecules/results/results-count-title'
 import { IconSearch } from '../../atoms/icons/search'
 import { LabelAdd } from '../../atoms/icons/label-add'
 import { search, selectSearchResults } from '../../../redux/features/searchSlice'
 import { debounce } from 'lodash'
 import { TitleCrumbs } from '../../organisms/title-crumbs'
-
-export interface ResultsCountTitleProps {
-    countClassName: string,
-    thing: Array<any>,
-    thingName: string
-}
-
-const ResultCountTitle: React.FC<ResultsCountTitleProps> = ({countClassName, thing, thingName}) => (
-    <h2 className={`text-xl font-semibold mt-6 mb-2 ${(!!thing.length) ? 'opacity-100 visible' : 'opacity-0 hidden'} transition-all duration-150`}><span className={countClassName}>{thing.length}</span> {thingName}</h2>
-)
 
 interface CollectionViewProps {
     collectionId?: number | string,
@@ -82,16 +64,16 @@ const CollectionSearchView: React.FC<CollectionViewProps> = ({customize, searchM
 
     const searchResultsCounts = (
         <div className={`${(!!searchPhrase && !!searchResults) ? 'opacity-100' : 'opacity-0'} transition-opacity duration-150`}>
-            <ResultCountTitle countClassName="text-green-500" thing={sr.sources} thingName="Sources" />
-            <ResultCountTitle countClassName="text-red-500" thing={sr.collections} thingName="Collections" />
-            <ResultCountTitle countClassName="text-orange-500" thing={sr.contents} thingName="Articles" />
-            <ResultCountTitle countClassName="text-orange-500" thing={sr.body_content_ids} thingName="Article Bodies" />
-            <ResultCountTitle countClassName="text-yellow-500" thing={sr.entity_people} thingName="People" />
-            <ResultCountTitle countClassName="text-blue-500" thing={sr.entity_places} thingName="Places" />
-            <ResultCountTitle countClassName="text-blue-500" thing={sr.entity_brands} thingName="Brands" />
-            <ResultCountTitle countClassName="text-blue-500" thing={sr.entity_chemicals} thingName="Chemicals" />
-            <ResultCountTitle countClassName="text-blue-500" thing={sr.entity_materials} thingName="Materials" />
-            <ResultCountTitle countClassName="text-blue-500" thing={sr.entity_concepts} thingName="Concepts" />
+            <ResultsCountTitle countClassName="text-green-500" thing={sr.sources} thingName="Sources" />
+            <ResultsCountTitle countClassName="text-red-500" thing={sr.collections} thingName="Collections" />
+            <ResultsCountTitle countClassName="text-orange-500" thing={sr.contents} thingName="Articles" />
+            <ResultsCountTitle countClassName="text-orange-500" thing={sr.body_content_ids} thingName="Article Bodies" />
+            <ResultsCountTitle countClassName="text-yellow-500" thing={sr.entity_people} thingName="People" />
+            <ResultsCountTitle countClassName="text-blue-500" thing={sr.entity_places} thingName="Places" />
+            <ResultsCountTitle countClassName="text-blue-500" thing={sr.entity_brands} thingName="Brands" />
+            <ResultsCountTitle countClassName="text-blue-500" thing={sr.entity_chemicals} thingName="Chemicals" />
+            <ResultsCountTitle countClassName="text-blue-500" thing={sr.entity_materials} thingName="Materials" />
+            <ResultsCountTitle countClassName="text-blue-500" thing={sr.entity_concepts} thingName="Concepts" />
             <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-yellow-500">{sr.mean_temperament === 1 ? 'Neutral' : 'Bipolar'}</span> Temperament Overall</h2>
         </div>
     )

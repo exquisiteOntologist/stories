@@ -195,8 +195,20 @@ pub struct WebPage {
 #[derive(Debug)]
 #[derive(Clone)]
 #[typeshare]
+#[derive(Serialize, Deserialize)]
+pub struct SearchQueryDto {
+    pub search_id: i32,
+    pub search_phrase: String,
+    pub collections_ids: Vec<i32>,
+    pub sources_ids: Vec<i32>
+}
+
+#[derive(Debug)]
+#[derive(Clone)]
+#[typeshare]
 #[derive(Serialize)]
 pub struct SearchResultsDto {
+    pub search_id: i32,
     pub search_phrase: String,
     pub collections: Vec<Collection>,
     pub sources: Vec<SourceDto>,

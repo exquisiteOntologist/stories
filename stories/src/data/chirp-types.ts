@@ -69,7 +69,15 @@ export interface ContentBody {
 	body_text: string;
 }
 
+export interface SearchQueryDto {
+	search_id: number;
+	search_phrase: string;
+	collections_ids: number[];
+	sources_ids: number[];
+}
+
 export interface SearchResultsDto {
+	search_id: number;
 	search_phrase: string;
 	collections: Collection[];
 	sources: SourceDto[];

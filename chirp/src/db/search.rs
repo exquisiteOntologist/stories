@@ -16,6 +16,7 @@ pub fn db_search(user_query: &String) -> Result<SearchResultsDto, Box<dyn Error>
     _ = conn.close();
 
     let results = SearchResultsDto {
+        search_id: 0,
         search_phrase: user_query.into(),
         collections: vec![],
         sources: sources_dtos,

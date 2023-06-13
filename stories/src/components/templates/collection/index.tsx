@@ -19,6 +19,7 @@ import { ListingsContainerContent } from '../../molecules/listings/listings-cont
 import { IconSearch } from '../../atoms/icons/search'
 import { LabelAdd } from '../../atoms/icons/label-add'
 import { search } from '../../../redux/features/searchSlice'
+import { debounce } from 'lodash'
 
 interface CollectionViewProps {
     collectionId?: number | string,
@@ -110,9 +111,11 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize, searchMode}) 
 
     const submitSearch = (e: React.FormEvent) => e.preventDefault()
 
+    const dispatchSearch = debounce((phrase: string) => dispatch(search(phrase)), 100)
+
     const updateSearch = (phrase: string) => {
         setSearchPhrase(phrase)
-        dispatch(search(phrase))
+        dispatchSearch(phrase)
     }
 
     const collectionSearcher = (

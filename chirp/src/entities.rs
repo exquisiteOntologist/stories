@@ -201,5 +201,5 @@ pub struct SearchResultsDto {
     pub collections: Vec<Collection>,
     pub sources: Vec<SourceDto>,
     pub contents: Vec<ContentDto>,
-    pub bodies: Vec<ContentBody>
+    pub body_content_ids: Vec<i32>
 }

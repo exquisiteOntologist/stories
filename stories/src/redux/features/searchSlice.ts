@@ -33,7 +33,7 @@ const initialSearchState: SearchState = {
         collections: [],
         sources: [],
         contents: [],
-        bodies: []
+        body_content_ids: []
     }
 }
 
@@ -52,11 +52,6 @@ const searchSlice = createSlice({
 })
 
 export const { setSearchResults } = searchSlice.actions
-// export const selectSearch = (state: RootState) => state.search
-// export const selectCollectionId = (state: RootState) => state.search.collectionId
-// export const selectHistory = (state: RootState) => state.search.submergeHistory
-// export const selectPriorCollId = (state: RootState) => state.search.priorCollId
-// export const selectSourceId = (state: RootState) => state.search.sourceId
-// export const selectContentId = (state: RootState) => state.search.contentId
+export const selectSearchResults = (state: RootState) => state.search.searchResults
 
 export const searchReducer = searchSlice.reducer

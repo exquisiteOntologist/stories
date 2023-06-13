@@ -11,6 +11,7 @@ pub fn db_search(user_query: &String) -> Result<SearchResultsDto, Box<dyn Error>
     let contents: Vec<Content> = db_search_content(&conn, user_query)?;
     let contents_dtos: Vec<ContentDto> = contents.into_iter().map(content_to_dto).collect();
     let bodies: Vec<ContentBody> = db_search_content_body(&conn, user_query)?;
+    let body_content_ids: Vec<i32> = bodies.into_iter().map(|b| b.content_id).collect();
 
     _ = conn.close();
 
@@ -19,7 +20,7 @@ pub fn db_search(user_query: &String) -> Result<SearchResultsDto, Box<dyn Error>
         collections: vec![],
         sources: sources_dtos,
         contents: contents_dtos,
-        bodies: bodies
+        body_content_ids: body_content_ids
     };
 
     Ok(results)

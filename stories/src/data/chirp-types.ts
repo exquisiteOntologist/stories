@@ -74,7 +74,7 @@ export interface SearchResultsDto {
 	collections: Collection[];
 	sources: SourceDto[];
 	contents: ContentDto[];
-	bodies: ContentBody[];
+	body_content_ids: number[];
 }
 
 export enum SettingsLayout {

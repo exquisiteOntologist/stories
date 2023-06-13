@@ -16,12 +16,12 @@ pub fn search_cli(args: Vec<String>) -> Result<(), Box<dyn Error>> {
 
     println!("sources {:?}", &(results.sources).len());
     println!("title {:?}", &(results.contents).len());
-    println!("articles {:?}", &(results.bodies).len());
+    println!("articles {:?}", &(results.body_content_ids).len());
     print!("\n");
 
     _ = &(results.sources).into_iter().for_each(|s| println!("source {:1}:     \"{:2}\"\n", s.id, s.name));
     _ = &(results.contents).into_iter().for_each(|c| println!("title of {:1}:      \"{:2}\"\n", c.id, c.title));
-    _ = &(results.bodies).into_iter().for_each(|c| println!("article of {:1}\n", c.content_id));
+    _ = &(results.body_content_ids).into_iter().for_each(|id| println!("article of {:1}\n", id));
     
     print!("\n");
     println!("Use view {{Result ID}} to view ");

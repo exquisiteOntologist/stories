@@ -17,6 +17,8 @@ import { Collection, CollectionSettings, SettingsLayout } from '../../../data/ch
 import { chooseCollection, selectCollectionId, selectHistory as selectHistoryIds } from '../../../redux/features/navSlice'
 import { ListingsContainerContent } from '../../molecules/listings/listings-container-content'
 import { IconSearch } from '../../atoms/icons/search'
+import { LabelAdd } from '../../atoms/icons/label-add'
+import { search } from '../../../redux/features/searchSlice'
 
 interface CollectionViewProps {
     collectionId?: number | string,
@@ -75,9 +77,10 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize, searchMode}) 
     const viewIsList = collectionSettings?.layout === SettingsLayout.ROWS
 
     const collectionEditor = (
-        <div className="">
-            <div className={`flex justify-start transition-all duration-0 ${showCollectionEditor ? 'opacity-1' : 'opacity-0'}`}>
-            <Button
+        <div className={`transition-all duration-0 ${showCollectionEditor ? 'opacity-1' : 'opacity-0'}`}>
+            {/* <h2 className="text-2xl font-semibold mb-2">Customize</h2> */}
+            <div className={`flex justify-start`}>
+                <Button
                     label="Done"
                     Icon={IconTickCircle}
                     linkTo={`/`}
@@ -107,16 +110,30 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize, searchMode}) 
 
     const submitSearch = (e: React.FormEvent) => e.preventDefault()
 
+    const updateSearch = (phrase: string) => {
+        setSearchPhrase(phrase)
+        dispatch(search(phrase))
+    }
+
     const collectionSearcher = (
-        <div className={`${searchMode ? 'opacity-100' : 'opacity-0'} transition-opacity duration-150`}>
-            <h2 className="text-2xl font-semibold mb-2">Search {searchPhrase && (<span className="text-blue-500">&ldquo;{searchPhrase}&rdquo;</span>)}</h2>
-            <form className="flex mb-2" onSubmit={submitSearch}>
+        <div className={`mb-12 ${searchMode ? 'opacity-100' : 'opacity-0'} transition-opacity duration-150`}>
+            <h2 className="text-2xl font-semibold mb-2">{/* Search */}&nbsp; {searchPhrase && (<span className="text-blue-500">&ldquo;{searchPhrase}&rdquo;</span>)} {/* <span className="inline-block ml-0 align-top"><LabelAdd /></span> */}</h2>
+            <form className="flex mb-12" onSubmit={submitSearch}>
                 <div className="relative w-full mr-2">
                     <span className="absolute top-1/2 left-3 -translate-y-1/2 text-blue-500 pointer-events-none"><IconSearch /></span>
-                    <input className='block border border-slate-400 w-full mr-2 px-4 py-2 pl-12 bg-transparent rounded-xl' type="text" placeholder="" autoFocus spellCheck="false" value={searchPhrase} onChange={e => setSearchPhrase(e.currentTarget.value)} />
+                    <input className='block border border-slate-400 w-full mr-2 px-4 py-2 pl-12 bg-transparent rounded-full' type="text" placeholder="" autoFocus spellCheck="false" value={searchPhrase} onChange={e => updateSearch(e.currentTarget.value)} />
                 </div>
-                <Button className={`${buttonClassesHollow} whitespace-nowrap`} action={() => console.log('pinning not yet supported :)')} label="Pin it" disabled={!searchPhrase}></Button>
+                {/* <Button className={`${buttonClassesHollow} whitespace-nowrap`} action={() => console.log('pinning not yet supported :)')} label="Pin it" disabled={!searchPhrase}></Button> */}
             </form>
+            <h2 className="text-xl font-semibold mt-6 mb-2"> <span className="text-green-500">6</span> Sources</h2>
+            <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-red-500">3</span> Collections</h2>
+            <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-orange-500">47</span> Articles</h2>
+            <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-yellow-500">2</span> People</h2>
+            <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-blue-500">12</span> Places</h2>
+            <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-blue-500">3</span> Brands</h2>
+            <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-blue-500">5</span> Chemicals</h2>
+            <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-blue-500">9</span> Concepts</h2>
+            <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-yellow-500">Neutral</span> Temperament Overall</h2>
         </div>
     )
 
@@ -151,16 +168,20 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize, searchMode}) 
         )
     })
 
+    const titleWithHistory = (
+        <hgroup className="mb-24">
+            <h1 className="text-4xl font-semibold">{title}</h1>
+            <h2 className="text-2xl font-semibold select-none">
+                {historyItems}
+            </h2>
+        </hgroup>
+    )
+
     return (
         <>
             <div className="collection w-full max-w-7xl mx-4 h-min-content">
-                <hgroup className="mb-24">
-                    <h1 className="text-4xl font-semibold">{title}</h1>
-                    <h2 className="text-2xl font-semibold select-none">
-                        {historyItems}
-                    </h2>
-                </hgroup>
-                <div className="h-16 mb-12">
+                {titleWithHistory}
+                <div className="mb-6">
                     {topActionSet} 
                 </div>
                 {emptyCollectionMessage}

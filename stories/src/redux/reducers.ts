@@ -8,12 +8,14 @@ import { themeReducer } from './features/themeSlice'
 import { collectionToCollectionReducer } from './features/collectionToCollectionSlice'
 import { navReducer } from './features/navSlice'
 import { collectionToSourceReducer } from './features/collectionToSourceSlice'
+import { searchReducer } from './features/searchSlice'
 
 export default combineReducers({
     collections: collectionsReducer,
     collectionSettings: collectionSettingsReducer,
     collectionToCollection: collectionToCollectionReducer,
     collectionToSource: collectionToSourceReducer,
+    search: searchReducer,
     sources: sourcesReducer,
     contents: contentsReducer,
     contentBodies: contentBodiesReducer,

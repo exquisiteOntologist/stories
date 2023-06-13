@@ -70,6 +70,8 @@ const AppHeaderShortcutHandlers: React.FC = () => (
     <>
         <SearchShortcutHandlers action={() => {
             navigate('/search')
+            const searchBox = document.querySelector('#search-box') as HTMLInputElement | null
+            searchBox?.focus()
         }} />
     </>
 )

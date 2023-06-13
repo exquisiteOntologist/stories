@@ -22,6 +22,16 @@ import { search, selectSearchResults } from '../../../redux/features/searchSlice
 import { debounce } from 'lodash'
 import { TitleCrumbs } from '../../organisms/title-crumbs'
 
+export interface ResultsCountTitleProps {
+    countClassName: string,
+    thing: Array<any>,
+    thingName: string
+}
+
+const ResultCountTitle: React.FC<ResultsCountTitleProps> = ({countClassName, thing, thingName}) => (
+    <h2 className={`text-xl font-semibold mt-6 mb-2 ${(!!thing.length) ? 'opacity-100 visible' : 'opacity-0 hidden'} transition-all duration-150`}><span className={countClassName}>{thing.length}</span> {thingName}</h2>
+)
+
 interface CollectionViewProps {
     collectionId?: number | string,
     customize?: boolean,
@@ -39,7 +49,7 @@ const CollectionSearchView: React.FC<CollectionViewProps> = ({customize, searchM
 
     const [searchPhrase, setSearchPhrase] = React.useState<string>('')
 
-    const title = customize ? 'edit' : (searchMode ? 'find' : 'hi')
+    const title = 'find'
 
     console.log('search results', searchResults)
     
@@ -60,26 +70,37 @@ const CollectionSearchView: React.FC<CollectionViewProps> = ({customize, searchM
         dispatchSearch(phrase)
     }
 
-    const collectionSearcher = (
-        <div className={`mb-12 ${searchMode ? 'opacity-100' : 'opacity-0'} transition-opacity duration-150`}>
-            <h2 className="text-2xl font-semibold mb-2">{/* Search */}&nbsp; {searchPhrase && (<span className="text-blue-500">&ldquo;{searchPhrase}&rdquo;</span>)} {/* <span className="inline-block ml-0 align-top"><LabelAdd /></span> */}</h2>
-            <form className="flex mb-12" onSubmit={submitSearch}>
-                <div className="relative w-full mr-2">
-                    <span className="absolute top-1/2 left-3 -translate-y-1/2 text-blue-500 pointer-events-none"><IconSearch /></span>
-                    <input className='block border border-slate-400 w-full mr-2 px-4 py-2 pl-12 bg-transparent rounded-full' type="text" placeholder="" autoFocus spellCheck="false" value={searchPhrase} onChange={e => updateSearch(e.currentTarget.value)} />
-                </div>
-                {/* <Button className={`${buttonClassesHollow} whitespace-nowrap`} action={() => console.log('pinning not yet supported :)')} label="Pin it" disabled={!searchPhrase}></Button> */}
-            </form>
-            <h2 className="text-xl font-semibold mt-6 mb-2"> <span className="text-green-500">{sr.sources.length}</span> Sources</h2>
-            <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-red-500">{sr.collections.length}</span> Collections</h2>
-            <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-orange-500">{sr.contents.length + sr.body_content_ids.length}</span> Articles</h2>
-            <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-yellow-500">{sr.entity_people.length}</span> People</h2>
-            <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-blue-500">{sr.entity_places.length}</span> Places</h2>
-            <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-blue-500">{sr.entity_brands.length}</span> Brands</h2>
-            <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-blue-500">{sr.entity_chemicals.length}</span> Chemicals</h2>
-            <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-blue-500">{sr.entity_materials.length}</span> Materials</h2>
-            <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-blue-500">{sr.entity_concepts.length}</span> Concepts</h2>
+    const searchForm = (
+        <form className="flex mb-12" onSubmit={submitSearch}>
+            <div className="relative w-full mr-2">
+                <span className="absolute top-1/2 left-3 -translate-y-1/2 text-blue-500 pointer-events-none"><IconSearch /></span>
+                <input className='block border border-slate-400 w-full mr-2 px-4 py-2 pl-12 bg-transparent rounded-full' type="text" placeholder="" autoFocus spellCheck="false" value={searchPhrase} onChange={e => updateSearch(e.currentTarget.value)} />
+            </div>
+            {/* <Button className={`${buttonClassesHollow} whitespace-nowrap`} action={() => console.log('pinning not yet supported :)')} label="Pin it" disabled={!searchPhrase}></Button> */}
+        </form>
+    )
+
+    const searchResultsCounts = (
+        <div className={`${(!!searchPhrase && !!searchResults) ? 'opacity-100' : 'opacity-0'} transition-opacity duration-150`}>
+            <ResultCountTitle countClassName="text-green-500" thing={sr.sources} thingName="Sources" />
+            <ResultCountTitle countClassName="text-red-500" thing={sr.collections} thingName="Collections" />
+            <ResultCountTitle countClassName="text-orange-500" thing={sr.contents} thingName="Articles" />
+            <ResultCountTitle countClassName="text-orange-500" thing={sr.body_content_ids} thingName="Article Bodies" />
+            <ResultCountTitle countClassName="text-yellow-500" thing={sr.entity_people} thingName="People" />
+            <ResultCountTitle countClassName="text-blue-500" thing={sr.entity_places} thingName="Places" />
+            <ResultCountTitle countClassName="text-blue-500" thing={sr.entity_brands} thingName="Brands" />
+            <ResultCountTitle countClassName="text-blue-500" thing={sr.entity_chemicals} thingName="Chemicals" />
+            <ResultCountTitle countClassName="text-blue-500" thing={sr.entity_materials} thingName="Materials" />
+            <ResultCountTitle countClassName="text-blue-500" thing={sr.entity_concepts} thingName="Concepts" />
             <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-yellow-500">{sr.mean_temperament === 1 ? 'Neutral' : 'Bipolar'}</span> Temperament Overall</h2>
+        </div>
+    )
+
+    const collectionSearcher = (
+        <div className={`mb-12`}>
+            <h2 className="text-2xl font-semibold mb-2">{/* Search */}&nbsp; {searchPhrase && (<span className="text-blue-500">&ldquo;{searchPhrase}&rdquo;</span>)} {/* <span className="inline-block ml-0 align-top"><LabelAdd /></span> */}</h2>
+            {searchForm}
+            {searchResultsCounts}
         </div>
     )
 

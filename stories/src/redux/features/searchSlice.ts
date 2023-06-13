@@ -27,6 +27,7 @@ export interface SearchState {
 
 const initialSearchState: SearchState = {
     searchResults: {
+        search_id: 0,
         search_phrase: 'string',
         collections: [],
         sources: [],

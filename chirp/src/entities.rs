@@ -62,6 +62,15 @@ pub struct CollectionToSource {
 }
 
 #[derive(Debug)]
+#[derive(Clone)]
+#[typeshare]
+#[derive(Serialize)]
+pub struct CollectionToSearch {
+    pub collection_id: i32,
+    pub search_id: i32,
+}
+
+#[derive(Debug)]
 // #[typeshare] // <- cannot do tuples as in data:
 #[derive(Serialize)]
 pub struct Source {
@@ -190,6 +199,17 @@ pub struct WebPage {
     pub title: String,
     pub body_text: String,
     pub cover_img: Option<String>
+}
+
+#[derive(Debug)]
+#[derive(Clone)]
+#[typeshare]
+#[derive(Serialize)]
+pub struct Search {
+    pub id: i32,
+    pub search_phrase: String,
+    // pub collection_ids: Vec<i32>,
+    // pub sources_ids: Vec<i32>,
 }
 
 #[derive(Debug)]

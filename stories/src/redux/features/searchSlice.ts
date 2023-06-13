@@ -33,7 +33,14 @@ const initialSearchState: SearchState = {
         collections: [],
         sources: [],
         contents: [],
-        body_content_ids: []
+        body_content_ids: [],
+        entity_people: [],
+        entity_places: [],
+        entity_brands: [],
+        entity_chemicals: [],
+        entity_materials: [],
+        entity_concepts: [],
+        mean_temperament: 1
     }
 }
 

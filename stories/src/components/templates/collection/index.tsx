@@ -18,7 +18,7 @@ import { chooseCollection, selectCollectionId, selectHistory as selectHistoryIds
 import { ListingsContainerContent } from '../../molecules/listings/listings-container-content'
 import { IconSearch } from '../../atoms/icons/search'
 import { LabelAdd } from '../../atoms/icons/label-add'
-import { search } from '../../../redux/features/searchSlice'
+import { search, selectSearchResults } from '../../../redux/features/searchSlice'
 import { debounce } from 'lodash'
 
 interface CollectionViewProps {
@@ -40,6 +40,8 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize, searchMode}) 
     const collectionSettings = useAppSelector(s => collectionSettingsSelectors.selectById(s, collectionId))
     const sources = useAppSelector(sourcesSelectors.selectAll)
     const contents = useAppSelector(selectContentOfCollection).slice(0, clientItemsLimit)
+    const searchResults = useAppSelector(selectSearchResults)
+    const sr = searchResults
 
     const [searchPhrase, setSearchPhrase] = React.useState<string>('')
 
@@ -128,15 +130,16 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize, searchMode}) 
                 </div>
                 {/* <Button className={`${buttonClassesHollow} whitespace-nowrap`} action={() => console.log('pinning not yet supported :)')} label="Pin it" disabled={!searchPhrase}></Button> */}
             </form>
-            <h2 className="text-xl font-semibold mt-6 mb-2"> <span className="text-green-500">6</span> Sources</h2>
-            <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-red-500">3</span> Collections</h2>
-            <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-orange-500">47</span> Articles</h2>
-            <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-yellow-500">2</span> People</h2>
-            <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-blue-500">12</span> Places</h2>
-            <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-blue-500">3</span> Brands</h2>
-            <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-blue-500">5</span> Chemicals</h2>
-            <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-blue-500">9</span> Concepts</h2>
-            <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-yellow-500">Neutral</span> Temperament Overall</h2>
+            <h2 className="text-xl font-semibold mt-6 mb-2"> <span className="text-green-500">{sr.sources.length}</span> Sources</h2>
+            <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-red-500">{sr.collections.length}</span> Collections</h2>
+            <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-orange-500">{sr.contents.length + sr.body_content_ids.length}</span> Articles</h2>
+            <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-yellow-500">{sr.entity_people.length}</span> People</h2>
+            <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-blue-500">{sr.entity_places.length}</span> Places</h2>
+            <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-blue-500">{sr.entity_brands.length}</span> Brands</h2>
+            <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-blue-500">{sr.entity_chemicals.length}</span> Chemicals</h2>
+            <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-blue-500">{sr.entity_materials.length}</span> Materials</h2>
+            <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-blue-500">{sr.entity_concepts.length}</span> Concepts</h2>
+            <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-yellow-500">{sr.mean_temperament === 1 ? 'Neutral' : 'Bipolar'}</span> Temperament Overall</h2>
         </div>
     )
 

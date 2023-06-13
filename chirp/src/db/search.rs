@@ -20,7 +20,14 @@ pub fn db_search(user_query: &String) -> Result<SearchResultsDto, Box<dyn Error>
         collections: vec![],
         sources: sources_dtos,
         contents: contents_dtos,
-        body_content_ids: body_content_ids
+        body_content_ids: body_content_ids,
+        entity_people: vec![],
+        entity_places: vec![],
+        entity_brands: vec![],
+        entity_chemicals: vec![],
+        entity_materials: vec![],
+        entity_concepts: vec![],
+        mean_temperament: 1
     };
 
     Ok(results)

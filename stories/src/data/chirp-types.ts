@@ -75,6 +75,13 @@ export interface SearchResultsDto {
 	sources: SourceDto[];
 	contents: ContentDto[];
 	body_content_ids: number[];
+	entity_people: number[];
+	entity_places: number[];
+	entity_brands: number[];
+	entity_chemicals: number[];
+	entity_materials: number[];
+	entity_concepts: number[];
+	mean_temperament: number;
 }
 
 export enum SettingsLayout {

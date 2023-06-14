@@ -13,6 +13,7 @@ import { LabelAdd } from '../../atoms/icons/label-add'
 import { search, selectSearchResults } from '../../../redux/features/searchSlice'
 import { debounce } from 'lodash'
 import { TitleCrumbs } from '../../organisms/title-crumbs'
+import { ListingRow } from '../../molecules/listings/row'
 
 interface CollectionViewProps {
     collectionId?: number | string,
@@ -65,9 +66,73 @@ const CollectionSearchView: React.FC<CollectionViewProps> = ({customize, searchM
     const searchResultsCounts = (
         <div className={`${(!!searchPhrase && !!searchResults) ? 'opacity-100' : 'opacity-0'} transition-opacity duration-150`}>
             <ResultsCountTitle countClassName="text-green-500" thing={sr.sources} thingName="Sources" />
+            {
+                sr.sources.length ? (
+                    <div className="grid grid-cols-3 mb-12">
+                        {
+                            sr.sources.map((s) => (
+                                <ListingRow
+                                    key={s.id}
+                                    id={s.id}
+                                    title={s.name}
+                                    action={() => console.info('selecting sources not supported yet')}
+                                />
+                            ))
+                        }
+                    </div>
+                ) : null
+            }
             <ResultsCountTitle countClassName="text-red-500" thing={sr.collections} thingName="Collections" />
+            {
+                sr.collections.length ? (
+                    <div className="grid grid-cols-3 mb-12">
+                        {
+                            sr.collections.map((c) => (
+                                <ListingRow
+                                    key={c.id}
+                                    id={c.id}
+                                    title={c.name}
+                                    action={() => dispatch(chooseCollection(c.id))}
+                                />
+                            ))
+                        }
+                    </div>
+                ) : null
+            }
             <ResultsCountTitle countClassName="text-orange-500" thing={sr.contents} thingName="Articles" />
+            {
+                sr.contents.length ? (
+                    <div className="grid grid-cols-3 mb-12">
+                        {
+                            sr.contents.map((c) => (
+                                <ListingRow
+                                    key={c.id}
+                                    id={c.id}
+                                    title={c.title}
+                                    linkUrl={c.url}
+                                />
+                            ))
+                        }
+                    </div>
+                ) : null
+            }
             <ResultsCountTitle countClassName="text-orange-500" thing={sr.body_content_ids} thingName="Article Bodies" />
+            {/* {
+                sr.body_content_ids.length ? (
+                    <div className="grid grid-cols-3 mb-12">
+                        {
+                            sr.body_content_ids.map((b) => (
+                                <ListingRow
+                                    key={b.id}
+                                    id={b.id}
+                                    title={b.title}
+                                    linkUrl={b.url}
+                                />
+                            ))
+                        }
+                    </div>
+                ) : null
+            } */}
             <ResultsCountTitle countClassName="text-yellow-500" thing={sr.entity_people} thingName="People" />
             <ResultsCountTitle countClassName="text-blue-500" thing={sr.entity_places} thingName="Places" />
             <ResultsCountTitle countClassName="text-blue-500" thing={sr.entity_brands} thingName="Brands" />

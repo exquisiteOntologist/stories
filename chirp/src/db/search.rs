@@ -19,6 +19,8 @@ pub fn db_search(user_query: &String) -> Result<SearchResultsDto, Box<dyn Error>
     let mut contents_all_dtos: Vec<ContentDto> = vec![];
     contents_all_dtos.append(&mut contents_match_titles_dtos.clone());
     contents_all_dtos.append(&mut contents_of_bodies_dtos.clone());
+    contents_all_dtos.sort_by_key(|c| c.id);
+    contents_all_dtos.dedup_by(|a, b| a.id == b.id);
 
     _ = conn.close();
 

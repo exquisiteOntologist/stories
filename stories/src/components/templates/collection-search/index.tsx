@@ -34,7 +34,7 @@ const CollectionSearchView: React.FC<CollectionViewProps> = ({customize, searchM
 
     const title = 'find'
 
-    console.log('search results', searchResults)
+    console.log('search results', searchResults.contents)
     
     useEffect(() => {
         dispatch(fetchCollection([collectionId]))

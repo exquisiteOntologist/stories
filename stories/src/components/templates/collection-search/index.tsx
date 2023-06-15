@@ -68,7 +68,7 @@ const CollectionSearchView: React.FC<CollectionViewProps> = ({customize, searchM
             <ResultsCountTitle countClassName="text-green-500" thing={sr.sources} thingName="Sources" />
             {
                 sr.sources.length ? (
-                    <div className="grid grid-cols-3 mb-12">
+                    <div className="grid grid-cols-3 gap-4 mb-12">
                         {
                             sr.sources.map((s) => (
                                 <ListingRow
@@ -85,7 +85,7 @@ const CollectionSearchView: React.FC<CollectionViewProps> = ({customize, searchM
             <ResultsCountTitle countClassName="text-red-500" thing={sr.collections} thingName="Collections" />
             {
                 sr.collections.length ? (
-                    <div className="grid grid-cols-3 mb-12">
+                    <div className="grid grid-cols-3 gap-4 mb-12">
                         {
                             sr.collections.map((c) => (
                                 <ListingRow
@@ -102,7 +102,7 @@ const CollectionSearchView: React.FC<CollectionViewProps> = ({customize, searchM
             <ResultsCountTitle countClassName="text-orange-500" thing={sr.contents} thingName="Articles" />
             {
                 sr.contents.length ? (
-                    <div className="grid grid-cols-3 mb-12">
+                    <div className="grid grid-cols-3 gap-4 mb-12">
                         {
                             sr.contents.map((c) => (
                                 <ListingRow

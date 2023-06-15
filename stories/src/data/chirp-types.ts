@@ -29,6 +29,11 @@ export interface CollectionToSource {
 	source_id: number;
 }
 
+export interface CollectionToSearch {
+	collection_id: number;
+	search_id: number;
+}
+
 export enum SourceKind {
 	RSS = "RSS",
 	WEB = "WEB",
@@ -69,6 +74,11 @@ export interface ContentBody {
 	body_text: string;
 }
 
+export interface Search {
+	id: number;
+	search_phrase: string;
+}
+
 export interface SearchQueryDto {
 	search_id: number;
 	search_phrase: string;
@@ -82,6 +92,8 @@ export interface SearchResultsDto {
 	collections: Collection[];
 	sources: SourceDto[];
 	contents: ContentDto[];
+	contents_match_titles: ContentDto[];
+	contents_match_bodies: ContentDto[];
 	body_content_ids: number[];
 	entity_people: number[];
 	entity_places: number[];

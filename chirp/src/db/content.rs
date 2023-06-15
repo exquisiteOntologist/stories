@@ -3,7 +3,7 @@ use chrono::{Utc, TimeZone};
 use rusqlite::{Params, Statement, Connection, types::Value};
 
 use crate::entities::{FullContent, Content, ContentBody, ContentMedia, MediaKind};
-use super::db_connect;
+use super::{db_connect, load_rarray_table};
 
 const DATE_FROM_FORMAT: &str = "%F %T%.6f %Z";
 
@@ -138,6 +138,7 @@ pub fn db_content_add(contents: Vec<FullContent>) -> Result<(), Box<dyn Error + 
 	Ok(())
 }
 
+// singular - see also db_contents_retrieve
 pub fn db_content_retrieve(id: i32) -> Result<Content, Box<dyn Error>> {
 	let conn = db_connect()?;
 
@@ -165,9 +166,31 @@ pub fn db_content_retrieve(id: i32) -> Result<Content, Box<dyn Error>> {
 	Ok(out)
 }
 
+pub fn db_contents_retrieve(content_ids: &Vec<i32>) -> Result<Vec<Content>, Box<dyn Error>> {
+	let conn: Connection = db_connect()?;
+	load_rarray_table(&conn)?;
+
+	let content_id_values = Rc::new(content_ids.to_owned().into_iter().map(Value::from).collect::<Vec<Value>>());
+
+	let mut contents_query: Statement = conn.prepare(
+		"SELECT * FROM content WHERE id IN (SELECT * FROM rarray(?1))"
+	)?;
+	let contents_res = db_map_content_query(&mut contents_query, [content_id_values]);
+
+	if let Err(e) = contents_res {
+		println!("Error retrieving contents");
+		println!("{:?}", e);
+		return Err(e);
+	}
+
+	let contents: Vec<Content> = contents_res.unwrap();
+
+	Ok(contents)
+}
+
 pub fn db_check_content_existing_urls(content_urls: &Vec<String>) -> Result<Vec<String>, Box<dyn Error>> {
 	let conn: Connection = db_connect()?;
-	rusqlite::vtab::array::load_module(&conn)?; // <- Adds "rarray" table function
+	load_rarray_table(&conn)?;
 
 	let content_url_values = Rc::new(content_urls.to_owned().into_iter().map(Value::from).collect::<Vec<Value>>());
 	let params = [content_url_values];
@@ -208,13 +231,13 @@ pub fn db_list_content() -> Result<Vec<Content>, Box<dyn Error>> {
 	Ok(content_list)
 }
 
-pub fn db_list_content_of_source(id: i32) -> Result<Vec<Content>, Box<dyn Error>> {
+pub fn db_list_content_of_source(source_id: i32) -> Result<Vec<Content>, Box<dyn Error>> {
 	let conn: Connection = db_connect()?;
 
 	let mut content_list_query: Statement = conn.prepare(
 		"SELECT * FROM content WHERE source_id = :ID ORDER BY id DESC LIMIT 1000"
 	)?;
-	let id_string = id.to_string();
+	let id_string = source_id.to_string();
     let named_params = [
         (":ID", id_string.as_str()),
     ];
@@ -231,7 +254,7 @@ pub fn db_list_content_of_source(id: i32) -> Result<Vec<Content>, Box<dyn Error>
 
 pub fn db_list_content_full() -> Result<Vec<FullContent>, Box<dyn Error>> {
 	let conn: Connection = db_connect()?;
-	rusqlite::vtab::array::load_module(&conn)?; // <- Adds "rarray" table function
+	load_rarray_table(&conn)?;
 
 	let mut content_query: Statement = conn.prepare(
 		"SELECT * FROM content ORDER BY id DESC LIMIT 1000"
@@ -298,7 +321,7 @@ pub fn db_list_content_full() -> Result<Vec<FullContent>, Box<dyn Error>> {
 
 pub fn db_content_bodies(content_ids: Vec<String>) -> Result<Vec<ContentBody>, Box<dyn Error>> {
 	let conn: Connection = db_connect()?;
-	rusqlite::vtab::array::load_module(&conn)?; // <- Adds "rarray" table function
+	load_rarray_table(&conn)?;
 
 	let content_id_values = Rc::new(content_ids.to_owned().into_iter().map(Value::from).collect::<Vec<Value>>());
 	let params = [content_id_values];

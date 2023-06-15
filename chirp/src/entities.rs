@@ -233,6 +233,8 @@ pub struct SearchResultsDto {
     pub collections: Vec<Collection>,
     pub sources: Vec<SourceDto>,
     pub contents: Vec<ContentDto>,
+    pub contents_match_titles: Vec<ContentDto>,
+    pub contents_match_bodies: Vec<ContentDto>,
     pub body_content_ids: Vec<i32>,
     pub entity_people: Vec<i32>,
     pub entity_places: Vec<i32>,

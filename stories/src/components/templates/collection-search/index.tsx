@@ -116,23 +116,6 @@ const CollectionSearchView: React.FC<CollectionViewProps> = ({customize, searchM
                     </div>
                 ) : null
             }
-            <ResultsCountTitle countClassName="text-orange-500" thing={sr.body_content_ids} thingName="Article Bodies" />
-            {/* {
-                sr.body_content_ids.length ? (
-                    <div className="grid grid-cols-3 mb-12">
-                        {
-                            sr.body_content_ids.map((b) => (
-                                <ListingRow
-                                    key={b.id}
-                                    id={b.id}
-                                    title={b.title}
-                                    linkUrl={b.url}
-                                />
-                            ))
-                        }
-                    </div>
-                ) : null
-            } */}
             <ResultsCountTitle countClassName="text-yellow-500" thing={sr.entity_people} thingName="People" />
             <ResultsCountTitle countClassName="text-blue-500" thing={sr.entity_places} thingName="Places" />
             <ResultsCountTitle countClassName="text-blue-500" thing={sr.entity_brands} thingName="Brands" />

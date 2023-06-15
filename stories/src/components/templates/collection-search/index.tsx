@@ -122,7 +122,7 @@ const CollectionSearchView: React.FC<CollectionViewProps> = ({customize, searchM
             <ResultsCountTitle countClassName="text-blue-500" thing={sr.entity_chemicals} thingName="Chemicals" />
             <ResultsCountTitle countClassName="text-blue-500" thing={sr.entity_materials} thingName="Materials" />
             <ResultsCountTitle countClassName="text-blue-500" thing={sr.entity_concepts} thingName="Concepts" />
-            <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-yellow-500">{sr.mean_temperament === 1 ? 'Neutral' : 'Bipolar'}</span> Temperament Overall</h2>
+            {/* <h2 className="text-xl font-semibold mt-6 mb-2"><span className="text-yellow-500">{sr.mean_temperament === 1 ? 'Neutral' : 'Bipolar'}</span> Temperament Overall</h2> */}
         </div>
     )
 

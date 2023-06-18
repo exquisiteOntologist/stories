@@ -3,7 +3,7 @@ use rusqlite::{Connection, types::Value, Statement, Params, params};
 
 use crate::entities::{CollectionSettings, Collection, CollectionToCollection, CollectionToSource};
 
-use super::{db_connect, load_rarray_table};
+use super::{db_connect, load_rarray_table, create_rarray_values};
 
 pub fn db_map_collection_query<P: Params>(s: &mut Statement, p: P) -> Result<Vec<Collection>, Box<dyn Error>> {
 	// assumes used a SELECT *
@@ -121,7 +121,8 @@ pub fn db_get_collection(collection_ids: &Vec<i32>) -> Result<Vec<Collection>, B
     let conn: Connection = db_connect()?;
 	load_rarray_table(&conn)?;
 
-	let c_id_values = Rc::new(collection_ids.to_owned().into_iter().map(Value::from).collect::<Vec<Value>>());
+	// let c_id_values = Rc::new(collection_ids.to_owned().into_iter().map(Value::from).collect::<Vec<Value>>());
+	let c_id_values = create_rarray_values(collection_ids.to_owned());
 	let params = [c_id_values];
 
     let mut c_query: Statement = conn.prepare(
@@ -137,7 +138,8 @@ pub fn db_get_collection_settings(collection_ids: &Vec<i32>) -> Result<Vec<Colle
     let conn: Connection = db_connect()?;
 	load_rarray_table(&conn)?;
 
-	let c_id_values = Rc::new(collection_ids.to_owned().into_iter().map(Value::from).collect::<Vec<Value>>());
+	// let c_id_values = Rc::new(collection_ids.to_owned().into_iter().map(Value::from).collect::<Vec<Value>>());
+	let c_id_values = create_rarray_values(collection_ids.to_owned());
 	let params = [c_id_values];
 
     let mut c_settings_query: Statement = conn.prepare(
@@ -169,7 +171,8 @@ pub fn db_get_collection_to_collection(parent_ids: &Vec<i32>) -> Result<Vec<Coll
     let conn: Connection = db_connect()?;
 	load_rarray_table(&conn)?;
 
-	let c_id_values = Rc::new(parent_ids.to_owned().into_iter().map(Value::from).collect::<Vec<Value>>());
+	// let c_id_values = Rc::new(parent_ids.to_owned().into_iter().map(Value::from).collect::<Vec<Value>>());
+	let c_id_values = create_rarray_values(parent_ids.to_owned());
 	let params = [c_id_values];
 
     let mut c_to_c_query: Statement = conn.prepare(
@@ -186,7 +189,8 @@ pub fn db_get_collection_to_source(collection_ids: &Vec<i32>) -> Result<Vec<Coll
     let conn: Connection = db_connect()?;
 	load_rarray_table(&conn)?;
 
-	let c_id_values = Rc::new(collection_ids.to_owned().into_iter().map(Value::from).collect::<Vec<Value>>());
+	// let c_id_values = Rc::new(collection_ids.to_owned().into_iter().map(Value::from).collect::<Vec<Value>>());
+	let c_id_values = create_rarray_values(collection_ids.to_owned());
 
     let mut c_to_s_query: Statement = conn.prepare(
         // using collection_id instead of id

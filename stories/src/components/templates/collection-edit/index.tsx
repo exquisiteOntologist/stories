@@ -50,7 +50,7 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
         e.preventDefault()
         setRenameCollectionMessage(['Renaming collection...', false])
         const success = (await dispatch(renameCollection({collectionId: collectionId, name: renameCollectionName } as RenameCollection))).payload
-        setRenameCollectionMessage([`${success ? 'Finished renaming' : 'Failed to rename'} collection "${collectionId}"`, !success])
+        setRenameCollectionMessage([`${success ? 'Finished renaming' : 'Failed to rename'} collection "${renameCollectionName}"`, !success])
         dispatch(fetchSourcesOfCollection([collectionId]))
     }
 

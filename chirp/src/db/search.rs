@@ -13,7 +13,7 @@ pub fn db_search(user_query: &String) -> Result<SearchResultsDto, Box<dyn Error>
     let contents_match_titles_dtos: Vec<ContentDto> = contents.into_iter().map(content_to_dto).collect();
     let bodies: Vec<ContentBody> = db_search_content_body(&conn, user_query)?;
     let body_content_ids: Vec<i32> = bodies.into_iter().map(|b| b.content_id).collect();
-    let contents_of_body_matches = db_contents_retrieve(&body_content_ids)?;
+    let contents_of_body_matches: Vec<Content> = db_contents_retrieve(&body_content_ids)?;
     let contents_of_bodies_dtos: Vec<ContentDto> = contents_of_body_matches.into_iter().map(content_to_dto).collect();
     
     let mut contents_all_dtos: Vec<ContentDto> = vec![];

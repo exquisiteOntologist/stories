@@ -22,6 +22,7 @@ import { search, selectSearchResults } from '../../../redux/features/searchSlice
 import { debounce } from 'lodash'
 import { TitleCrumbs } from '../../organisms/title-crumbs'
 import { H2, Light } from '../../atoms/headings'
+import { ListingsContainerCollections } from '../../molecules/listings/listings-container-collections'
 
 interface CollectionViewProps {
     collectionId?: number | string,
@@ -113,15 +114,6 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize, searchMode}) 
         </div>
     ) : null
 
-    const nestedCollectionsRows = nestedCollections.map((nCollection) => (
-        <ListingRow
-            key={nCollection.id}
-            id={nCollection.id}
-            title={nCollection.name}
-            action={() => dispatch(chooseCollection(nCollection.id))}
-        />
-    ))
-
     return (
         <>
             <div className="collection w-full max-w-7xl mx-4 h-min-content">
@@ -130,13 +122,12 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize, searchMode}) 
                     {collectionEditor} 
                 </div>
                 {emptyCollectionMessage}
-                {
-                    nestedCollectionsRows.length ? (
-                        <div className="grid grid-cols-3 gap-4 mb-12">
-                            {nestedCollectionsRows}
-                        </div>
-                    ) : null
-                }
+                <ListingsContainerCollections
+                    className="mb-12"
+                    view={collectionSettings?.layout as SettingsLayout}
+                    collections={nestedCollections}
+                    selectAction={c => dispatch(chooseCollection(c.id))}
+                />
                 <ListingsContainerContent
                     view={collectionSettings?.layout as SettingsLayout}
                     contents={contents}

@@ -1,7 +1,8 @@
 import { ContentDto, SettingsLayout, SourceDto } from "../../../../data/chirp-types";
 
 export interface ListingsContainerContentProps {
-    view?: SettingsLayout,
-    contents: ContentDto[],
+    className?: string
+    view?: SettingsLayout
+    contents: ContentDto[]
     sources: SourceDto[]
 }

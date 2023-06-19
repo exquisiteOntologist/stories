@@ -1,6 +1,6 @@
-use std::{error::Error, rc::Rc};
+use std::{error::Error};
 use chrono::{Utc, TimeZone};
-use rusqlite::{Params, Statement, Connection, types::Value};
+use rusqlite::{Params, Statement, Connection};
 
 use crate::entities::{FullContent, Content, ContentBody, ContentMedia, MediaKind};
 use super::{db_connect, load_rarray_table, create_rarray_values};
@@ -170,7 +170,6 @@ pub fn db_contents_retrieve(content_ids: &Vec<i32>) -> Result<Vec<Content>, Box<
 	let conn: Connection = db_connect()?;
 	load_rarray_table(&conn)?;
 
-	// let content_id_values = Rc::new(content_ids.to_owned().into_iter().map(Value::from).collect::<Vec<Value>>());
 	let content_id_values = create_rarray_values(content_ids.to_owned());
 
 	let mut contents_query: Statement = conn.prepare(
@@ -193,7 +192,6 @@ pub fn db_check_content_existing_urls(content_urls: &Vec<String>) -> Result<Vec<
 	let conn: Connection = db_connect()?;
 	load_rarray_table(&conn)?;
 
-	// let content_url_values = Rc::new(content_urls.to_owned().into_iter().map(Value::from).collect::<Vec<Value>>());
 	let content_url_values = create_rarray_values(content_urls.to_owned());
 	let params = [content_url_values];
 
@@ -271,7 +269,6 @@ pub fn db_list_content_full() -> Result<Vec<FullContent>, Box<dyn Error>> {
 	let content = content_res?;
 
 	let ids: Vec<i32> = content.clone().into_iter().map(|c| c.id).collect::<Vec<i32>>();
-	// let id_values = Rc::new(ids.iter().copied().map(Value::from).collect::<Vec<Value>>());
 	let id_values = create_rarray_values(ids);
 	let params = [id_values];
 
@@ -326,7 +323,6 @@ pub fn db_content_bodies(content_ids: Vec<String>) -> Result<Vec<ContentBody>, B
 	let conn: Connection = db_connect()?;
 	load_rarray_table(&conn)?;
 
-	// let content_id_values = Rc::new(content_ids.to_owned().into_iter().map(Value::from).collect::<Vec<Value>>());
 	let content_id_values = create_rarray_values(content_ids.to_owned());
 	let params = [content_id_values];
 

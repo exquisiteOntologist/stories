@@ -1,5 +1,5 @@
-use std::{error::Error, rc::Rc};
-use rusqlite::{Params, Statement, Connection, types::Value, params};
+use std::{error::Error};
+use rusqlite::{Params, Statement, Connection, params};
 
 use crate::entities::{Source, SourceKind, select_source_kind};
 use super::{db_connect, db_retrievals_outdated_sources, load_rarray_table, create_rarray_values};
@@ -33,7 +33,7 @@ pub fn db_sources_retrieve() -> Result<Vec<Source>, Box<dyn Error>> {
 pub fn db_sources_of_collections_retrieve(collection_ids: &Vec<i32>) -> Result<Vec<Source>, Box<dyn Error>> {
 	let conn: Connection = db_connect()?;
 	load_rarray_table(&conn)?;
-	// let c_id_values = Rc::new(collection_ids.to_owned().into_iter().map(Value::from).collect::<Vec<Value>>());
+
 	let c_id_values = create_rarray_values(collection_ids.to_owned());
 	let mut sources_query: Statement = conn.prepare(
 		"SELECT * FROM source 
@@ -101,7 +101,6 @@ pub fn db_sources_delete(source_ids: &Vec<i32>) -> Result<(), Box<dyn Error>> {
 	let conn: Connection = db_connect()?;
 	rusqlite::vtab::array::load_module(&conn)?; // <- Adds "rarray" table function
 
-	// let source_id_values = Rc::new(source_ids.to_owned().into_iter().map(Value::from).collect::<Vec<Value>>());
 	let source_id_values = create_rarray_values(source_ids.to_owned());
 	let params = [source_id_values];
 

@@ -131,7 +131,7 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize, searchMode}) 
                 {emptyCollectionMessage}
                 {
                     nestedCollectionsRows.length ? (
-                        <div className="grid grid-cols-3 mb-12">
+                        <div className="grid grid-cols-3 gap-4 mb-12">
                             {nestedCollectionsRows}
                         </div>
                     ) : null

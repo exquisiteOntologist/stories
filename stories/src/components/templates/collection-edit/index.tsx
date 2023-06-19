@@ -90,7 +90,7 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = () => {
         <div className="mb-10">
             <H2 className="text-current">Add a collection</H2>
             <form className="flex mb-2" onSubmit={submitAddCollection}>
-                <Field placeholder="Collection Name" value={newCollectionName} updater={setNewCollectionName} />
+                <Field placeholder="New Collection Name" value={newCollectionName} updater={setNewCollectionName} />
                 <Button className={`${buttonClassesHollow} whitespace-nowrap`} action={() => {}} label="Add" disabled={!newCollectionName} />
             </form>
             {

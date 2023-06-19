@@ -47,15 +47,17 @@ const AppMenuActions: React.FC<AppHeaderProps> = ({location}) => {
             <Button
                 Icon={IconPaintRoller}
                 label="Customize"
-                // linkTo="/customize"
-                action={() => dispatch(setIsCustomizing(true))}
+                action={() => {
+                    dispatch(setIsCustomizing(true))
+                    navigate('/')
+                }}
             />
-            <Button
+            {/* <Button
                 Icon={IconWidgets}
                 label="Widgets"
-                linkTo="/customize"
+                linkTo="/"
                 disabled={true}
-            />
+            /> */}
              {/* <Button
                 Icon={IconMagic}
                 label="Magic ID"

@@ -2,10 +2,11 @@ import React from 'react'
 
 export interface HeadingProps {
     children: React.ReactNode
+    className?: String
 }
 
-export const H2: React.FC<HeadingProps> = ({ children }) => (
-    <h2 className="text-2xl font-semibold mb-2">{children}</h2>
+export const H2: React.FC<HeadingProps> = ({ children, className = '' }) => (
+    <h2 className={['text-2xl font-semibold mb-2', className].join(' ')}>{children}</h2>
 )
 
 export type ColourNames = 'green' | 'yellow' | 'blue' | 'red'

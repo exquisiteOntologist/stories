@@ -13,7 +13,7 @@ import { ListActionBar } from '../../molecules/list-action-bar'
 import { CollectionEditViewProps } from './interfaces'
 
 
-const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
+const CollectionEditView: React.FC<CollectionEditViewProps> = () => {
     const dispatch = useAppDispatch()
     const collectionId = useAppSelector(selectCollectionId)
 
@@ -64,7 +64,7 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
             <H2>Rename Collection</H2>
             <form className="flex mb-2" onSubmit={submitRenameCollection}>
                 <Field placeholder="Collection Name" value={renameCollectionName} updater={setRenameCollectionName} />
-                <Button className={`${buttonClassesHollow} whitespace-nowrap`} action={() => {}} label="Rename" disabled={!renameCollectionName}></Button>
+                <Button className={`${buttonClassesHollow} whitespace-nowrap`} action={() => {}} label="Rename" disabled={!renameCollectionName} />
             </form>
             {
                 renameCollectionMessageText
@@ -88,10 +88,10 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
 
     const addCollection = (
         <div className="mb-10">
-            <H2>Add a collection</H2>
+            <H2 className="text-current">Add a collection</H2>
             <form className="flex mb-2" onSubmit={submitAddCollection}>
                 <Field placeholder="Collection Name" value={newCollectionName} updater={setNewCollectionName} />
-                <Button className={`${buttonClassesHollow} whitespace-nowrap`} action={() => {}} label="Add" disabled={!newCollectionName}></Button>
+                <Button className={`${buttonClassesHollow} whitespace-nowrap`} action={() => {}} label="Add" disabled={!newCollectionName} />
             </form>
             {
                 newCollectionMessageText
@@ -121,7 +121,7 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
             <form className='flex mb-2' onSubmit={submitAddToCollection}>
                 <Field placeholder="Enter Source URL" value={sourceUrlEntry} updater={setSourceUrlEntry} />
                 <Field placeholder="Article URL '/segment/'" value={otherParamEntry} updater={setOtherParamEntry} />
-                <Button className={`${buttonClassesHollow} whitespace-nowrap`} action={() => {}} label="Add" disabled={!sourceUrlEntry}></Button>
+                <Button className={`${buttonClassesHollow} whitespace-nowrap`} action={() => {}} label="Add" disabled={!sourceUrlEntry} />
             </form>
             {
                 addMessageText

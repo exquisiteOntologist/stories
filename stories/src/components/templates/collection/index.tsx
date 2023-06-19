@@ -21,6 +21,7 @@ import { LabelAdd } from '../../atoms/icons/label-add'
 import { search, selectSearchResults } from '../../../redux/features/searchSlice'
 import { debounce } from 'lodash'
 import { TitleCrumbs } from '../../organisms/title-crumbs'
+import { H2, Light } from '../../atoms/headings'
 
 interface CollectionViewProps {
     collectionId?: number | string,
@@ -102,9 +103,9 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize, searchMode}) 
         </div>
     )
 
-    const emptyCollectionMessage = (!nestedCollections.length && !contents.length) ? (
+    const emptyCollectionMessage = (!!collection && !nestedCollections.length && !contents.length) ? (
         <div>
-            <h3 className='text-2xl font-semibold mb-2 text-current'>Add Something to <span className="text-yellow-500">{collection?.name}</span>?</h3>
+            <H2>Add Something to <Light colour="yellow">{collection?.name}</Light></H2>
             <p className="text-current mb-6">This collection is empty. There are no sources &amp; no nested collections.</p>
             <div className="flex">
                 <Button className={`${buttonClassesHollow} whitespace-nowrap`} linkTo="/edit" label="Edit Sources"></Button>

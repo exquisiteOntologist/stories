@@ -8,8 +8,10 @@ import { addSourceToCollection, fetchSourcesOfCollection, removeSources, selectN
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
 import { Button, buttonClassesHollow } from '../../atoms/button'
 import { Field } from '../../atoms/forms/field'
+import { H2, Light } from '../../atoms/headings'
 import { ListActionBar } from '../../molecules/list-action-bar'
 import { CollectionEditViewProps } from './interfaces'
+
 
 const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
     const dispatch = useAppDispatch()
@@ -59,7 +61,7 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
 
     const renameCollectionSection = (
         <div className="mb-10">
-            <h2 className="text-2xl font-semibold mb-2">Rename Collection</h2>
+            <H2>Rename Collection</H2>
             <form className="flex mb-2" onSubmit={submitRenameCollection}>
                 <Field placeholder="Collection Name" value={renameCollectionName} updater={setRenameCollectionName} />
                 <Button className={`${buttonClassesHollow} whitespace-nowrap`} action={() => {}} label="Rename" disabled={!renameCollectionName}></Button>
@@ -86,7 +88,7 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
 
     const addCollection = (
         <div className="mb-10">
-            <h2 className="text-2xl font-semibold mb-2">Add a Collection</h2>
+            <H2>Add a collection</H2>
             <form className="flex mb-2" onSubmit={submitAddCollection}>
                 <Field placeholder="Collection Name" value={newCollectionName} updater={setNewCollectionName} />
                 <Button className={`${buttonClassesHollow} whitespace-nowrap`} action={() => {}} label="Add" disabled={!newCollectionName}></Button>
@@ -115,7 +117,7 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
 
     const addSource = (
         <div className="mb-10">
-            <h2 className='text-2xl font-semibold mb-2'>Add a Source</h2>
+            <H2>Add a Source</H2>
             <form className='flex mb-2' onSubmit={submitAddToCollection}>
                 <Field placeholder="Enter Source URL" value={sourceUrlEntry} updater={setSourceUrlEntry} />
                 <Field placeholder="Article URL '/segment/'" value={otherParamEntry} updater={setOtherParamEntry} />
@@ -169,11 +171,11 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
     return (
         <>
             <div className="collection max-w-xl w-full h-min-content">
-                <h1 className="text-4xl font-semibold mb-24">Material of <span className="text-yellow-500">{collection?.name}</span> Collection</h1>
+                <h1 className="text-4xl font-semibold mb-24">Material of <Light colour="yellow">{collection?.name}</Light> Collection</h1>
                 {renameCollectionSection}               
                 {addSource}
                 <>
-                    <h2 className='text-2xl font-semibold mb-2'><span className="text-green-500">{sourceList?.length}</span> Sources</h2>
+                    <H2><Light colour="green">{sourceList?.length}</Light> Sources</H2>
                     <div className='mb-5'>
                         {sourceList}
                     </div>
@@ -191,7 +193,7 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
                 </>
                 {addCollection}
                 <>
-                    <h2 className='text-2xl font-semibold mb-2'><span className="text-blue-500">{nestedCollectionList.length}</span> Collections</h2>
+                    <H2><Light colour="blue">{nestedCollectionList.length}</Light> Collections</H2>
                     <div className='mb-10'>
                         {nestedCollectionList}
                     </div>

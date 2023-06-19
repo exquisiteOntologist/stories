@@ -18,20 +18,27 @@ import { setIsCustomizing } from "../../../redux/features/navSlice";
 
 const scrollToTop = () => scrollTo({top: 0})
 
-const AppMenuNavigation: React.FC = () => (
-    <div className="pointer-events-auto py-4">
-        <Button
-            Icon={ShutEye}
-            label=""
-            linkTo={routeAppLanding}
-            usePadding={false}
-            sideAction={() => {
-                const alreadyAtDest = location.pathname === routeAppLanding
-                if (alreadyAtDest) scrollToTop()
-            }}
-        />
-    </div>
-)
+const AppMenuNavigation: React.FC = () => {
+    const dispatch = useAppDispatch()
+    
+    return (
+        <div className="pointer-events-auto py-4">
+            <Button
+                Icon={ShutEye}
+                label=""
+                action={() => {
+                    dispatch(setIsCustomizing(false))
+                    navigate('/')
+                }}
+                usePadding={false}
+                sideAction={() => {
+                    const alreadyAtDest = location.pathname === routeAppLanding
+                    if (alreadyAtDest) scrollToTop()
+                }}
+            />
+        </div>
+    )
+}
 
 const AppMenuActions: React.FC<AppHeaderProps> = ({location}) => {
     const dispatch = useAppDispatch()

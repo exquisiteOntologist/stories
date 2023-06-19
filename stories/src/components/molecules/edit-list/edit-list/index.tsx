@@ -19,7 +19,7 @@ export interface EditListProps<ListT> {
 export const EditList: React.FC<EditListProps<T>> = ({ title, countColour, list, mapper, deleteDispatch }) => {
     const [selectedIds, setSelectedIds] = useState<number[]>([])
 
-    const handleCheckToggle = useCallback((e: React.ChangeEvent<HTMLInputElement>, id: number) => {
+    const handleCheckToggle = (e: React.ChangeEvent<HTMLInputElement>, id: number) => {
         const checked: boolean = (e.target as HTMLInputElement)?.checked
         const selected = [...selectedIds]
         if (checked) {
@@ -28,7 +28,7 @@ export const EditList: React.FC<EditListProps<T>> = ({ title, countColour, list,
             selected.splice(selected.indexOf(id), 1)
         }
         setSelectedIds(selected)
-    }, [])
+    }
 
     const showContextActions: boolean = !!selectedIds.length
 

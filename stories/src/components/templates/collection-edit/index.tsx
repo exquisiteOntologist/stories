@@ -1,18 +1,16 @@
 import * as React from 'react'
 import { useEffect, useState } from 'react'
-import { SourceDto } from '../../../data/chirp-types'
 import { addNewCollection, collectionsSelectors, fetchCollection, fetchNestedCollections, NewCollection, selectNestedCollections, renameCollection, RenameCollection } from '../../../redux/features/collectionsSlice'
 import { collectionToSourceSelectors } from '../../../redux/features/collectionToSourceSlice'
 import { selectCollectionId } from '../../../redux/features/navSlice'
-import { addSourceToCollection, fetchSourcesOfCollection, removeSources, selectNestedSources } from '../../../redux/features/sourcesSlice'
+import { fetchSourcesOfCollection } from '../../../redux/features/sourcesSlice'
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
 import { Button, buttonClassesHollow } from '../../atoms/button'
 import { Field } from '../../atoms/forms/field'
 import { H2, Hint, Light } from '../../atoms/headings'
-import { EditList, EditListMapperOptions } from '../../molecules/edit-list/edit-list'
 import { EditListItem } from '../../molecules/edit-list/edit-list-item'
+import { EditListCollections } from '../../organisms/collection-edit/edit-list-collections'
 import { EditListSources } from '../../organisms/collection-edit/edit-list-sources'
-// import { ListActionBar } from '../../molecules/list-action-bar'
 import { CollectionEditViewProps } from './interfaces'
 
 
@@ -25,11 +23,8 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = () => {
     
     const [newCollectionName, setNewCollectionName] = useState<string>('')
     const [newCollectionMessage, setNewCollectionMessage] = useState<[string, boolean]>(['', false])
-    
-    const [selectedCollectionIds, setSelectedCollectionIds] = useState<number[]>([])
-    
+        
     const collection = useAppSelector(s => collectionsSelectors.selectById(s, collectionId))
-    const nestedCollections = useAppSelector(selectNestedCollections)
     const collectionToSources = useAppSelector(collectionToSourceSelectors.selectAll)
 
     useEffect(() => {
@@ -98,33 +93,6 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = () => {
         </div>
     )
 
-    const handleCollectionCheckToggle = (e: React.ChangeEvent<HTMLInputElement>, id: number) => {
-        const checked: boolean = (e.target as HTMLInputElement)?.checked
-        const selected = [...selectedCollectionIds]
-        if (checked) {
-            selected.push(id)
-        } else {
-            selected.splice(selected.indexOf(id), 1)
-        }
-        setSelectedCollectionIds(selected)
-    }
-
-    const collectionChecked = (id: number): boolean => selectedCollectionIds.includes(id)
-
-    const nestedCollectionList = nestedCollections.sort((cA, cB) => (cA.name || '').localeCompare(cB.name || '')).map(c => {
-        const title = c.name
-        
-        return (
-            <EditListItem
-                key={c.id}
-                id={Number(c.id).toString()}
-                isChecked={collectionChecked(c.id)}
-                handleCheck={e => handleCollectionCheckToggle(e, c.id)}
-                title={title}
-            />
-        )
-    })
-
     return (
         <>
             <div className="collection max-w-xl w-full h-min-content">
@@ -132,12 +100,7 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = () => {
                 {renameCollectionSection}               
                 <EditListSources />
                 {addCollection}
-                <>
-                    <H2><Light colour="blue">{nestedCollectionList.length}</Light> Collections</H2>
-                    <div className='mb-10'>
-                        {nestedCollectionList}
-                    </div>
-                </>
+                <EditListCollections />
             </div>
         </>
     )

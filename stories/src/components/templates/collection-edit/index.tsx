@@ -11,6 +11,7 @@ import { Field } from '../../atoms/forms/field'
 import { H2, Hint, Light } from '../../atoms/headings'
 import { EditList, EditListMapperOptions } from '../../molecules/edit-list/edit-list'
 import { EditListItem } from '../../molecules/edit-list/edit-list-item'
+import { EditListSources } from '../../organisms/collection-edit/edit-list-sources'
 // import { ListActionBar } from '../../molecules/list-action-bar'
 import { CollectionEditViewProps } from './interfaces'
 
@@ -25,16 +26,11 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = () => {
     const [newCollectionName, setNewCollectionName] = useState<string>('')
     const [newCollectionMessage, setNewCollectionMessage] = useState<[string, boolean]>(['', false])
     
-    // const [selectedSourceIds, setSelectedSourceIds] = useState<number[]>([])
     const [selectedCollectionIds, setSelectedCollectionIds] = useState<number[]>([])
-    const [sourceUrlEntry, setSourceUrlEntry] = useState<string>('')
-    const [otherParamEntry, setOtherParamEntry] = useState<string>('')
-    const [addSourceMessage, setAddSourceMessage] = useState<[string, boolean]>(['', false])
     
     const collection = useAppSelector(s => collectionsSelectors.selectById(s, collectionId))
     const nestedCollections = useAppSelector(selectNestedCollections)
     const collectionToSources = useAppSelector(collectionToSourceSelectors.selectAll)
-    const sources = useAppSelector(selectNestedSources)
 
     useEffect(() => {
         dispatch(fetchCollection([collectionId]))
@@ -102,66 +98,6 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = () => {
         </div>
     )
 
-    const submitAddToCollection = async (e: React.FormEvent) => {
-        e.preventDefault()
-        setAddSourceMessage(['Adding source...', false])
-        const success = (await dispatch(addSourceToCollection({collectionId: collectionId, sourceUrl: sourceUrlEntry, otherParam: otherParamEntry }))).payload
-        setAddSourceMessage([`${success ? 'Finished adding' : 'Failed to add'} source "${sourceUrlEntry}"`, !success])
-        dispatch(fetchSourcesOfCollection([collectionId]))
-        if (success) {
-            setSourceUrlEntry('')
-            setOtherParamEntry('')
-        }
-    }
-
-    const [addMessageText, addMessageWasError] = addSourceMessage
-
-    const addSource = (
-        <div className="mb-10">
-            <H2>Add a Source</H2>
-            <form className='flex mb-2' onSubmit={submitAddToCollection}>
-                <Field placeholder="Enter Source URL" value={sourceUrlEntry} updater={setSourceUrlEntry} />
-                <Field placeholder="Article URL '/segment/'" value={otherParamEntry} updater={setOtherParamEntry} />
-                <Button className={`${buttonClassesHollow} whitespace-nowrap`} action={() => {}} label="Add" disabled={!sourceUrlEntry} />
-            </form>
-            {
-                addMessageText
-                    ? (<p className={`${addMessageWasError ? 'text-orange-700' : 'text-green-700'}`}>{addMessageText}&nbsp;</p>)
-                    : (<Hint title="Tip" text="If articles on a site have &ldquo;/2023/&rdquo; in their URLs, add &ldquo;2023&rdquo; as the segment.&nbsp;" />)
-            }
-        </div>
-    )
-
-    // const handleSourceCheckToggle = (e: React.ChangeEvent<HTMLInputElement>, id: number) => {
-    //     const checked: boolean = (e.target as HTMLInputElement)?.checked
-    //     const selected = [...selectedSourceIds]
-    //     if (checked) {
-    //         selected.push(id)
-    //     } else {
-    //         selected.splice(selected.indexOf(id), 1)
-    //     }
-    //     setSelectedSourceIds(selected)
-    // }
-
-    // const sourceChecked = (id: number): boolean => selectedSourceIds.includes(id)
-    const kindClass = (kind: SourceDto['kind']) => kind === 'RSS' ? 'text-red-600' : 'text-yellow-600'
-
-    // const sourceList = sources.sort((sA, sB) => (sA.name || '').localeCompare(sB.name || '')).map(s => {
-    //     const title = s.name
-    //     const subtitle = (<><span className={`font-bold ${kindClass(s.kind)}`}>{s.kind}&nbsp;</span>{s.url}</>)
-
-    //     return (
-    //         <EditListItem
-    //             key={s.id}
-    //             id={Number(s.id).toString()}
-    //             isChecked={sourceChecked(s.id)}
-    //             handleCheck={e => handleSourceCheckToggle(e, s.id)}
-    //             title={title}
-    //             subtitle={subtitle}
-    //         />
-    //     )
-    // })
-
     const handleCollectionCheckToggle = (e: React.ChangeEvent<HTMLInputElement>, id: number) => {
         const checked: boolean = (e.target as HTMLInputElement)?.checked
         const selected = [...selectedCollectionIds]
@@ -189,63 +125,12 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = () => {
         )
     })
 
-    // const showContextActions: boolean = !!selectedSourceIds.length
-
     return (
         <>
             <div className="collection max-w-xl w-full h-min-content">
                 <h1 className="text-4xl font-semibold mb-24">Material of <Light colour="yellow">{collection?.name}</Light> Collection</h1>
                 {renameCollectionSection}               
-                {addSource}
-                {/* <>
-                    <H2><Light colour="green">{sourceList?.length}</Light> Sources</H2>
-                    <div className='mb-5'>
-                        {sourceList}
-                    </div>
-                    <ListActionBar
-                        show={showContextActions}
-                        deleteAction={async () => {
-                            await dispatch(removeSources({
-                                collectionId: collectionId,
-                                sourceIds: selectedSourceIds
-                            }))
-
-                            setSelectedSourceIds([])
-                        }}
-                    />
-                </> */}
-                <EditList
-                    title="sources"
-                    countColour="green"
-                    list={sources}
-                    mapper={(o: EditListMapperOptions<SourceDto>) => {
-                        const {
-                            isChecked,
-                            list,
-                            handleCheckToggle
-                        } = o
-
-                        return list.sort((sA, sB) => (sA.name || '').localeCompare(sB.name || '')).map(s => {
-                            const title = s.name
-                            const subtitle = (<><span className={`font-bold ${kindClass(s.kind)}`}>{s.kind}&nbsp;</span>{s.url}</>)
-                    
-                            return (
-                                <EditListItem
-                                    key={s.id}
-                                    id={Number(s.id).toString()}
-                                    isChecked={isChecked(s.id)}
-                                    handleCheck={e => handleCheckToggle(e, s.id)}
-                                    title={title}
-                                    subtitle={subtitle}
-                                />
-                            )
-                        })
-                    }}
-                    deleteDispatch={(selectedIds: number[]) => dispatch(removeSources({
-                        collectionId: collectionId,
-                        sourceIds: selectedIds
-                    }))}
-                />
+                <EditListSources />
                 {addCollection}
                 <>
                     <H2><Light colour="blue">{nestedCollectionList.length}</Light> Collections</H2>

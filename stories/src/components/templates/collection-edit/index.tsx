@@ -9,8 +9,9 @@ import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
 import { Button, buttonClassesHollow } from '../../atoms/button'
 import { Field } from '../../atoms/forms/field'
 import { H2, Hint, Light } from '../../atoms/headings'
+import { EditList, EditListMapperOptions } from '../../molecules/edit-list/edit-list'
 import { EditListItem } from '../../molecules/edit-list/edit-list-item'
-import { ListActionBar } from '../../molecules/list-action-bar'
+// import { ListActionBar } from '../../molecules/list-action-bar'
 import { CollectionEditViewProps } from './interfaces'
 
 
@@ -24,7 +25,8 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = () => {
     const [newCollectionName, setNewCollectionName] = useState<string>('')
     const [newCollectionMessage, setNewCollectionMessage] = useState<[string, boolean]>(['', false])
     
-    const [selectedSourceIds, setSelectedSourceIds] = useState<number[]>([])
+    // const [selectedSourceIds, setSelectedSourceIds] = useState<number[]>([])
+    const [selectedCollectionIds, setSelectedCollectionIds] = useState<number[]>([])
     const [sourceUrlEntry, setSourceUrlEntry] = useState<string>('')
     const [otherParamEntry, setOtherParamEntry] = useState<string>('')
     const [addSourceMessage, setAddSourceMessage] = useState<[string, boolean]>(['', false])
@@ -130,48 +132,64 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = () => {
         </div>
     )
 
-    const handleCheckToggle = (e: React.ChangeEvent<HTMLInputElement>, id: number) => {
+    // const handleSourceCheckToggle = (e: React.ChangeEvent<HTMLInputElement>, id: number) => {
+    //     const checked: boolean = (e.target as HTMLInputElement)?.checked
+    //     const selected = [...selectedSourceIds]
+    //     if (checked) {
+    //         selected.push(id)
+    //     } else {
+    //         selected.splice(selected.indexOf(id), 1)
+    //     }
+    //     setSelectedSourceIds(selected)
+    // }
+
+    // const sourceChecked = (id: number): boolean => selectedSourceIds.includes(id)
+    const kindClass = (kind: SourceDto['kind']) => kind === 'RSS' ? 'text-red-600' : 'text-yellow-600'
+
+    // const sourceList = sources.sort((sA, sB) => (sA.name || '').localeCompare(sB.name || '')).map(s => {
+    //     const title = s.name
+    //     const subtitle = (<><span className={`font-bold ${kindClass(s.kind)}`}>{s.kind}&nbsp;</span>{s.url}</>)
+
+    //     return (
+    //         <EditListItem
+    //             key={s.id}
+    //             id={Number(s.id).toString()}
+    //             isChecked={sourceChecked(s.id)}
+    //             handleCheck={e => handleSourceCheckToggle(e, s.id)}
+    //             title={title}
+    //             subtitle={subtitle}
+    //         />
+    //     )
+    // })
+
+    const handleCollectionCheckToggle = (e: React.ChangeEvent<HTMLInputElement>, id: number) => {
         const checked: boolean = (e.target as HTMLInputElement)?.checked
-        const selected = [...selectedSourceIds]
+        const selected = [...selectedCollectionIds]
         if (checked) {
             selected.push(id)
         } else {
             selected.splice(selected.indexOf(id), 1)
         }
-        setSelectedSourceIds(selected)
+        setSelectedCollectionIds(selected)
     }
 
-    const sourceChecked = (id: number): boolean => selectedSourceIds.includes(id)
-    const kindClass = (kind: SourceDto['kind']) => kind === 'RSS' ? 'text-red-600' : 'text-yellow-600'
+    const collectionChecked = (id: number): boolean => selectedCollectionIds.includes(id)
 
-    const sourceList = sources.sort((sA, sB) => (sA.name || '').localeCompare(sB.name || '')).map(s => {
-        const title = s.name
-        const subtitle = (<><span className={`font-bold ${kindClass(s.kind)}`}>{s.kind}&nbsp;</span>{s.url}</>)
-
+    const nestedCollectionList = nestedCollections.sort((cA, cB) => (cA.name || '').localeCompare(cB.name || '')).map(c => {
+        const title = c.name
+        
         return (
             <EditListItem
-                key={s.id}
-                id={Number(s.id).toString()}
-                isChecked={sourceChecked(s.id)}
-                handleCheck={e => handleCheckToggle(e, s.id)}
+                key={c.id}
+                id={Number(c.id).toString()}
+                isChecked={collectionChecked(c.id)}
+                handleCheck={e => handleCollectionCheckToggle(e, c.id)}
                 title={title}
-                subtitle={subtitle}
             />
         )
     })
 
-    const nestedCollectionList = nestedCollections.sort((cA, cB) => (cA.name || '').localeCompare(cB.name || '')).map(c => (
-        <div className="select-none" key={c.id}>
-            <input className="hidden" type="checkbox" id={c.id.toString()} name={c.id.toString()} onChange={e => console.error('selecting collections not supported')} />
-            <label htmlFor={c.id.toString()} className={`block p-2 p2-3 px-2 -mt-2 -ml-2 -mr-2 max-w-none rounded-md ${sourceChecked(c.id) ? 'bg-yellow-200' : ''}`}>
-                <h3 className={`${sourceChecked(c.id) ? 'text-gray-900' : 'text-current'}`}>{c.name}</h3>
-            </label>
-        </div>
-    ))
-
-    const showContextActions: boolean = !!selectedSourceIds.length
-
-    const clearSelection = () => setSelectedSourceIds([])
+    // const showContextActions: boolean = !!selectedSourceIds.length
 
     return (
         <>
@@ -179,7 +197,7 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = () => {
                 <h1 className="text-4xl font-semibold mb-24">Material of <Light colour="yellow">{collection?.name}</Light> Collection</h1>
                 {renameCollectionSection}               
                 {addSource}
-                <>
+                {/* <>
                     <H2><Light colour="green">{sourceList?.length}</Light> Sources</H2>
                     <div className='mb-5'>
                         {sourceList}
@@ -192,10 +210,42 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = () => {
                                 sourceIds: selectedSourceIds
                             }))
 
-                            clearSelection()
+                            setSelectedSourceIds([])
                         }}
                     />
-                </>
+                </> */}
+                <EditList
+                    title="sources"
+                    countColour="green"
+                    list={sources}
+                    mapper={(o: EditListMapperOptions<SourceDto>) => {
+                        const {
+                            isChecked,
+                            list,
+                            handleCheckToggle
+                        } = o
+
+                        return list.sort((sA, sB) => (sA.name || '').localeCompare(sB.name || '')).map(s => {
+                            const title = s.name
+                            const subtitle = (<><span className={`font-bold ${kindClass(s.kind)}`}>{s.kind}&nbsp;</span>{s.url}</>)
+                    
+                            return (
+                                <EditListItem
+                                    key={s.id}
+                                    id={Number(s.id).toString()}
+                                    isChecked={isChecked(s.id)}
+                                    handleCheck={e => handleCheckToggle(e, s.id)}
+                                    title={title}
+                                    subtitle={subtitle}
+                                />
+                            )
+                        })
+                    }}
+                    deleteDispatch={(selectedIds: number[]) => dispatch(removeSources({
+                        collectionId: collectionId,
+                        sourceIds: selectedIds
+                    }))}
+                />
                 {addCollection}
                 <>
                     <H2><Light colour="blue">{nestedCollectionList.length}</Light> Collections</H2>

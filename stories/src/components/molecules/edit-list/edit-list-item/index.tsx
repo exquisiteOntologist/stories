@@ -1,5 +1,6 @@
 import { EditListItemProps } from "./interfaces";
 
+/** A selectable item that goes in a list */
 export const EditListItem: React.FC<EditListItemProps> = ({
     key,
     id,

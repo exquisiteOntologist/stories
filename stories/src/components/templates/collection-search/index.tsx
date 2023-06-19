@@ -2,28 +2,18 @@ import * as React from 'react'
 import { useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
 import { resetThemeColours } from '../../../redux/features/themeSlice'
-import { collectionsSelectors, fetchCollection, fetchNestedCollections, selectNestedCollections } from '../../../redux/features/collectionsSlice'
-import { collectionSettingsSelectors, setCollectionSettings } from '../../../redux/features/collectionSettingsSlice'
-import { Collection, CollectionSettings, SettingsLayout } from '../../../data/chirp-types'
+import { fetchCollection } from '../../../redux/features/collectionsSlice'
 import { chooseCollection, selectCollectionId } from '../../../redux/features/navSlice'
-import { ListingsContainerContent } from '../../molecules/listings/listings-container-content'
 import { ResultsCountTitle } from '../../molecules/results/results-count-title'
 import { IconSearch } from '../../atoms/icons/search'
-import { LabelAdd } from '../../atoms/icons/label-add'
 import { search, selectSearchResults } from '../../../redux/features/searchSlice'
 import { debounce } from 'lodash'
 import { TitleCrumbs } from '../../organisms/title-crumbs'
 import { ListingRow } from '../../molecules/listings/row'
 
-interface CollectionViewProps {
-    collectionId?: number | string,
-    customize?: boolean,
-    searchMode?: boolean
-}
-
 const clientItemsLimit: number = 100
 
-const CollectionSearchView: React.FC<CollectionViewProps> = ({customize, searchMode}) => {
+const CollectionSearchView: React.FC = () => {
     const dispatch = useAppDispatch()
 
     const collectionId = useAppSelector(selectCollectionId)
@@ -57,7 +47,6 @@ const CollectionSearchView: React.FC<CollectionViewProps> = ({customize, searchM
                 <span className="absolute top-1/2 left-3 -translate-y-1/2 text-blue-500 pointer-events-none"><IconSearch /></span>
                 <input id="search-box" className='block border border-slate-400 w-full mr-2 px-4 py-2 pl-12 bg-transparent rounded-full' type="text" placeholder="" autoFocus spellCheck="false" value={searchPhrase} onChange={e => updateSearch(e.currentTarget.value)} />
             </div>
-            {/* <Button className={`${buttonClassesHollow} whitespace-nowrap`} action={() => console.log('pinning not yet supported :)')} label="Pin it" disabled={!searchPhrase}></Button> */}
         </form>
     )
 

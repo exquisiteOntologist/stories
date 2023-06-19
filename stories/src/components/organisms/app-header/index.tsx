@@ -13,6 +13,8 @@ import { ShortcutCommandF } from '../../atoms/icons/shortcuts/shortcut-cmd-f'
 import { ShutEye } from "../../atoms/logo/shut-eye";
 import { ButtonsGroup } from "../../molecules/buttons-group";
 import { SearchShortcutHandlers } from "../../alternate/search-shortcut-handler";
+import { useAppDispatch } from "../../../redux/hooks";
+import { setIsCustomizing } from "../../../redux/features/navSlice";
 
 const scrollToTop = () => scrollTo({top: 0})
 
@@ -31,40 +33,45 @@ const AppMenuNavigation: React.FC = () => (
     </div>
 )
 
-const AppMenuActions: React.FC<AppHeaderProps> = ({location}) => (
-    <ButtonsGroup className="grow justify-end pointer-events-auto pl-20 py-4" expands={true} IconExpand={IconEllipsis} leftward={true}>
-        <Button
-            Icon={IconShapes}
-            label="Sources"
-            // linkTo={`${location.pathname}/edit`}
-            linkTo={`/edit`}
-        />
-        <Button
-            Icon={IconPaintRoller}
-            label="Customize"
-            linkTo="/customize"
-        />
-        <Button
-            Icon={IconWidgets}
-            label="Widgets"
-            linkTo="/customize"
-            disabled={true}
-        />
-         {/* <Button
-            Icon={IconMagic}
-            label="Magic ID"
-            action={() => console.log('magic ID')}
-            disabled={true}
-        /> */}
-        <Button
-            Icon={IconSearch}
-            PopoverIcon={ShortcutCommandF}
-            label="Search"
-            linkTo="/search"
-            disabled={false}
-        />
-    </ButtonsGroup>
-)
+const AppMenuActions: React.FC<AppHeaderProps> = ({location}) => {
+    const dispatch = useAppDispatch()
+
+    return (
+        <ButtonsGroup className="grow justify-end pointer-events-auto pl-20 py-4" expands={true} IconExpand={IconEllipsis} leftward={true}>
+            <Button
+                Icon={IconShapes}
+                label="Sources"
+                // linkTo={`${location.pathname}/edit`}
+                linkTo={`/edit`}
+            />
+            <Button
+                Icon={IconPaintRoller}
+                label="Customize"
+                // linkTo="/customize"
+                action={() => dispatch(setIsCustomizing(true))}
+            />
+            <Button
+                Icon={IconWidgets}
+                label="Widgets"
+                linkTo="/customize"
+                disabled={true}
+            />
+             {/* <Button
+                Icon={IconMagic}
+                label="Magic ID"
+                action={() => console.log('magic ID')}
+                disabled={true}
+            /> */}
+            <Button
+                Icon={IconSearch}
+                PopoverIcon={ShortcutCommandF}
+                label="Search"
+                linkTo="/search"
+                disabled={false}
+            />
+        </ButtonsGroup>
+    )
+}
 
 const AppHeaderShortcutHandlers: React.FC = () => (
     <>

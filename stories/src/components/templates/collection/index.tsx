@@ -1,38 +1,24 @@
 import * as React from 'react'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
 import { fetchContent, selectContentOfCollection } from '../../../redux/features/contentsSlice'
-import { ListingRow } from '../../molecules/listings/row'
 import { fetchSourcesOfCollection, sourcesSelectors } from '../../../redux/features/sourcesSlice'
 import { resetThemeColours } from '../../../redux/features/themeSlice'
 import { Button, buttonClassesHollow } from '../../atoms/button'
-import { IconGrid } from '../../atoms/icons/grid'
-import { IconList } from '../../atoms/icons/list'
-import { IconAddCircle } from '../../atoms/icons/add-circle'
-import { IconShapes } from '../../atoms/icons/shapes'
-import { IconTickCircle } from '../../atoms/icons/tick-circle'
 import { collectionsSelectors, fetchCollection, fetchNestedCollections, selectNestedCollections } from '../../../redux/features/collectionsSlice'
-import { collectionSettingsSelectors, setCollectionSettings } from '../../../redux/features/collectionSettingsSlice'
-import { Collection, CollectionSettings, SettingsLayout } from '../../../data/chirp-types'
-import { chooseCollection, selectCollectionId } from '../../../redux/features/navSlice'
+import { collectionSettingsSelectors } from '../../../redux/features/collectionSettingsSlice'
+import { SettingsLayout } from '../../../data/chirp-types'
+import { chooseCollection, selectCollectionId, selectIsCustomizing } from '../../../redux/features/navSlice'
 import { ListingsContainerContent } from '../../molecules/listings/listings-container-content'
-import { IconSearch } from '../../atoms/icons/search'
-import { LabelAdd } from '../../atoms/icons/label-add'
-import { search, selectSearchResults } from '../../../redux/features/searchSlice'
-import { debounce } from 'lodash'
 import { TitleCrumbs } from '../../organisms/title-crumbs'
 import { H2, Light } from '../../atoms/headings'
 import { ListingsContainerCollections } from '../../molecules/listings/listings-container-collections'
-
-interface CollectionViewProps {
-    collectionId?: number | string,
-    customize?: boolean,
-    searchMode?: boolean
-}
+import { CollectionCustomizer } from '../../organisms/collection-customizer'
+import { CollectionViewProps } from './interface'
 
 const clientItemsLimit: number = 100
 
-const CollectionView: React.FC<CollectionViewProps> = ({customize, searchMode}) => {
+const CollectionView: React.FC<CollectionViewProps> = () => {
     const dispatch = useAppDispatch()
 
     const collectionId = useAppSelector(selectCollectionId)
@@ -41,13 +27,9 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize, searchMode}) 
     const collectionSettings = useAppSelector(s => collectionSettingsSelectors.selectById(s, collectionId))
     const sources = useAppSelector(sourcesSelectors.selectAll)
     const contents = useAppSelector(selectContentOfCollection).slice(0, clientItemsLimit)
+    const isCustomizing = useAppSelector(selectIsCustomizing);
 
-    const title = customize ? 'edit' : (searchMode ? 'find' : 'hi')
-
-    // console.log('collection', collectionId, collection)
-    // console.log('collection settings', collectionSettings)
-    // console.log('nested collections', nestedCollections)
-    // console.log('collection to source maps', collectionToSources)
+    const title = isCustomizing ? 'edit' : 'hi'
     
     useEffect(() => {
         dispatch(fetchCollection([collectionId]))
@@ -69,41 +51,6 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize, searchMode}) 
         dispatch(resetThemeColours())
     }, [dispatch])
 
-    const showCollectionEditor = customize
-    const viewIsList = collectionSettings?.layout === SettingsLayout.ROWS
-
-    const collectionEditor = (
-        <div className={`transition-all duration-0 ${showCollectionEditor ? 'opacity-1' : 'opacity-0'}`}>
-            {/* <h2 className="text-2xl font-semibold mb-2">Customize</h2> */}
-            <div className={`flex justify-start`}>
-                <Button
-                    label="Done"
-                    Icon={IconTickCircle}
-                    linkTo={`/`}
-                />
-                <Button 
-                    label={`View as ${viewIsList ? 'Cards' : 'List'}`}
-                    Icon={viewIsList ? IconGrid : IconList}
-                    action={() => dispatch(setCollectionSettings({
-                        ...collectionSettings,
-                        layout: viewIsList ? 'CARDS' : 'ROWS'
-                    } as CollectionSettings))}
-                />
-                <Button 
-                    label="Add Widget"
-                    Icon={IconAddCircle}
-                    action={() => void 8}
-                    disabled={true}
-                />
-                <Button
-                    Icon={IconShapes}
-                    label="Sources"
-                    linkTo={`/edit`}
-                />
-            </div>
-        </div>
-    )
-
     const emptyCollectionMessage = (!!collection && !nestedCollections.length && !contents.length) ? (
         <div>
             <H2>Add Something to <Light colour="yellow">{collection?.name}</Light></H2>
@@ -118,9 +65,7 @@ const CollectionView: React.FC<CollectionViewProps> = ({customize, searchMode}) 
         <>
             <div className="collection w-full max-w-7xl mx-4 h-min-content">
                 <TitleCrumbs collectionId={collectionId} title={title} />
-                <div className="mb-6">
-                    {collectionEditor} 
-                </div>
+                <CollectionCustomizer collectionSettings={collectionSettings} isCustomizing={isCustomizing} /> 
                 {emptyCollectionMessage}
                 <ListingsContainerCollections
                     className="mb-12"

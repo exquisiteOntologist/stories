@@ -8,7 +8,7 @@ import { addSourceToCollection, fetchSourcesOfCollection, removeSources, selectN
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
 import { Button, buttonClassesHollow } from '../../atoms/button'
 import { Field } from '../../atoms/forms/field'
-import { H2, Light } from '../../atoms/headings'
+import { H2, Hint, Light } from '../../atoms/headings'
 import { ListActionBar } from '../../molecules/list-action-bar'
 import { CollectionEditViewProps } from './interfaces'
 
@@ -96,7 +96,7 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
             {
                 newCollectionMessageText
                     ? (<p className={`${newCollectionMessageError ? 'text-orange-700' : 'text-green-700'}`}>{newCollectionMessageText}&nbsp;</p>)
-                    : (<p className="text-gray-300"><span className="font-semibold">Note:</span> The new collection will be nested within the current collection.</p>)
+                    : (<Hint title="Note" text="The new collection will be nested within the current collection." />)
             }
         </div>
     )
@@ -126,7 +126,7 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
             {
                 addMessageText
                     ? (<p className={`${addMessageWasError ? 'text-orange-700' : 'text-green-700'}`}>{addMessageText}&nbsp;</p>)
-                    : (<p className="text-gray-300"><span className="font-semibold">Tip:</span> If articles on a site have &ldquo;/2023/&rdquo; in their URLs, add &ldquo;2023&rdquo; as the segment.&nbsp;</p>)
+                    : (<Hint title="Tip" text="If articles on a site have &ldquo;/2023/&rdquo; in their URLs, add &ldquo;2023&rdquo; as the segment.&nbsp;" />)
             }
         </div>
     )

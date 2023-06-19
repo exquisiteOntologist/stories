@@ -15,6 +15,15 @@ export interface LightProps {
     colour: ColourNames
 }
 
-export const Light: React.FC<LightProps> = ({children, colour}) => (
+export const Light: React.FC<LightProps> = ({ children, colour }) => (
     <span className={`text-${colour}-500`}>{children}</span>
+)
+
+export interface HintProps {
+    title: String
+    text: String
+}
+
+export const Hint: React.FC<HintProps> = ({ title, text }) => (
+    <p className="text-gray-300"><span className="font-semibold">{title}:</span> {text}</p>
 )

@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
 import { Button, buttonClassesHollow } from '../../atoms/button'
 import { Field } from '../../atoms/forms/field'
 import { H2, Hint, Light } from '../../atoms/headings'
+import { EditListItem } from '../../molecules/edit-list/edit-list-item'
 import { ListActionBar } from '../../molecules/list-action-bar'
 import { CollectionEditViewProps } from './interfaces'
 
@@ -46,8 +47,6 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = () => {
     useEffect(() => {
         setRenameCollectionName(collection?.name ?? renameCollectionName)
     }, [collection])
-
-    // NOTE: Current collection name is this collection's name, & new collection name is for any collection being added new to this collection
 
     const submitRenameCollection = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -145,15 +144,21 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = () => {
     const sourceChecked = (id: number): boolean => selectedSourceIds.includes(id)
     const kindClass = (kind: SourceDto['kind']) => kind === 'RSS' ? 'text-red-600' : 'text-yellow-600'
 
-    const sourceList = sources.sort((sA, sB) => (sA.name || '').localeCompare(sB.name || '')).map(s => (
-        <div className="select-none" key={s.id}>
-            <input className="hidden" type="checkbox" id={s.id.toString()} name={s.id.toString()} onChange={e => handleCheckToggle(e, s.id)} />
-            <label htmlFor={s.id.toString()} className={`block p-2 p2-3 px-2 -mt-2 -ml-2 -mr-2 max-w-none rounded-md ${sourceChecked(s.id) ? 'bg-yellow-200' : ''}`}>
-                <h3 className={`${sourceChecked(s.id) ? 'text-gray-900' : 'text-current'}`}>{s.name}</h3>
-                <p className={`${sourceChecked(s.id) ? 'text-gray-900' : 'text-current'} opacity-30`} title={`ID ${s.id}`}><span className={`font-bold ${kindClass(s.kind)}`}>{s.kind}&nbsp;</span>{s.url}</p>
-            </label>
-        </div>
-    ))
+    const sourceList = sources.sort((sA, sB) => (sA.name || '').localeCompare(sB.name || '')).map(s => {
+        const title = s.name
+        const subtitle = (<><span className={`font-bold ${kindClass(s.kind)}`}>{s.kind}&nbsp;</span>{s.url}</>)
+
+        return (
+            <EditListItem
+                key={s.id}
+                id={Number(s.id).toString()}
+                isChecked={sourceChecked(s.id)}
+                handleCheck={e => handleCheckToggle(e, s.id)}
+                title={title}
+                subtitle={subtitle}
+            />
+        )
+    })
 
     const nestedCollectionList = nestedCollections.sort((cA, cB) => (cA.name || '').localeCompare(cB.name || '')).map(c => (
         <div className="select-none" key={c.id}>

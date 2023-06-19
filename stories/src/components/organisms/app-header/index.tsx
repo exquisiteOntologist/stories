@@ -39,18 +39,18 @@ const AppMenuActions: React.FC<AppHeaderProps> = ({location}) => {
     return (
         <ButtonsGroup className="grow justify-end pointer-events-auto pl-20 py-4" expands={true} IconExpand={IconEllipsis} leftward={true}>
             <Button
-                Icon={IconShapes}
-                label="Sources"
-                // linkTo={`${location.pathname}/edit`}
-                linkTo={`/edit`}
-            />
-            <Button
                 Icon={IconPaintRoller}
                 label="Customize"
                 action={() => {
                     dispatch(setIsCustomizing(true))
                     navigate('/')
                 }}
+            />
+            <Button
+                Icon={IconShapes}
+                label="Sources"
+                // linkTo={`${location.pathname}/edit`}
+                linkTo={`/edit`}
             />
             {/* <Button
                 Icon={IconWidgets}

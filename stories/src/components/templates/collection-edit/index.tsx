@@ -7,6 +7,7 @@ import { selectCollectionId } from '../../../redux/features/navSlice'
 import { addSourceToCollection, fetchSourcesOfCollection, removeSources, selectNestedSources } from '../../../redux/features/sourcesSlice'
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
 import { Button, buttonClassesHollow } from '../../atoms/button'
+import { Field } from '../../atoms/forms/field'
 import { ListActionBar } from '../../molecules/list-action-bar'
 import { CollectionEditViewProps } from './interfaces'
 
@@ -60,7 +61,8 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
         <div className="mb-10">
             <h2 className="text-2xl font-semibold mb-2">Rename Collection</h2>
             <form className="flex mb-2" onSubmit={submitRenameCollection}>
-                <input className='block border border-slate-400 rounded-md w-full mr-2 px-4 py-2 bg-transparent' type="text" placeholder="Collection Name" spellCheck="false" value={renameCollectionName} onChange={e => setRenameCollectionName(e.currentTarget.value)} />
+                {/* <input className='block border border-slate-400 rounded-md w-full mr-2 px-4 py-2 bg-transparent' type="text" placeholder="Collection Name" spellCheck="false" value={renameCollectionName} onChange={e => setRenameCollectionName(e.currentTarget.value)} /> */}
+                <Field placeholder="Collection Name" value={renameCollectionName} updater={setRenameCollectionName} />
                 <Button className={`${buttonClassesHollow} whitespace-nowrap`} action={() => {}} label="Rename" disabled={!renameCollectionName}></Button>
             </form>
             {
@@ -87,7 +89,8 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
         <div className="mb-10">
             <h2 className="text-2xl font-semibold mb-2">Add a Collection</h2>
             <form className="flex mb-2" onSubmit={submitAddCollection}>
-                <input className='block border border-slate-400 rounded-md w-full mr-2 px-4 py-2 bg-transparent' type="text" placeholder="Collection Name" spellCheck="false" value={newCollectionName} onChange={e => setNewCollectionName(e.currentTarget.value)} />
+                {/* <input className='block border border-slate-400 rounded-md w-full mr-2 px-4 py-2 bg-transparent' type="text" placeholder="Collection Name" spellCheck="false" value={newCollectionName} onChange={e => setNewCollectionName(e.currentTarget.value)} /> */}
+                <Field placeholder="Collection Name" value={newCollectionName} updater={setNewCollectionName} />
                 <Button className={`${buttonClassesHollow} whitespace-nowrap`} action={() => {}} label="Add" disabled={!newCollectionName}></Button>
             </form>
             {
@@ -117,8 +120,10 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
             <h2 className='text-2xl font-semibold mb-2'>Add a Source</h2>
             <form className='flex mb-2' onSubmit={submitAddToCollection}>
                 {/* <h3 className='text-xl'>Enter source URL</h3> */}
-                <input className='block border border-slate-400 rounded-md w-full mr-2 px-4 py-2 bg-transparent' type="text" placeholder="Enter Source URL" spellCheck="false" value={sourceUrlEntry} onChange={e => setSourceUrlEntry(e.currentTarget.value)} />
-                <input className='block border border-slate-400 rounded-md w-full mr-2 px-4 py-2 bg-transparent' type="text" placeholder="Article URL '/segment/'" spellCheck="false" value={otherParamEntry} onChange={e => setOtherParamEntry(e.currentTarget.value)} />
+                {/* <input className='block border border-slate-400 rounded-md w-full mr-2 px-4 py-2 bg-transparent' type="text" placeholder="Enter Source URL" spellCheck="false" value={sourceUrlEntry} onChange={e => setSourceUrlEntry(e.currentTarget.value)} /> */}
+                <Field placeholder="Enter Source URL" value={sourceUrlEntry} updater={setSourceUrlEntry} />
+                {/* <input className='block border border-slate-400 rounded-md w-full mr-2 px-4 py-2 bg-transparent' type="text" placeholder="Article URL '/segment/'" spellCheck="false" value={otherParamEntry} onChange={e => setOtherParamEntry(e.currentTarget.value)} /> */}
+                <Field placeholder="Article URL '/segment/'" value={otherParamEntry} updater={setOtherParamEntry} />
                 <Button className={`${buttonClassesHollow} whitespace-nowrap`} action={() => {}} label="Add" disabled={!sourceUrlEntry}></Button>
             </form>
             {

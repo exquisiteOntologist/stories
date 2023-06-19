@@ -61,7 +61,6 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
         <div className="mb-10">
             <h2 className="text-2xl font-semibold mb-2">Rename Collection</h2>
             <form className="flex mb-2" onSubmit={submitRenameCollection}>
-                {/* <input className='block border border-slate-400 rounded-md w-full mr-2 px-4 py-2 bg-transparent' type="text" placeholder="Collection Name" spellCheck="false" value={renameCollectionName} onChange={e => setRenameCollectionName(e.currentTarget.value)} /> */}
                 <Field placeholder="Collection Name" value={renameCollectionName} updater={setRenameCollectionName} />
                 <Button className={`${buttonClassesHollow} whitespace-nowrap`} action={() => {}} label="Rename" disabled={!renameCollectionName}></Button>
             </form>
@@ -89,7 +88,6 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
         <div className="mb-10">
             <h2 className="text-2xl font-semibold mb-2">Add a Collection</h2>
             <form className="flex mb-2" onSubmit={submitAddCollection}>
-                {/* <input className='block border border-slate-400 rounded-md w-full mr-2 px-4 py-2 bg-transparent' type="text" placeholder="Collection Name" spellCheck="false" value={newCollectionName} onChange={e => setNewCollectionName(e.currentTarget.value)} /> */}
                 <Field placeholder="Collection Name" value={newCollectionName} updater={setNewCollectionName} />
                 <Button className={`${buttonClassesHollow} whitespace-nowrap`} action={() => {}} label="Add" disabled={!newCollectionName}></Button>
             </form>
@@ -119,10 +117,7 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
         <div className="mb-10">
             <h2 className='text-2xl font-semibold mb-2'>Add a Source</h2>
             <form className='flex mb-2' onSubmit={submitAddToCollection}>
-                {/* <h3 className='text-xl'>Enter source URL</h3> */}
-                {/* <input className='block border border-slate-400 rounded-md w-full mr-2 px-4 py-2 bg-transparent' type="text" placeholder="Enter Source URL" spellCheck="false" value={sourceUrlEntry} onChange={e => setSourceUrlEntry(e.currentTarget.value)} /> */}
                 <Field placeholder="Enter Source URL" value={sourceUrlEntry} updater={setSourceUrlEntry} />
-                {/* <input className='block border border-slate-400 rounded-md w-full mr-2 px-4 py-2 bg-transparent' type="text" placeholder="Article URL '/segment/'" spellCheck="false" value={otherParamEntry} onChange={e => setOtherParamEntry(e.currentTarget.value)} /> */}
                 <Field placeholder="Article URL '/segment/'" value={otherParamEntry} updater={setOtherParamEntry} />
                 <Button className={`${buttonClassesHollow} whitespace-nowrap`} action={() => {}} label="Add" disabled={!sourceUrlEntry}></Button>
             </form>
@@ -154,8 +149,6 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = (props) => {
             <label htmlFor={s.id.toString()} className={`block p-2 p2-3 px-2 -mt-2 -ml-2 -mr-2 max-w-none rounded-md ${sourceChecked(s.id) ? 'bg-yellow-200' : ''}`}>
                 <h3 className={`${sourceChecked(s.id) ? 'text-gray-900' : 'text-current'}`}>{s.name}</h3>
                 <p className={`${sourceChecked(s.id) ? 'text-gray-900' : 'text-current'} opacity-30`} title={`ID ${s.id}`}><span className={`font-bold ${kindClass(s.kind)}`}>{s.kind}&nbsp;</span>{s.url}</p>
-                {/* <p className="text-gray-900 opacity-30 mix-blend-multiply" title={`ID ${s.id}`}><span className={`font-bold ${kindClass(s.kind)}`}>{s.kind}&nbsp;</span>{s.url}</p> */}
-                {/* <p className="text-gray-300" title={`ID ${s.id}`}><span className="font-bold">{s.kind}&nbsp;</span>{s.url}</p> */}
             </label>
         </div>
     ))

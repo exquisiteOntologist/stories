@@ -1,11 +1,11 @@
 import React from 'react'
 import { useAppDispatch, useAppSelector } from '../../../../redux/hooks'
 import { Collection } from '../../../../data/chirp-types'
-
 import { EditList, EditListMapperOptions } from '../../../molecules/edit-list/edit-list'
 import { EditListItem } from '../../../molecules/edit-list/edit-list-item'
 import { selectCollectionId } from '../../../../redux/features/navSlice'
 import { removeCollection, selectNestedCollections } from '../../../../redux/features/collectionsSlice'
+import { AddCollection } from '../add-collection'
 
 export const EditListCollections: React.FC = () => {
     const dispatch = useAppDispatch()
@@ -37,9 +37,9 @@ export const EditListCollections: React.FC = () => {
 
     return (
         <div>
-            {/* <AddCollection /> */}
+            <AddCollection />
             <EditList
-                title="collections"
+                title="Collection"
                 countColour="blue"
                 list={collections}
                 mapper={collectionMapper}

@@ -1,12 +1,13 @@
 import React from 'react'
+import { SettingsLayout } from '../../../../data/chirp-types'
 import { ListingCard } from '../card'
 import ListingsContainer from '../listings-container'
 import { ListingRow } from '../row'
 import { ListingsContainerContentProps } from './interfaces'
 
-export const ListingsContainerContent: React.FC<ListingsContainerContentProps> = ({view, contents, sources}) => (
-    <ListingsContainer view={view}>
-        {view === 'CARDS' ? contents.map((c, cI) => (
+export const ListingsContainerContent: React.FC<ListingsContainerContentProps> = ({className, view, contents, sources}) => (
+    <ListingsContainer className={className} view={view}>
+        {view === SettingsLayout.CARDS ? contents.map((c, cI) => (
             <ListingCard
                 key={c.id}
                 id={c.id}

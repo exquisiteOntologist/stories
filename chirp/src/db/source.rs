@@ -97,24 +97,36 @@ pub fn db_source_add_data_web(source: &Source, source_id: &i32) -> Result<(), Bo
 	Ok(())
 }
 
-pub fn db_sources_delete(source_ids: &Vec<i32>) -> Result<(), Box<dyn Error>> {
+pub fn db_sources_remove(collection_id: &i32, source_ids: &Vec<i32>) -> Result<(), Box<dyn Error>> {
 	let conn: Connection = db_connect()?;
-	rusqlite::vtab::array::load_module(&conn)?; // <- Adds "rarray" table function
+	load_rarray_table(&conn)?;
 
-	let source_id_values = create_rarray_values(source_ids.to_owned());
-	let params = [source_id_values];
+	let s_id_values = create_rarray_values(source_ids.to_owned());
 
-	let mut delete_query: Statement = conn.prepare(
-		"DELETE FROM source WHERE id IN (SELECT * FROM rarray(?1))"
-	)?;
+    // DELETE collection_to_source associations for specified sources of collection
+    if let Err(e) = conn.execute(
+        "DELETE FROM collection_to_source WHERE 
+            collection_id = ?1 AND
+            source_id IN (SELECT * FROM rarray(?2));
+        ",
+        params![collection_id, s_id_values]
+    ) {
+        println!("Error deleting sources {:?}", e);
+        return Err(e.into());
+    };
 
-	let d_res = delete_query.execute(params);
+    // DELETE sources that have no parent collections
+    if let Err(e) = conn.execute(
+        "DELETE FROM source WHERE 
+            id NOT IN (SELECT source_id FROM collection_to_source)
+        ",
+        params![]
+    ) {
+        println!("Error deleting orphaned sources {:?}", e);
+        return Err(e.into());
+    };
 
-	if d_res.is_err() {
-		let err = d_res.unwrap_err();
-		println!("{:?}", err);
-		return Err("Error deleting content ids".into());
-	}
+	_ = conn.close();
 
 	Ok(())
 }
@@ -149,13 +161,3 @@ pub fn db_source_get_id(source: &Source) -> Result<i32, Box<dyn Error>> {
 	Ok(source_id)
 }
 
-pub fn db_source_remove(source_id: &i32) -> Result<(), Box<dyn Error>> {
-	let conn = db_connect()?;
-	conn.execute(
-		"DELETE FROM source WHERE ID = ?1",
-		[source_id],
-	)?;
-	_ = conn.close();
-
-	Ok(())
-}

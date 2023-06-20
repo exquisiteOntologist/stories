@@ -1,6 +1,6 @@
 use std::{error::Error};
 use rusqlite::{Result};
-use crate::db::{db_source_remove, db_sources_delete};
+use crate::db::{db_sources_remove};
 
 pub fn source_remove_action(args: Vec<String>) -> Result<(), Box<dyn Error>> {
     // This is the original source remove for CLI that completely deletes the source
@@ -10,14 +10,14 @@ pub fn source_remove_action(args: Vec<String>) -> Result<(), Box<dyn Error>> {
     }
 
     let source_id: i32 = args[2].parse::<i32>().unwrap();
-    db_source_remove(&source_id)?;
+    db_sources_remove(&0, &vec![source_id])?;
     println!("Removed source {:?}", source_id);
     Ok(())
 }
 
-pub fn sources_remove(_collection_id: &i32, source_ids: &Vec<i32>) -> Result<(), Box<dyn Error>> {
+pub fn sources_remove(collection_id: &i32, source_ids: &Vec<i32>) -> Result<(), Box<dyn Error>> {
     // If in a collection, remove from collection
     // TODO: remove from collection
     // if not in a collection just delete the sources
-    db_sources_delete(source_ids)
+    db_sources_remove(collection_id, source_ids)
 }

@@ -1,9 +1,9 @@
-import { createAsyncThunk, createEntityAdapter, createSelector, createSlice } from "@reduxjs/toolkit";
+import { AsyncThunk, createAsyncThunk, createEntityAdapter, createSelector, createSlice } from "@reduxjs/toolkit";
 import { invoke } from "@tauri-apps/api";
 import { Collection } from "../../data/chirp-types";
 import { RootState } from "../store";
 import { fetchCollectionSettings } from "./collectionSettingsSlice";
-import { fetchCollectionToCollection, selectNestedCollectionIds } from "./collectionToCollectionSlice";
+import { fetchCollectionToCollection, removeCollectionToCollection, selectNestedCollectionIds } from "./collectionToCollectionSlice";
 import { fetchCollectionToSource } from "./collectionToSourceSlice";
 
 export const fetchCollection = createAsyncThunk(
@@ -59,6 +59,31 @@ export const addNewCollection = createAsyncThunk(
         }
     }
 )
+
+export interface RemoveCollectionsFromCollection {
+    parentCollectionId: number,
+    collectionIds: number[]
+}
+
+/**
+ * Remove collections from collection.
+ * All collection afterward not in a collection, except the root, will be deleted.
+ */
+export const removeCollection: AsyncThunk<boolean, RemoveCollectionsFromCollection, {}> = createAsyncThunk(
+    'collections/removeCollections',
+    async (rmCollections: RemoveCollectionsFromCollection, { dispatch }) => {
+        try {
+            await invoke('remove_collection', {...rmCollections})
+            await dispatch(removeCollectionToCollection(rmCollections.collectionIds))
+            await dispatch(fetchCollectionToCollection([rmCollections.parentCollectionId]))
+            return true
+        } catch (e) {
+            console.error('failed to remove collections', e)
+            return false
+        }
+    }
+)
+
 
 export interface RenameCollection {
     collectionId: number,

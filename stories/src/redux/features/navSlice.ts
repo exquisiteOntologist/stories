@@ -17,6 +17,7 @@ export interface NavState {
     priorCollId: number,
     sourceId: number,
     contentId: number
+    isCustomizing: boolean
 }
 
 const initialNavState: NavState = {
@@ -25,7 +26,8 @@ const initialNavState: NavState = {
     collectionId: 0,
     priorCollId: 0,
     sourceId: 0,
-    contentId: 0
+    contentId: 0,
+    isCustomizing: false
 }
 
 /**
@@ -49,17 +51,21 @@ const navSlice = createSlice({
             state.submergeHistory.push(action.payload)
             
             state.collectionId = action.payload
+        },
+        setIsCustomizing (state, action: PayloadAction<boolean>) {
+            state.isCustomizing = action.payload
         }
     },
     extraReducers: {}
 })
 
-export const { chooseCollection } = navSlice.actions
+export const { chooseCollection, setIsCustomizing } = navSlice.actions
 export const selectNav = (state: RootState) => state.nav
 export const selectCollectionId = (state: RootState) => state.nav.collectionId
 export const selectHistory = (state: RootState) => state.nav.submergeHistory
 export const selectPriorCollId = (state: RootState) => state.nav.priorCollId
 export const selectSourceId = (state: RootState) => state.nav.sourceId
 export const selectContentId = (state: RootState) => state.nav.contentId
+export const selectIsCustomizing = (state: RootState) => state.nav.isCustomizing
 
 export const navReducer = navSlice.reducer

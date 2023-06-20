@@ -98,6 +98,41 @@ pub fn db_collection_add(c_name: &String, c_parent_id: &i32) -> Result<(), Box<d
 	Ok(())
 }
 
+pub fn db_collection_remove(parent_id: &i32, collection_ids: &Vec<i32>) -> Result<(), Box<dyn Error>> {
+    let conn = db_connect()?;
+    load_rarray_table(&conn)?;
+
+    let c_id_values = create_rarray_values(collection_ids.to_owned());
+
+    // DELETE collection_to_collection associations for specified collections of parent
+    if let Err(e) = conn.execute(
+        "DELETE FROM collection_to_collection WHERE 
+            collection_parent_id = ?1 AND
+            collection_inside_id IN (SELECT * FROM rarray(?2));
+        ",
+        params![parent_id, c_id_values]
+    ) {
+        println!("Error deleting collections {:?}", e);
+        return Err(e.into());
+    };
+
+    // DELETE collections that have no parent collections (& not root/home/oldest)
+    if let Err(e) = conn.execute(
+        "DELETE FROM collection WHERE
+            id NOT IN (SELECT collection_inside_id FROM collection_to_collection) AND
+            id NOT IN (SELECT id FROM collection ORDER BY id ASC LIMIT 1)
+        ",
+        params![]
+    ) {
+        println!("Error deleting orphaned collections {:?}", e);
+        return Err(e.into());
+    };
+
+	_ = conn.close();
+
+	Ok(())
+}
+
 pub fn db_collection_rename(collection_id: &i32, name: &String) -> Result<(), Box<dyn Error>> {
     let conn = db_connect()?;
 

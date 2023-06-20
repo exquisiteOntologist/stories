@@ -40,7 +40,10 @@ export const Button: React.FC<ButtonProps> = ({ className, label, Icon, PopoverI
 
     const asLink = () => <Link className={classNames.join(' ')} to={linkTo || ''} onClick={() => sideAction && sideAction()}>{buttonInner}</Link>
     const asExternalLink = () => <a className={classNames.join(' ')} href={href} target="_blank">{buttonInner}</a>
-    const asButton = () => <button className={classNames.join(' ')} onClick={action} disabled={disabled}>{buttonInner}</button>
+    const asButton = () => (<button className={classNames.join(' ')} onClick={() => {
+        action && action()
+        sideAction && sideAction()
+    }} disabled={disabled}>{buttonInner}</button>)
 
     if (linkTo) return asLink()
     if (href) return asExternalLink()

@@ -31,12 +31,13 @@ const collectionToCollectionSlice = createSlice({
     reducers: {
         setAllCollectionToCollection: collectionToCollectionAdapter.setAll,
         addManyCollectionToCollection: collectionToCollectionAdapter.addMany,
-        upsertCollectionToCollection: collectionToCollectionAdapter.upsertMany
+        upsertCollectionToCollection: collectionToCollectionAdapter.upsertMany,
+        removeCollectionToCollection: collectionToCollectionAdapter.removeMany
     },
     extraReducers: {}
 })
 
-export const { setAllCollectionToCollection, addManyCollectionToCollection, upsertCollectionToCollection } = collectionToCollectionSlice.actions
+export const { setAllCollectionToCollection, addManyCollectionToCollection, upsertCollectionToCollection, removeCollectionToCollection } = collectionToCollectionSlice.actions
 export const collectionToCollectionSelectors = collectionToCollectionAdapter.getSelectors<RootState>((state) => state.collectionToCollection)
 
 /**

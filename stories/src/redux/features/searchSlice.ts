@@ -7,6 +7,12 @@ export const search = createAsyncThunk(
     'search/search',
     async (searchPhrase: string, { dispatch }) => {
         try {
+            if (!searchPhrase) {
+                dispatch(setSearchResults(initialSearchState.searchResults))
+
+                return true
+            }
+            
             const results = await invoke('search', {
                 searchPhrase
             })
@@ -32,6 +38,8 @@ const initialSearchState: SearchState = {
         collections: [],
         sources: [],
         contents: [],
+        contents_match_titles: [],
+        contents_match_bodies: [],
         body_content_ids: [],
         entity_people: [],
         entity_places: [],

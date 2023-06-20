@@ -29,8 +29,8 @@ export const ListingRow: React.FC<ListingRowProps> = ({ title, linkUrl, action, 
     ))
 
     return (
-        <motion.article {...motionProps} className="relative group border-b border-gray-100">
-            <h1 className="text-base mx-0 my-2">
+        <motion.article {...motionProps} className="relative group border-b border-gray-100 dark:border-slate-800">
+            <h1 className="text-base mx-0 my-2 dark:text-slate-300">
                 {titleInner}
                 <SourceLink source={source} isBlock={false} />
             </h1>

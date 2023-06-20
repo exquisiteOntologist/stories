@@ -11,6 +11,7 @@ import { H2, Hint, Light } from '../../atoms/headings'
 import { EditListItem } from '../../molecules/edit-list/edit-list-item'
 import { EditListCollections } from '../../organisms/collection-edit/edit-list-collections'
 import { EditListSources } from '../../organisms/collection-edit/edit-list-sources'
+import { TitleCrumbs } from '../../organisms/title-crumbs'
 import { CollectionEditViewProps } from './interfaces'
 
 
@@ -65,11 +66,15 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = () => {
 
     return (
         <>
-            <div className="collection max-w-xl w-full h-min-content">
-                <h1 className="text-4xl font-semibold mb-24">Material of <Light colour="yellow">{collection?.name}</Light> Collection</h1>
-                {renameCollectionSection}               
-                <EditListSources />
-                <EditListCollections />
+            <div className="w-full max-w-7xl mx-4 flex flex-wrap justify-normal">
+                <div className="collection w-full max-w-7xl h-min-content">
+                    <TitleCrumbs collectionId={collectionId} title="materials" />
+                </div>
+                <div className="collection w-full max-w-xl h-min-content">    
+                    {renameCollectionSection}
+                    <EditListSources />
+                    <EditListCollections />
+                </div>
             </div>
         </>
     )

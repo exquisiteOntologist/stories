@@ -104,6 +104,7 @@ pub fn db_collection_remove(parent_id: &i32, collection_ids: &Vec<i32>) -> Resul
 
     let c_id_values = create_rarray_values(collection_ids.to_owned());
 
+    // DELETE collection_to_collection associations for specified collections of parent
     if let Err(e) = conn.execute(
         "DELETE FROM collection_to_collection WHERE 
             collection_parent_id = ?1 AND
@@ -115,6 +116,7 @@ pub fn db_collection_remove(parent_id: &i32, collection_ids: &Vec<i32>) -> Resul
         return Err(e.into());
     };
 
+    // DELETE collections that have no parent collections (& not root/home/oldest)
     if let Err(e) = conn.execute(
         "DELETE FROM collection WHERE
             id NOT IN (SELECT collection_inside_id FROM collection_to_collection) AND

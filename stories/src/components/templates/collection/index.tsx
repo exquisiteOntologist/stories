@@ -1,5 +1,6 @@
 import * as React from 'react'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
+import { motion } from "framer-motion";
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
 import { fetchContent, selectContentOfCollection } from '../../../redux/features/contentsSlice'
 import { fetchSourcesOfCollection, sourcesSelectors } from '../../../redux/features/sourcesSlice'
@@ -15,6 +16,7 @@ import { H2, Light } from '../../atoms/headings'
 import { ListingsContainerCollections } from '../../molecules/listings/listings-container-collections'
 import { CollectionCustomizer } from '../../organisms/collection-customizer'
 import { CollectionViewProps } from './interface'
+import { motionProps } from '../../../utilities/animate'
 
 const clientItemsLimit: number = 100
 
@@ -63,7 +65,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
 
     return (
         <>
-            <div className="collection w-full max-w-7xl mx-4 h-min-content">
+            <motion.div {...motionProps} className="collection w-full max-w-7xl mx-4 h-min-content">
                 <TitleCrumbs collectionId={collectionId} title={title} />
                 <CollectionCustomizer collectionSettings={collectionSettings} isCustomizing={isCustomizing} /> 
                 {emptyCollectionMessage}
@@ -78,7 +80,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
                     contents={contents}
                     sources={sources}
                 />
-            </div>
+            </motion.div>
         </>
     )
 }

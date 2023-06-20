@@ -1,6 +1,7 @@
 import React from "react";
 // some reason @reach/router link does not work properly (because component outside router tags?)
-import { WindowLocation, navigate } from "@reach/router";
+// import { WindowLocation, navigate } from "@reach/router";
+import { Navigate, Location, useNavigate } from "react-router-dom";
 import { routeAppLanding } from '../../../data/top-routes'
 import { Button } from "../../atoms/button";
 import { IconEllipsis } from "../../atoms/icons/ellipsis";
@@ -20,6 +21,7 @@ const scrollToTop = () => scrollTo({top: 0})
 
 const AppMenuNavigation: React.FC = () => {
     const dispatch = useAppDispatch()
+    const navigate = useNavigate()
     
     return (
         <div className="pointer-events-auto py-4">
@@ -42,6 +44,7 @@ const AppMenuNavigation: React.FC = () => {
 
 const AppMenuActions: React.FC<AppHeaderProps> = ({location}) => {
     const dispatch = useAppDispatch()
+    const navigate = useNavigate()
 
     return (
         <ButtonsGroup className="grow justify-end pointer-events-auto pl-20 py-4" expands={true} IconExpand={IconEllipsis} leftward={true}>
@@ -82,18 +85,22 @@ const AppMenuActions: React.FC<AppHeaderProps> = ({location}) => {
     )
 }
 
-const AppHeaderShortcutHandlers: React.FC = () => (
-    <>
-        <SearchShortcutHandlers action={() => {
-            navigate('/search')
-            const searchBox = document.querySelector('#search-box') as HTMLInputElement | null
-            searchBox?.focus()
-        }} />
-    </>
-)
+const AppHeaderShortcutHandlers: React.FC = () => {
+    const navigate = useNavigate()
+    
+    return (
+        <>
+            <SearchShortcutHandlers action={() => {
+                navigate('/search')
+                const searchBox = document.querySelector('#search-box') as HTMLInputElement | null
+                searchBox?.focus()
+            }} />
+        </>
+    )
+}
 
 interface AppHeaderProps {
-    location?: WindowLocation<unknown>
+    location?: Location
 }
 
 const headerStyles: React.CSSProperties = {

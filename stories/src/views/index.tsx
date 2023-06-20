@@ -1,5 +1,7 @@
-import { Router, Location } from "@reach/router"
+// import { Router, Location } from "@reach/router"
 import * as React from "react"
+import { AnimatePresence, motion } from "framer-motion";
+import { BrowserRouter, useLocation, useRoutes } from "react-router-dom";
 import { AppHeader } from "../components/organisms/app-header";
 import CollectionView from "../components/templates/collection"
 import CollectionEditView from "../components/templates/collection-edit"
@@ -9,6 +11,14 @@ import { selectColours } from "../redux/features/themeSlice"
 import { useAppSelector } from "../redux/hooks"
 import { ReduxWrapper } from "../redux/redux-wrapper"
 import { setBodyBackground } from "../utilities/graphics/colours"
+import { motionProps } from "../utilities/animate";
+
+const Wrap: React.FC<{children: React.ReactElement}> = ({ children }) => (
+  <motion.div
+      {...motionProps}
+  >{children}</motion.div>
+)
+
 
 // The App itself has dynamic client-side routes, while the other pages are pure Gatsby
 const AppPageInner = () => {
@@ -23,43 +33,47 @@ const AppPageInner = () => {
 
   const routerClassNames = 'flex justify-center py-12 overflow-x-hidden'
 
-  return (
-    <Location>
-      {({ location }) => {
-        scrollTo(0,0) // because router primary={true} scrolls down from top to nested path component
-        return (
-          <main className="w-screen flex flex-col min-h-screen overscroll-none transition-all duration-1000" style={elMainStyle}>
-            <AppHeader location={location} />
-            <Router location={location} className={routerClassNames} primary={false}>
-                {/* <NotFound default /> */}
-                {/* <CollectionView default /> */}
-                <CollectionView path="/" />
-                <CollectionView path="/customize" />
-                <CollectionSearchView path="/search" searchMode={true} />
-                <CollectionEditView path="/edit" />
-                {/* <CollectionEditView path="/:collectionId/edit" /> */}
-                <ReaderView path="/reader/:contentId" />
-                {/* <CollectionView path="/:collectionId" /> */}
-            </Router>
-          </main>
-        )
-      }}
-    </Location>
+  const element = useRoutes([
+    {
+      path: "/",
+      element: <CollectionView /> // <Wrap><CollectionView /></Wrap>
+    },
+    {
+      path: "/search",
+      element: <CollectionSearchView /> // <Wrap><CollectionSearchView /></Wrap>
+    },
+    {
+      path: "/edit",
+      element: <CollectionEditView /> // <Wrap><CollectionEditView /></Wrap>
+    }
+  ]);
+
+  const location = useLocation();
+
+  if (!element) return null
+
+  // scrollTo(0,0)
+
+  return (    
+    
+      <main className="w-screen flex flex-col min-h-screen overscroll-none transition-all duration-1000" style={elMainStyle}>
+        <AppHeader location={location} />
+        <div className={routerClassNames}>
+          <AnimatePresence mode="wait">
+            {React.cloneElement(element, { key: location.pathname })}
+          </AnimatePresence>
+        </div>
+      </main>
   )
 }
 
-// note - access will be denied if API not running & registered in Auth0
-const apiPath = `http://localhost:5001/api`
-const apiAudience = `semblance-server`
-const apiScopes: string = [
-  'read:current_user',
-  'update:current_user'
-].join(' ')
 
 const AppView: React.FC = () => (
   <React.Fragment>
     <ReduxWrapper>
-      <AppPageInner />
+      <BrowserRouter>
+        <AppPageInner />
+      </BrowserRouter>
     </ReduxWrapper>
   </React.Fragment>
 )

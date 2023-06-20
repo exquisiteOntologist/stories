@@ -12,6 +12,16 @@ pub fn add_collection(c_name: String, c_parent_id: i32) -> Result<(), String> {
 }
 
 #[tauri::command]
+pub fn remove_collection(parent_collection_id: i32, collection_ids: Vec<i32>) -> Result<(), String> {
+    let rm_res = chirp::actions::collections_remove(&parent_collection_id, &collection_ids);
+    if rm_res.is_err() {
+        return Err("Unable to remove some collections".into());
+    }
+
+    Ok(())
+}
+
+#[tauri::command]
 pub fn rename_collection(collection_id: i32, name: String) -> Result<(), String> {
     let c_res = chirp::actions::collections::collection_rename(&collection_id, &name);
 

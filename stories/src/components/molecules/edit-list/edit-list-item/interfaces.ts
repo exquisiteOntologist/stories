@@ -1,5 +1,4 @@
 export interface EditListItemProps {
-    key: string | number
     id: string
     isChecked: boolean
     handleCheck: (e: React.ChangeEvent<HTMLInputElement>) => any

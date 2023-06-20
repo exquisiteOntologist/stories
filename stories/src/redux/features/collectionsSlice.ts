@@ -69,7 +69,7 @@ export interface RemoveCollectionsFromCollection {
  * Remove collections from collection.
  * All collection afterward not in a collection, except the root, will be deleted.
  */
-export const removeCollections: AsyncThunk<boolean, RemoveCollectionsFromCollection, {}> = createAsyncThunk(
+export const removeCollection: AsyncThunk<boolean, RemoveCollectionsFromCollection, {}> = createAsyncThunk(
     'collections/removeCollections',
     async (rmCollections: RemoveCollectionsFromCollection, { dispatch }) => {
         try {

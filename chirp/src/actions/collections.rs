@@ -12,7 +12,7 @@ pub fn collection_add(c_name: &String, c_parent_id: &i32) -> Result<(), Box<dyn 
     db_collection_add(c_name, c_parent_id)
 }
 
-pub fn collections_remove(parent_id: &i32, collection_ids: &Vec<i32>) -> Result<(), Box<dyn Error>> {
+pub fn collection_remove(parent_id: &i32, collection_ids: &Vec<i32>) -> Result<(), Box<dyn Error>> {
     db_collection_remove(parent_id, collection_ids)
 }
 

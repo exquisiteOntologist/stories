@@ -5,7 +5,7 @@ import { Collection } from '../../../../data/chirp-types'
 import { EditList, EditListMapperOptions } from '../../../molecules/edit-list/edit-list'
 import { EditListItem } from '../../../molecules/edit-list/edit-list-item'
 import { selectCollectionId } from '../../../../redux/features/navSlice'
-import { removeCollections, selectNestedCollections } from '../../../../redux/features/collectionsSlice'
+import { removeCollection, selectNestedCollections } from '../../../../redux/features/collectionsSlice'
 
 export const EditListCollections: React.FC = () => {
     const dispatch = useAppDispatch()
@@ -43,7 +43,7 @@ export const EditListCollections: React.FC = () => {
                 countColour="blue"
                 list={collections}
                 mapper={collectionMapper}
-                deleteDispatch={(selectedIds: number[]) => dispatch(removeCollections({
+                deleteDispatch={(selectedIds: number[]) => dispatch(removeCollection({
                     parentCollectionId: collectionId,
                     collectionIds: selectedIds
                 }))}

@@ -103,7 +103,7 @@ pub fn db_sources_remove(collection_id: &i32, source_ids: &Vec<i32>) -> Result<(
 
 	let s_id_values = create_rarray_values(source_ids.to_owned());
 
-    // DELETE collection_to_collection associations for specified collections of parent
+    // DELETE collection_to_source associations for specified sources of collection
     if let Err(e) = conn.execute(
         "DELETE FROM collection_to_source WHERE 
             collection_id = ?1 AND

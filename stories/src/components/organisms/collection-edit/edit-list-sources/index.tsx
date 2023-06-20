@@ -44,7 +44,7 @@ export const EditListSources: React.FC = () => {
         <div>
             <AddSource />
             <EditList
-                title="sources"
+                title="Source"
                 countColour="green"
                 list={sources}
                 mapper={sourceMapper}

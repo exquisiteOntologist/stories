@@ -20,9 +20,6 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = () => {
 
     const [renameCollectionName, setRenameCollectionName] = useState<string>('')
     const [renameCollectionMessage, setRenameCollectionMessage] = useState<[string, boolean]>(['', false])
-    
-    const [newCollectionName, setNewCollectionName] = useState<string>('')
-    const [newCollectionMessage, setNewCollectionMessage] = useState<[string, boolean]>(['', false])
         
     const collection = useAppSelector(s => collectionsSelectors.selectById(s, collectionId))
     const collectionToSources = useAppSelector(collectionToSourceSelectors.selectAll)
@@ -66,40 +63,12 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = () => {
         </div>
     )
 
-    const submitAddCollection = async (e: React.FormEvent) => {
-        e.preventDefault()
-        const success = (await dispatch(addNewCollection({
-            collectionName: newCollectionName,
-            parentId: collectionId
-        } as NewCollection))).payload
-        setNewCollectionMessage([`${success ? 'Succeeded' : 'Failed'} adding new collection "${newCollectionName}"`, !success])
-        if (success) setNewCollectionName('')
-    }
-
-    const [newCollectionMessageText, newCollectionMessageError] = newCollectionMessage
-
-    const addCollection = (
-        <div className="mb-10">
-            <H2 className="text-current">Add a collection</H2>
-            <form className="flex mb-2" onSubmit={submitAddCollection}>
-                <Field placeholder="New Collection Name" value={newCollectionName} updater={setNewCollectionName} />
-                <Button className={`${buttonClassesHollow} whitespace-nowrap`} action={() => {}} label="Add" disabled={!newCollectionName} />
-            </form>
-            {
-                newCollectionMessageText
-                    ? (<p className={`${newCollectionMessageError ? 'text-orange-700' : 'text-green-700'}`}>{newCollectionMessageText}&nbsp;</p>)
-                    : (<Hint title="Note" text="The new collection will be nested within the current collection." />)
-            }
-        </div>
-    )
-
     return (
         <>
             <div className="collection max-w-xl w-full h-min-content">
                 <h1 className="text-4xl font-semibold mb-24">Material of <Light colour="yellow">{collection?.name}</Light> Collection</h1>
                 {renameCollectionSection}               
                 <EditListSources />
-                {addCollection}
                 <EditListCollections />
             </div>
         </>

@@ -42,7 +42,7 @@ export const EditList: React.FC<EditListProps<T>> = ({ title, countColour, list,
 
     return (
         <>
-            <H2><Light colour={countColour}>{list?.length}</Light> {title}</H2>
+            <H2><Light colour={countColour}>{list?.length}</Light> {title}{(list?.length > 1) ? 's' : ''}</H2>
             <div className='mb-5'>
                 {elList}
             </div>

@@ -1,4 +1,6 @@
 import React from 'react'
+import { motion } from 'framer-motion'
+import { motionProps } from '../../../../utilities/animate'
 import { SourceLink } from '../source-link/source-link'
 import { ListingRowProps } from './interfaces'
 
@@ -27,11 +29,11 @@ export const ListingRow: React.FC<ListingRowProps> = ({ title, linkUrl, action, 
     ))
 
     return (
-        <article className="relative group border-b border-gray-100">
+        <motion.article {...motionProps} className="relative group border-b border-gray-100">
             <h1 className="text-base mx-0 my-2">
                 {titleInner}
                 <SourceLink source={source} isBlock={false} />
             </h1>
-        </article>
+        </motion.article>
     )
 }

@@ -1,6 +1,8 @@
 import React from 'react'
+import { motion } from 'framer-motion'
 import { SourceLink } from '../source-link/source-link'
 import { ListingCardProps } from './interfaces'
+import { motionProps } from '../../../../utilities/animate'
 
 export const ListingCard: React.FC<ListingCardProps> = ({ title, linkUrl, content, source }) => {
     const listingCoverImage = content?.media?.length && [...content?.media][0] //?.sort(m => m.isCover ? 0 : 1)[0]?.mediaImage[0]
@@ -26,7 +28,7 @@ export const ListingCard: React.FC<ListingCardProps> = ({ title, linkUrl, conten
     // )
 
     return (
-        <article className='group flex flex-col text-center mb-6'>
+        <motion.article {...motionProps} className='group flex flex-col text-center mb-6'>
             <a className='flex flex-col w-full' href={linkUrl} target="_blank">
                 <picture className='flex flex-col grow w-full aspect-square my-1 rounded-md overflow-hidden empty:bg-gray-100'>
                     {coverImage}
@@ -39,6 +41,6 @@ export const ListingCard: React.FC<ListingCardProps> = ({ title, linkUrl, conten
                 </a>
                 <SourceLink source={source} isBlock={true} />
             </h1>
-        </article>
+        </motion.article>
     )
 }

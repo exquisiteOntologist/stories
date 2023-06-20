@@ -54,13 +54,13 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     }, [dispatch])
 
     const emptyCollectionMessage = (!!collection && !nestedCollections.length && !contents.length) ? (
-        <div>
+        <motion.div {...motionProps}>
             <H2>Add Something to <Light colour="yellow">{collection?.name}</Light></H2>
             <p className="text-current mb-6">This collection is empty. There are no sources &amp; no nested collections.</p>
             <div className="flex">
                 <Button className={`${buttonClassesHollow} whitespace-nowrap`} linkTo="/edit" label="Edit Sources"></Button>
             </div>
-        </div>
+        </motion.div>
     ) : null
 
     return (

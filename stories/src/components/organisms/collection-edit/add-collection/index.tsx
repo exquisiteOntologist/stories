@@ -27,7 +27,7 @@ export const AddCollection: React.FC = () => {
 
     return (
         <div className="mb-10">
-            <H2 className="text-current">Add a collection</H2>
+            <H2 className="text-current">Add a Collection</H2>
             <form className="flex mb-2" onSubmit={submitAddCollection}>
                 <Field placeholder="New Collection Name" value={newCollectionName} updater={setNewCollectionName} />
                 <Button className={`${buttonClassesHollow} whitespace-nowrap`} action={() => {}} label="Add" disabled={!newCollectionName} />

@@ -25,7 +25,8 @@ export default function Home() {
       </div>
       <figure className={styles.introImg}>
         {/* <Image src={imgScreenshot} alt="Stories provides a view of the world" width={2880/2} height={1424/2} /> */}
-        <img src="/images/early-screenshot.png" alt="Stories provides a view of the world" width={2880/2} height={1424/2} />
+        {/* <img src="/images/early-screenshot.png" alt="Stories provides a view of the world" width={2880/2} height={1424/2} /> */}
+        <video src="/videos/stories-new.mp4" poster="/videos/stories-new.jpg" muted autoPlay loop width={1280} height={605}></video>
         {/* <Image src={imgScreenshotCards} alt="Stories provides a view of the world" width={3204/2} height={1660/2} /> */}
       </figure>
       <section>

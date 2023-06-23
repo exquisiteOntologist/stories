@@ -7,7 +7,7 @@ import { fetchSourcesOfCollection, sourcesSelectors } from '../../../redux/featu
 import { resetThemeColours } from '../../../redux/features/themeSlice'
 import { collectionsSelectors, fetchCollection, fetchNestedCollections, selectNestedCollections } from '../../../redux/features/collectionsSlice'
 import { collectionSettingsSelectors } from '../../../redux/features/collectionSettingsSlice'
-import { SettingsLayout } from '../../../data/chirp-types'
+import { ContentDto, SettingsLayout } from '../../../data/chirp-types'
 import { chooseCollection, selectCollectionId, selectIsCustomizing } from '../../../redux/features/navSlice'
 import { ListingsContainerContent } from '../../molecules/listings/listings-container-content'
 import { TitleCrumbs } from '../../organisms/title-crumbs'
@@ -19,6 +19,7 @@ import { CollectionEmptyMessage } from '../../organisms/collection-empty-message
 
 const clientItemsLimit: number = 100
 const time = (s: string): number => new Date(s).getTime()
+const sortContentPublished = (cA: ContentDto, cB: ContentDto) => time(cB.date_published) - time(cA.date_published)
 
 const CollectionView: React.FC<CollectionViewProps> = () => {
     const dispatch = useAppDispatch()
@@ -28,7 +29,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     const nestedCollections = useAppSelector(selectNestedCollections)
     const collectionSettings = useAppSelector(s => collectionSettingsSelectors.selectById(s, collectionId))
     const sources = useAppSelector(sourcesSelectors.selectAll)
-    const contents = useAppSelector(selectContentOfCollection).slice(0, clientItemsLimit).sort((cA, cB) => time(cA.date_published) - time(cB.date_published))
+    const contents = useAppSelector(selectContentOfCollection).slice(0, clientItemsLimit).sort(sortContentPublished)
     const isCustomizing = useAppSelector(selectIsCustomizing);
 
     const title = isCustomizing ? 'edit' : 'hi'

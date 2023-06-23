@@ -59,7 +59,8 @@ export default function Home() {
         </div>
         <div className={styles.middle}>
           {/* <Image className={styles.floating} src={imgScreenshotAddSource} alt="Stories provides a view of the world" width={786/2} height={682/2} /> */}
-          <img className={styles.floating} src="/images/sources-screenshot.png" alt="Stories provides a view of the world" width={786/2} height={682/2} />
+          {/* <img className={styles.floating} src="/images/sources-screenshot.png" alt="Stories provides a view of the world" width={786/2} height={682/2} /> */}
+          <video className={styles.floating} src="/videos/stories-vi-02.mp4" poster="/videos/stories-vi-02.jpg" muted autoPlay loop width={393} height={341}></video>
         </div>
       </section>
       <section>

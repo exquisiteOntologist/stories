@@ -17,8 +17,8 @@ pub fn full_content_to_content_dto(fc: FullContent) -> ContentDto {
         source_id: fc.content.source_id,
         title: fc.content.title,
         url: fc.content.url,
-        date_published: fc.content.date_published.to_string(),
-        date_retrieved: fc.content.date_retrieved.to_string(),
+        date_published: fc.content.date_published.to_rfc3339(),
+        date_retrieved: fc.content.date_retrieved.to_rfc3339(),
         media: fc.content_media //.into_iter().map(|m| m.)
     }
 }
@@ -29,8 +29,8 @@ pub fn content_to_dto(c: Content) -> ContentDto {
         source_id: c.source_id,
         title: c.title,
         url: c.url,
-        date_published: c.date_published.to_string(),
-        date_retrieved: c.date_retrieved.to_string(),
+        date_published: c.date_published.to_rfc3339(),
+        date_retrieved: c.date_retrieved.to_rfc3339(),
         media: vec![]
     }
 }

@@ -5,20 +5,20 @@ import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
 import { fetchContent, selectContentOfCollection } from '../../../redux/features/contentsSlice'
 import { fetchSourcesOfCollection, sourcesSelectors } from '../../../redux/features/sourcesSlice'
 import { resetThemeColours } from '../../../redux/features/themeSlice'
-import { Button, buttonClassesHollow } from '../../atoms/button'
 import { collectionsSelectors, fetchCollection, fetchNestedCollections, selectNestedCollections } from '../../../redux/features/collectionsSlice'
 import { collectionSettingsSelectors } from '../../../redux/features/collectionSettingsSlice'
 import { SettingsLayout } from '../../../data/chirp-types'
 import { chooseCollection, selectCollectionId, selectIsCustomizing } from '../../../redux/features/navSlice'
 import { ListingsContainerContent } from '../../molecules/listings/listings-container-content'
 import { TitleCrumbs } from '../../organisms/title-crumbs'
-import { H2, Light } from '../../atoms/headings'
 import { ListingsContainerCollections } from '../../molecules/listings/listings-container-collections'
 import { CollectionCustomizer } from '../../organisms/collection-customizer'
 import { CollectionViewProps } from './interface'
 import { motionProps } from '../../../utilities/animate'
+import { CollectionEmptyMessage } from '../../organisms/collection-empty-message';
 
 const clientItemsLimit: number = 100
+const time = (s: string): number => new Date(s).getTime()
 
 const CollectionView: React.FC<CollectionViewProps> = () => {
     const dispatch = useAppDispatch()
@@ -28,7 +28,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     const nestedCollections = useAppSelector(selectNestedCollections)
     const collectionSettings = useAppSelector(s => collectionSettingsSelectors.selectById(s, collectionId))
     const sources = useAppSelector(sourcesSelectors.selectAll)
-    const contents = useAppSelector(selectContentOfCollection).slice(0, clientItemsLimit)//.sort((cA, cB) => new Date(cB.date_published).to - new Date(cB.date_published)))
+    const contents = useAppSelector(selectContentOfCollection).slice(0, clientItemsLimit).sort((cA, cB) => time(cA.date_published) - time(cB.date_published))
     const isCustomizing = useAppSelector(selectIsCustomizing);
 
     const title = isCustomizing ? 'edit' : 'hi'
@@ -53,16 +53,6 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
         dispatch(resetThemeColours())
     }, [dispatch])
 
-    const emptyCollectionMessage = (!!collection && !nestedCollections.length && !contents.length) ? (
-        <motion.div {...motionProps}>
-            <H2>Add Something to <Light colour="yellow">{collection?.name}</Light></H2>
-            <p className="text-current mb-6">This collection is empty. There are no sources &amp; no nested collections.</p>
-            <div className="flex">
-                <Button className={`${buttonClassesHollow} whitespace-nowrap`} linkTo="/edit" label="Edit Sources"></Button>
-            </div>
-        </motion.div>
-    ) : null
-
     return (
         <>
             <motion.div {...motionProps} className="collection w-full max-w-7xl mx-4 h-min-content">
@@ -70,7 +60,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
                     <TitleCrumbs collectionId={collectionId} title={title} />
                     <CollectionCustomizer collectionSettings={collectionSettings} isCustomizing={isCustomizing} /> 
                 </div>
-                {emptyCollectionMessage}
+                <CollectionEmptyMessage />
                 <ListingsContainerCollections
                     className="mb-12"
                     view={collectionSettings?.layout as SettingsLayout}

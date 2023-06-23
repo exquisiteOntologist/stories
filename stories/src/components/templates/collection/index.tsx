@@ -28,7 +28,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     const nestedCollections = useAppSelector(selectNestedCollections)
     const collectionSettings = useAppSelector(s => collectionSettingsSelectors.selectById(s, collectionId))
     const sources = useAppSelector(sourcesSelectors.selectAll)
-    const contents = useAppSelector(selectContentOfCollection).slice(0, clientItemsLimit)
+    const contents = useAppSelector(selectContentOfCollection).slice(0, clientItemsLimit)//.sort((cA, cB) => new Date(cB.date_published).to - new Date(cB.date_published)))
     const isCustomizing = useAppSelector(selectIsCustomizing);
 
     const title = isCustomizing ? 'edit' : 'hi'
@@ -66,8 +66,10 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     return (
         <>
             <motion.div {...motionProps} className="collection w-full max-w-7xl mx-4 h-min-content">
-                <TitleCrumbs collectionId={collectionId} title={title} />
-                <CollectionCustomizer collectionSettings={collectionSettings} isCustomizing={isCustomizing} /> 
+                <div className="flex justify-between">
+                    <TitleCrumbs collectionId={collectionId} title={title} />
+                    <CollectionCustomizer collectionSettings={collectionSettings} isCustomizing={isCustomizing} /> 
+                </div>
                 {emptyCollectionMessage}
                 <ListingsContainerCollections
                     className="mb-12"

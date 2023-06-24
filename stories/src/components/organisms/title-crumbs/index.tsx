@@ -16,9 +16,10 @@ export const TitleCrumbs: React.FC<TitleCrumbsProps> = ({collectionId, title }) 
 
     const historyItems = submergeHistoryItems.map(hi => {
         const last = collectionId === hi.id
+        const cursorStyle = last ? 'cursor-default' : 'cursor-pointer'
         const colour = last ? 'text-yellow-500' : 'inherit'
         return (
-            <span key={hi.id} className={`text-current cursor-pointer mr-3 ${colour}`} onClick={() => dispatch(chooseCollection(hi.id))}>
+            <span key={hi.id} className={`text-current ${cursorStyle} mr-3 ${colour}`} onClick={() => dispatch(chooseCollection(hi.id))}>
                 {hi.name}
             </span>
         )

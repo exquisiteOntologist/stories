@@ -1,6 +1,4 @@
 import React from "react";
-// some reason @reach/router link does not work properly (because component outside router tags?)
-// import { WindowLocation, navigate } from "@reach/router";
 import { Navigate, Location, useNavigate } from "react-router-dom";
 import { routeCollectionView, routeSearch, routeSourcesEdit } from '../../../data/top-routes'
 import { Button } from "../../atoms/button";

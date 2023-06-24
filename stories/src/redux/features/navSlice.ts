@@ -14,7 +14,6 @@ export interface NavState {
      * 0 is the root collection (seeded on Rust lib init)
      */
     collectionId: number,
-    // priorCollId: number,
     sourceId: number,
     contentId: number
     isCustomizing: boolean
@@ -24,7 +23,6 @@ const initialNavState: NavState = {
     selectionKind: SelectionKind.COLLECTION,
     submergeHistory: [0],
     collectionId: 0,
-    // priorCollId: 0,
     sourceId: 0,
     contentId: 0,
     isCustomizing: false

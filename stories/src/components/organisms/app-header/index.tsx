@@ -2,43 +2,55 @@ import React from "react";
 // some reason @reach/router link does not work properly (because component outside router tags?)
 // import { WindowLocation, navigate } from "@reach/router";
 import { Navigate, Location, useNavigate } from "react-router-dom";
-import { routeAppLanding } from '../../../data/top-routes'
+import { routeCollectionView, routeSearch, routeSourcesEdit } from '../../../data/top-routes'
 import { Button } from "../../atoms/button";
 import { IconEllipsis } from "../../atoms/icons/ellipsis";
-import { IconMagic } from "../../atoms/icons/magic";
 import { IconPaintRoller } from "../../atoms/icons/paint-roller";
 import { IconSearch } from "../../atoms/icons/search";
 import { IconShapes } from "../../atoms/icons/shapes";
-import { IconWidgets } from "../../atoms/icons/widgets";
 import { ShortcutCommandF } from '../../atoms/icons/shortcuts/shortcut-cmd-f'
 import { ShutEye } from "../../atoms/logo/shut-eye";
 import { ButtonsGroup } from "../../molecules/buttons-group";
 import { SearchShortcutHandlers } from "../../alternate/search-shortcut-handler";
-import { useAppDispatch } from "../../../redux/hooks";
-import { setIsCustomizing } from "../../../redux/features/navSlice";
+import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import { chooseCollection, selectHistory, setIsCustomizing } from "../../../redux/features/navSlice";
 
 const scrollToTop = () => scrollTo({top: 0})
 
-const AppMenuNavigation: React.FC = () => {
+export interface AppMenuNavigationProps {
+    location?: Location
+}
+
+const AppMenuNavigation: React.FC<AppMenuNavigationProps> = ({location}) => {
     const dispatch = useAppDispatch()
     const navigate = useNavigate()
+    const submergeHistoryIds = useAppSelector(selectHistory)
     
     return (
-        <div className="pointer-events-auto py-4">
+        <nav className="pointer-events-auto py-4">
             <Button
                 Icon={ShutEye}
                 label=""
                 action={() => {
                     dispatch(setIsCustomizing(false))
-                    navigate('/')
+                    
+                    if (location?.pathname === routeCollectionView) {
+                        if (submergeHistoryIds.length <= 1) return
+
+                        const priorId = submergeHistoryIds[submergeHistoryIds.length - 2]
+
+                        dispatch(chooseCollection(priorId))
+                    } else {
+                        navigate(routeCollectionView)
+                    }
                 }}
                 usePadding={false}
                 sideAction={() => {
-                    const alreadyAtDest = location.pathname === routeAppLanding
+                    const alreadyAtDest = location?.pathname === routeCollectionView
                     if (alreadyAtDest) scrollToTop()
                 }}
             />
-        </div>
+        </nav>
     )
 }
 
@@ -53,14 +65,14 @@ const AppMenuActions: React.FC<AppHeaderProps> = ({location}) => {
                 label="Customize"
                 action={() => {
                     dispatch(setIsCustomizing(true))
-                    navigate('/')
+                    navigate(routeCollectionView)
                 }}
             />
             <Button
                 Icon={IconShapes}
                 label="Sources"
                 // linkTo={`${location.pathname}/edit`}
-                linkTo={`/edit`}
+                linkTo={routeSourcesEdit}
             />
             {/* <Button
                 Icon={IconWidgets}
@@ -78,7 +90,7 @@ const AppMenuActions: React.FC<AppHeaderProps> = ({location}) => {
                 Icon={IconSearch}
                 PopoverIcon={ShortcutCommandF}
                 label="Search"
-                linkTo="/search"
+                linkTo={routeSearch}
                 disabled={false}
             />
         </ButtonsGroup>
@@ -91,7 +103,7 @@ const AppHeaderShortcutHandlers: React.FC = () => {
     return (
         <>
             <SearchShortcutHandlers action={() => {
-                navigate('/search')
+                navigate(routeSearch)
                 const searchBox = document.querySelector('#search-box') as HTMLInputElement | null
                 searchBox?.focus()
             }} />
@@ -111,7 +123,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({location}) => (
     <header className="app-header flex items-start justify-between px-4 py-0 sticky top-0 right-0 left-0 z-50 pointer-events-none" style={headerStyles}>
         <AppHeaderShortcutHandlers />
         <div className="app-header--a flex items-center">
-            <AppMenuNavigation />
+            <AppMenuNavigation location={location} />
         </div>
         <div className="app-header--b flex items-center">
             <AppMenuActions location={location} />

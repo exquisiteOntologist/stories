@@ -66,11 +66,12 @@ export const ShutEye: React.FC = () => {
 
     useEffect(() => {
         setActive(false);
-        const handleDarkMode = () => {
+        const handleDarkMode = () => window.setTimeout(() => {
             progress.reset()
+            setActive(true)
             setActive(false)
             setRand(Math.random())
-        }
+        }, 500)
         const darkModePreference = window.matchMedia("(prefers-color-scheme: dark)")
         darkModePreference.addEventListener("change", handleDarkMode)
         const lightModePreference = window.matchMedia("(prefers-color-scheme: light)")

@@ -8,7 +8,7 @@ use super::{db_connect, load_rarray_table, create_rarray_values};
 const DATE_FROM_FORMAT: &str = "%F %T%.6f %Z";
 
 pub fn content_title_clean(mut title: String) -> String {
-	let pipe_offset = title.find("|").unwrap_or(title.len());
+	let pipe_offset = title.find(&['|', '-']).unwrap_or(title.len());
 	title.replace_range(pipe_offset.., "");
 	title
 }

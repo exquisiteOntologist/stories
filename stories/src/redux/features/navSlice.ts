@@ -52,12 +52,15 @@ const navSlice = createSlice({
         },
         setIsCustomizing (state, action: PayloadAction<boolean>) {
             state.isCustomizing = action.payload
+        },
+        toggleIsCustomizing (state, action: PayloadAction) {
+            state.isCustomizing = !state.isCustomizing
         }
     },
     extraReducers: {}
 })
 
-export const { chooseCollection, setIsCustomizing } = navSlice.actions
+export const { chooseCollection, setIsCustomizing, toggleIsCustomizing } = navSlice.actions
 export const selectNav = (state: RootState) => state.nav
 export const selectCollectionId = (state: RootState) => state.nav.collectionId
 export const selectHistory = (state: RootState) => state.nav.submergeHistory

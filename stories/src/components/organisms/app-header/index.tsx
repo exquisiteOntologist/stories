@@ -11,7 +11,7 @@ import { ShutEye } from "../../atoms/logo/shut-eye";
 import { ButtonsGroup } from "../../molecules/buttons-group";
 import { SearchShortcutHandlers } from "../../alternate/search-shortcut-handler";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { chooseCollection, selectHistory, setIsCustomizing } from "../../../redux/features/navSlice";
+import { chooseCollection, selectHistory, setIsCustomizing, toggleIsCustomizing } from "../../../redux/features/navSlice";
 
 const scrollToTop = () => scrollTo({top: 0})
 
@@ -62,8 +62,12 @@ const AppMenuActions: React.FC<AppHeaderProps> = ({location}) => {
                 Icon={IconPaintRoller}
                 label="Customize"
                 action={() => {
-                    dispatch(setIsCustomizing(true))
-                    navigate(routeCollectionView)
+                    if (location?.pathname === routeCollectionView) {
+                        dispatch(toggleIsCustomizing())
+                    } else {
+                        dispatch(setIsCustomizing(true))
+                        navigate(routeCollectionView)
+                    }
                 }}
             />
             <Button

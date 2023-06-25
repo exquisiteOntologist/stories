@@ -76,13 +76,13 @@ export const ShutEye: React.FC = () => {
         darkModePreference.addEventListener("change", handleDarkMode)
         const lightModePreference = window.matchMedia("(prefers-color-scheme: light)")
         lightModePreference.addEventListener("change", handleDarkMode)
-        // window.addEventListener('focus', handleDarkMode)
+        window.addEventListener('focus', handleDarkMode)
 
         return () => {
             // return for unmount lifecycle step
             darkModePreference.removeEventListener('change', handleDarkMode);
             lightModePreference.removeEventListener('change', handleDarkMode);
-            // window.removeEventListener('focus', handleDarkMode)
+            window.removeEventListener('focus', handleDarkMode)
         }
     }, [])
 

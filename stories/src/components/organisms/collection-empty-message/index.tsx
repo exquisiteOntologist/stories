@@ -4,7 +4,7 @@ import { Button, buttonClassesHollow } from '../../atoms/button'
 import { H2, Light } from '../../atoms/headings'
 import { motionProps } from '../../../utilities/animate'
 import { collectionsSelectors, selectNestedCollections } from '../../../redux/features/collectionsSlice';
-import { selectCollectionId } from '../../../redux/features/navSlice';
+import { selectCollectionId, selectLoading } from '../../../redux/features/navSlice';
 import { useAppSelector } from '../../../redux/hooks';
 import { selectContentOfCollection } from '../../../redux/features/contentsSlice';
 
@@ -13,8 +13,9 @@ export const CollectionEmptyMessage: React.FC = () => {
     const collection = useAppSelector(s => collectionsSelectors.selectById(s, collectionId))
     const hasNestedCollections = !!useAppSelector(selectNestedCollections)?.length
     const hasContents = !!useAppSelector(selectContentOfCollection)?.length
+    const isLoading = !!useAppSelector(selectLoading)
   
-    const notEmpty = (!!collection && !hasNestedCollections && !hasContents)
+    const notEmpty = !isLoading && (!!collection && !hasNestedCollections && !hasContents)
 
     if (notEmpty === false) return null
 

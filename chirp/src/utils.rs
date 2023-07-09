@@ -10,7 +10,7 @@ pub fn get_datetime_now() -> DateTime<Utc> {
 	Utc::now()
 }
 
-pub async fn fetch_url_to_string(url: &String) -> Result<String, Box<dyn Error>> {
+pub async fn fetch_url_to_string(url: &String) -> Result<String, Box<dyn Error + Send + Sync>> {
 	println!("fetching {:?}", url);
 	let res = reqwest::get(url.to_owned())
 		.await?;

@@ -80,7 +80,7 @@ pub async fn parse_web_articles(url: &String, doc_text: &String, article_url_seg
 
 // For a URL get the page doc, scrape the page, and return the Contents
 pub async fn contents_from_page(url: String) -> Result<FullContent, Box<dyn Error + Send + Sync>> {
-	let doc: Result<Html, Box<dyn Error>> = get_page_doc(&url).await;
+	let doc: Result<Html, Box<dyn Error + Send + Sync>> = get_page_doc(&url).await;
 
 	if doc.is_err() {
 		return Err(format!("Page could not be retrieved for {url}").into());
@@ -132,7 +132,7 @@ pub fn scrape_web_page(doc: &Html, url: &String) -> Result<WebPage, Box<dyn Erro
 }
 
 // Retrieve a web page from a URL
-pub async fn get_page_doc(url: &String) -> Result<Html, Box<dyn Error>> {
+pub async fn get_page_doc(url: &String) -> Result<Html, Box<dyn Error + Send + Sync>> {
 	let doc_text = fetch_url_to_string(&url).await?;
 	let doc = Html::parse_document(&doc_text);
 

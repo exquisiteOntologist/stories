@@ -48,33 +48,28 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     }, [sources])
 
     useEffect(() => {
-    }, [contents])
-
-    useEffect(() => {
         dispatch(resetThemeColours())
     }, [dispatch])
 
     return (
-        <>
-            <motion.div {...motionProps} className="collection w-full max-w-7xl mx-4 h-min-content">
-                <div className="flex justify-between">
-                    <TitleCrumbs collectionId={collectionId} title={title} />
-                    <CollectionCustomizer collectionSettings={collectionSettings} isCustomizing={isCustomizing} /> 
-                </div>
-                <CollectionEmptyMessage />
-                <ListingsContainerCollections
-                    className="mb-12"
-                    view={collectionSettings?.layout as SettingsLayout}
-                    collections={nestedCollections}
-                    selectAction={c => dispatch(chooseCollection(c.id))}
-                />
-                <ListingsContainerContent
-                    view={collectionSettings?.layout as SettingsLayout}
-                    contents={contents}
-                    sources={sources}
-                />
-            </motion.div>
-        </>
+        <motion.div {...motionProps} className="collection w-full max-w-7xl mx-4 h-min-content">
+            <div className="flex justify-between">
+                <TitleCrumbs collectionId={collectionId} title={title} />
+                <CollectionCustomizer collectionSettings={collectionSettings} isCustomizing={isCustomizing} /> 
+            </div>
+            <CollectionEmptyMessage />
+            <ListingsContainerCollections
+                className="mb-12"
+                view={collectionSettings?.layout as SettingsLayout}
+                collections={nestedCollections}
+                selectAction={c => dispatch(chooseCollection(c.id))}
+            />
+            <ListingsContainerContent
+                view={collectionSettings?.layout as SettingsLayout}
+                contents={contents}
+                sources={sources}
+            />
+        </motion.div>
     )
 }
 

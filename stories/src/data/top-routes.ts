@@ -1,4 +1,4 @@
-export const routeHomepage = '/' // <- no homepage anymore
-export const routeAppLanding = '/'
-export const routeAppCollection = '/collection'
+export const routeCollectionView = '/'
+export const routeSearch = '/search'
+export const routeSourcesEdit = '/edit'
 export const routeAppReader = '/reader'

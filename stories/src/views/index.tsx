@@ -1,27 +1,17 @@
-// import { Router, Location } from "@reach/router"
 import * as React from "react"
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { BrowserRouter, useLocation, useRoutes } from "react-router-dom";
 import { AppHeader } from "../components/organisms/app-header";
 import CollectionView from "../components/templates/collection"
 import CollectionEditView from "../components/templates/collection-edit"
 import CollectionSearchView from "../components/templates/collection-search";
-import ReaderView from "../components/templates/reader"
 import { selectColours } from "../redux/features/themeSlice"
 import { useAppSelector } from "../redux/hooks"
 import { ReduxWrapper } from "../redux/redux-wrapper"
 import { setBodyBackground } from "../utilities/graphics/colours"
-import { motionProps } from "../utilities/animate";
+import { routeCollectionView, routeSearch, routeSourcesEdit } from "../data/top-routes";
 
-const Wrap: React.FC<{children: React.ReactElement}> = ({ children }) => (
-  <motion.div
-      {...motionProps}
-  >{children}</motion.div>
-)
-
-
-// The App itself has dynamic client-side routes, while the other pages are pure Gatsby
-const AppPageInner = () => {
+const AppPageInner: React.FC = () => {
   const colours = useAppSelector(selectColours)
   const elMainStyle: React.CSSProperties = {
     "--pixel-ratio": window?.devicePixelRatio || 1,
@@ -35,16 +25,16 @@ const AppPageInner = () => {
 
   const element = useRoutes([
     {
-      path: "/",
-      element: <CollectionView /> // <Wrap><CollectionView /></Wrap>
+      path: routeCollectionView,
+      element: <CollectionView />
     },
     {
-      path: "/search",
-      element: <CollectionSearchView /> // <Wrap><CollectionSearchView /></Wrap>
+      path: routeSearch,
+      element: <CollectionSearchView />
     },
     {
-      path: "/edit",
-      element: <CollectionEditView /> // <Wrap><CollectionEditView /></Wrap>
+      path: routeSourcesEdit,
+      element: <CollectionEditView />
     }
   ]);
 
@@ -55,7 +45,6 @@ const AppPageInner = () => {
   // scrollTo(0,0)
 
   return (    
-    
       <main className="w-screen flex flex-col min-h-screen overscroll-none transition-all duration-1000" style={elMainStyle}>
         <AppHeader location={location} />
         <div className={routerClassNames}>

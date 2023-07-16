@@ -10,7 +10,9 @@ export const SearchForm: React.FC = () => {
 
     const [searchPhrase, setSearchPhrase] = React.useState<string>('')
 
-    const dispatchSearch = useCallback(debounce((phrase: string) => dispatch(search(phrase)), 150), [])
+    const dispatchSearch = useCallback(debounce((phrase: string) => dispatch(search(phrase)), 300, {
+        trailing: true
+    }), [])
 
     useEffect(() => {
         dispatch(search(''))
@@ -23,10 +25,15 @@ export const SearchForm: React.FC = () => {
         dispatchSearch(phrase)
     }
 
+    const submitHandler = (e: Event) => {
+        e.preventDefault()
+        dispatch(search(searchPhrase))
+    }
+
     return (
         <>
             <H2>&nbsp; {searchPhrase && (<Light colour="blue">&ldquo;{searchPhrase}&rdquo;</Light>)}</H2>
-            <form className="flex mb-12" onSubmit={e => e.preventDefault()}>
+            <form className="flex mb-12" onSubmit={submitHandler}>
                 <div className="relative w-full mr-2">
                     <span className="absolute top-1/2 left-3 -translate-y-1/2 text-blue-500 pointer-events-none"><IconSearch /></span>
                     <input id="search-box" className='block border border-slate-400 w-full mr-2 px-4 py-2 pl-12 bg-transparent rounded-full' type="text" placeholder="" autoFocus spellCheck="false" value={searchPhrase} onChange={e => updateSearch(e.currentTarget.value)} />

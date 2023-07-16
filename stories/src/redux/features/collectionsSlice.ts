@@ -5,6 +5,7 @@ import { RootState } from "../store";
 import { fetchCollectionSettings } from "./collectionSettingsSlice";
 import { fetchCollectionToCollection, removeCollectionToCollection, selectNestedCollectionIds } from "./collectionToCollectionSlice";
 import { fetchCollectionToSource } from "./collectionToSourceSlice";
+import { setLoading } from "./navSlice";
 
 export const fetchCollection = createAsyncThunk(
     'collections/fetchCollection',
@@ -13,11 +14,13 @@ export const fetchCollection = createAsyncThunk(
             const collections = await invoke('get_collection', {
                 collectionIds: collectionIds
             })
-        
+            
+            dispatch(setLoading(true))
             dispatch(upsertCollections(collections as Collection[]))
             dispatch(fetchCollectionSettings(collectionIds))
             await dispatch(fetchCollectionToCollection(collectionIds))
             await dispatch(fetchCollectionToSource(collectionIds))
+            dispatch(setLoading(false))
         } catch (e) {
             console.error('Unable to fetch collection for', collectionIds, e)
         }

@@ -66,22 +66,23 @@ export const ShutEye: React.FC = () => {
 
     useEffect(() => {
         setActive(false);
-        const handleDarkMode = () => {
+        const handleDarkMode = () => window.setTimeout(() => {
             progress.reset()
+            setActive(true)
             setActive(false)
             setRand(Math.random())
-        }
+        }, 500)
         const darkModePreference = window.matchMedia("(prefers-color-scheme: dark)")
         darkModePreference.addEventListener("change", handleDarkMode)
         const lightModePreference = window.matchMedia("(prefers-color-scheme: light)")
         lightModePreference.addEventListener("change", handleDarkMode)
-        // window.addEventListener('focus', handleDarkMode)
+        window.addEventListener('focus', handleDarkMode)
 
         return () => {
             // return for unmount lifecycle step
             darkModePreference.removeEventListener('change', handleDarkMode);
             lightModePreference.removeEventListener('change', handleDarkMode);
-            // window.removeEventListener('focus', handleDarkMode)
+            window.removeEventListener('focus', handleDarkMode)
         }
     }, [])
 

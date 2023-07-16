@@ -14,20 +14,20 @@ export interface NavState {
      * 0 is the root collection (seeded on Rust lib init)
      */
     collectionId: number,
-    priorCollId: number,
     sourceId: number,
-    contentId: number
-    isCustomizing: boolean
+    contentId: number,
+    isCustomizing: boolean,
+    loading: boolean
 }
 
 const initialNavState: NavState = {
     selectionKind: SelectionKind.COLLECTION,
     submergeHistory: [0],
     collectionId: 0,
-    priorCollId: 0,
     sourceId: 0,
     contentId: 0,
-    isCustomizing: false
+    isCustomizing: false,
+    loading: true
 }
 
 /**
@@ -54,18 +54,24 @@ const navSlice = createSlice({
         },
         setIsCustomizing (state, action: PayloadAction<boolean>) {
             state.isCustomizing = action.payload
+        },
+        toggleIsCustomizing (state, action: PayloadAction) {
+            state.isCustomizing = !state.isCustomizing
+        },
+        setLoading (state, action: PayloadAction<boolean>) {
+            state.loading = action.payload
         }
     },
     extraReducers: {}
 })
 
-export const { chooseCollection, setIsCustomizing } = navSlice.actions
+export const { chooseCollection, setIsCustomizing, toggleIsCustomizing, setLoading } = navSlice.actions
 export const selectNav = (state: RootState) => state.nav
 export const selectCollectionId = (state: RootState) => state.nav.collectionId
 export const selectHistory = (state: RootState) => state.nav.submergeHistory
-export const selectPriorCollId = (state: RootState) => state.nav.priorCollId
 export const selectSourceId = (state: RootState) => state.nav.sourceId
 export const selectContentId = (state: RootState) => state.nav.contentId
 export const selectIsCustomizing = (state: RootState) => state.nav.isCustomizing
+export const selectLoading = (state: RootState) => state.nav.loading
 
 export const navReducer = navSlice.reducer

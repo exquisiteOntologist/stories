@@ -173,7 +173,7 @@ pub fn db_contents_retrieve(content_ids: &Vec<i32>) -> Result<Vec<Content>, Box<
 	let content_id_values = create_rarray_values(content_ids.to_owned());
 
 	let mut contents_query: Statement = conn.prepare(
-		"SELECT * FROM content WHERE id IN (SELECT * FROM rarray(?1))"
+		"SELECT * FROM content WHERE id IN (SELECT * FROM rarray(?1)) LIMIT 150"
 	)?;
 	let contents_res = db_map_content_query(&mut contents_query, [content_id_values]);
 
@@ -217,7 +217,7 @@ pub fn db_list_content() -> Result<Vec<Content>, Box<dyn Error>> {
 	let conn: Connection = db_connect()?;
 
 	let mut content_list_query: Statement = conn.prepare(
-		"SELECT * FROM content ORDER BY id DESC LIMIT 1000"
+		"SELECT * FROM content ORDER BY id DESC LIMIT 150"
 	)?;
 
 	let content_list_res = db_map_content_query(&mut content_list_query, []);
@@ -231,11 +231,13 @@ pub fn db_list_content() -> Result<Vec<Content>, Box<dyn Error>> {
 	Ok(content_list)
 }
 
+pub const SQL_CONTENT_OF_SOURCE: &str = "SELECT * FROM content WHERE source_id = :ID ORDER BY id DESC LIMIT 150";
+
 pub fn db_list_content_of_source(source_id: i32) -> Result<Vec<Content>, Box<dyn Error>> {
 	let conn: Connection = db_connect()?;
 
 	let mut content_list_query: Statement = conn.prepare(
-		"SELECT * FROM content WHERE source_id = :ID ORDER BY id DESC LIMIT 1000"
+		SQL_CONTENT_OF_SOURCE
 	)?;
 	let id_string = source_id.to_string();
     let named_params = [
@@ -257,7 +259,7 @@ pub fn db_list_content_full() -> Result<Vec<FullContent>, Box<dyn Error>> {
 	load_rarray_table(&conn)?;
 
 	let mut content_query: Statement = conn.prepare(
-		"SELECT * FROM content ORDER BY id DESC LIMIT 1000"
+		"SELECT * FROM content ORDER BY id DESC LIMIT 150"
 	)?;
 
 	let content_res = db_map_content_query(&mut content_query, []);

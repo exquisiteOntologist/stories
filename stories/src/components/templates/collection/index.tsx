@@ -48,9 +48,6 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     }, [sources])
 
     useEffect(() => {
-    }, [contents])
-
-    useEffect(() => {
         dispatch(resetThemeColours())
     }, [dispatch])
 

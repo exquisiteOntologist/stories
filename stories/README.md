@@ -9,3 +9,5 @@ This template should help get you started developing with Tauri, React and Types
 ## Generating Types from the Chirp lib
 
 Use the `gen-types.sh` script.
+
+Note: to run the script you will need to read it and then set permissions on your computer so that it can be executed.

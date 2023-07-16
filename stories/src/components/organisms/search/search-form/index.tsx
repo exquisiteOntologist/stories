@@ -1,12 +1,13 @@
-import React, { useCallback, useEffect } from 'react'
+import React, { FormEvent, useCallback, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { debounce } from 'lodash'
 import { search } from '../../../../redux/features/searchSlice'
 import { IconSearch } from '../../../atoms/icons/search'
 import { H2, Light } from '../../../atoms/headings'
+import { AppDispatch } from '../../../../redux/store'
 
 export const SearchForm: React.FC = () => {
-    const dispatch = useDispatch()
+    const dispatch = useDispatch<AppDispatch>()
 
     const [searchPhrase, setSearchPhrase] = React.useState<string>('')
 
@@ -25,7 +26,7 @@ export const SearchForm: React.FC = () => {
         dispatchSearch(phrase)
     }
 
-    const submitHandler = (e: Event) => {
+    const submitHandler = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         dispatch(search(searchPhrase))
     }

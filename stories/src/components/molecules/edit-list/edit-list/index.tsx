@@ -16,7 +16,7 @@ export interface EditListProps<ListT> {
     deleteDispatch: (selectedIds: number[]) => unknown
 }
 
-export const EditList: React.FC<EditListProps<T>> = ({ title, countColour, list, mapper, deleteDispatch }) => {
+export const EditList: React.FC<EditListProps<any>> = <T, >({ title, countColour, list, mapper, deleteDispatch }: EditListProps<T>) => {
     const [selectedIds, setSelectedIds] = useState<number[]>([])
 
     const handleCheckToggle = (e: React.ChangeEvent<HTMLInputElement>, id: number) => {

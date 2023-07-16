@@ -3,7 +3,7 @@
  * will not stick.
  */
 export const findStickyParents = () => {
-    let parent = document.querySelector('.sticky').parentElement;
+    let parent = document.querySelector('.sticky')?.parentElement;
 
     while (parent) {
         const hasOverflow = getComputedStyle(parent).overflow;

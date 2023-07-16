@@ -73,7 +73,11 @@ pub async fn parse_web_articles(url: &String, doc_text: &String, article_url_seg
 	println!("Urls to crawl {:?}", urls_to_crawl.len());
 	
 	let article_futures = urls_to_crawl.into_iter().map(|p_url| contents_from_page(p_url.to_string()));
-	let website_contents: Vec<FullContent> = join_all(article_futures).await.drain_filter(|r| r.is_ok()).map(|r| r.unwrap()).collect();
+	// let website_contents: Vec<FullContent> = join_all(article_futures).await.drain_filter(|r| r.is_ok()).map(|r| r.unwrap()).collect();
+	let website_contents: Vec<FullContent> = join_all(article_futures).await.into_iter()
+		.filter(|af| af.is_ok())
+		.map(|r| r.unwrap())
+		.collect();
 
 	Ok(website_contents)
 }

@@ -32,6 +32,8 @@ async fn main() {
             commands::search::search
         ])
         .setup(|_app| {
+            // _app.path_resolver().app_local_data_dir(); // <-- likely of use later
+
             // if it can't spawn due to lack of send due to bug in chirp most likely
             tokio::spawn(continual_updates());
 

@@ -16,6 +16,7 @@ import { CollectionCustomizer } from '../../organisms/collection-customizer'
 import { CollectionViewProps } from './interface'
 import { motionProps } from '../../../utilities/animate'
 import { CollectionEmptyMessage } from '../../organisms/collection-empty-message';
+import { selectNestedSourceIds } from '../../../redux/features/collectionToSourceSlice';
 
 const clientItemsLimit: number = 100
 const time = (s: string): number => new Date(s).getTime()
@@ -30,7 +31,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     const collectionSettings = useAppSelector(s => collectionSettingsSelectors.selectById(s, collectionId))
     // these source selectors assume that the sources store only has the current sources
     const sources = useAppSelector(sourcesSelectors.selectAll)
-    const sourceIds = useAppSelector(sourcesSelectors.selectIds)
+    const sourceIds = useAppSelector(selectNestedSourceIds)
     const contents = useAppSelector(selectContentOfCollection).slice(0, clientItemsLimit).sort(sortContentPublished)
     const isCustomizing = useAppSelector(selectIsCustomizing);
 

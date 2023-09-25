@@ -1,5 +1,5 @@
+use rusqlite::Result;
 use std::{env, error::Error};
-use rusqlite::{Result};
 
 pub async fn take_command() -> Result<(), Box<dyn Error>> {
     let args: Vec<String> = env::args().collect();
@@ -21,7 +21,6 @@ pub async fn take_command() -> Result<(), Box<dyn Error>> {
         "rename" => todo!(),
         "sources" => list_sources_action(),
         "content" => list_content_action(),
-        "content-full" => list_content_full_action(),
         "update" => update_action().await,
         "search" => search_cli(args),
         "search_entity" => todo!(),

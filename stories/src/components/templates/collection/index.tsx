@@ -2,7 +2,7 @@ import * as React from 'react'
 import { useEffect } from 'react'
 import { motion } from "framer-motion";
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
-import { fetchContent, selectContentOfCollection } from '../../../redux/features/contentsSlice'
+import { fetchContent, fetchContentOfSources, selectContentOfCollection } from '../../../redux/features/contentsSlice'
 import { fetchSourcesOfCollection, sourcesSelectors } from '../../../redux/features/sourcesSlice'
 import { resetThemeColours } from '../../../redux/features/themeSlice'
 import { collectionsSelectors, fetchCollection, fetchNestedCollections, selectNestedCollections } from '../../../redux/features/collectionsSlice'
@@ -28,7 +28,9 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     const collection = useAppSelector(s => collectionsSelectors.selectById(s, collectionId))
     const nestedCollections = useAppSelector(selectNestedCollections)
     const collectionSettings = useAppSelector(s => collectionSettingsSelectors.selectById(s, collectionId))
+    // these source selectors assume that the sources store only has the current sources
     const sources = useAppSelector(sourcesSelectors.selectAll)
+    const sourceIds = useAppSelector(sourcesSelectors.selectIds)
     const contents = useAppSelector(selectContentOfCollection).slice(0, clientItemsLimit).sort(sortContentPublished)
     const isCustomizing = useAppSelector(selectIsCustomizing);
 
@@ -44,7 +46,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     }, [collection, collectionSettings])
 
     useEffect(() => {
-        dispatch(fetchContent())
+        dispatch(fetchContentOfSources(sourceIds))
     }, [sources])
 
     useEffect(() => {

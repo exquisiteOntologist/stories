@@ -20,16 +20,9 @@ export const fetchContentOfSources = createAsyncThunk(
 export const fetchContent = createAsyncThunk(
     'contents/fetchContent',
     async (contentIds: number[] | null | undefined, { dispatch }) =>{
-        // const contents = await getContents({ contentIds })
-
-        // if (contents.status != 200) throw Error('Failed to fetch content')
-
-        // const data = contents.data
-
         const content = await invoke('list_content')
 
         dispatch(addContents(content as ContentDto[]))
-        // dispatch(fetchContentBodies(data.map(x => x.contentId)))
     }
 )
 

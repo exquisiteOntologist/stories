@@ -281,15 +281,9 @@ pub fn db_list_content_of_source(source_id: i32) -> Result<Vec<Content>, Box<dyn
 pub const SQL_CONTENT_OF_SOURCES: &str = "
     SELECT * FROM content WHERE
     source_id IN (SELECT * FROM rarray(?1))
-    LIMIT 1000;
+    ORDER BY date_published DESC
+    LIMIT 150;
 ";
-
-// pub const SQL_CONTENT_OF_SOURCES: &str = "
-//     SELECT * FROM content WHERE
-//     source_id IN (SELECT * FROM rarray(?1))
-//     LIMIT 150 BY source_id
-//     LIMIT 1000;
-// ";
 
 pub fn db_list_content_of_sources(source_ids: &Vec<i32>) -> Result<Vec<Content>, Box<dyn Error>> {
     let conn: Connection = db_connect()?;

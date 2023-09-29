@@ -32,7 +32,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     // these source selectors assume that the sources store only has the current sources
     const sources = useAppSelector(sourcesSelectors.selectAll)
     const sourceIds = useAppSelector(selectNestedSourceIds)
-    const contents = useAppSelector(selectContentOfCollection).slice(0, clientItemsLimit).sort(sortContentPublished)
+    const contents = useAppSelector(selectContentOfCollection).sort(sortContentPublished).slice(0, clientItemsLimit)
     const isCustomizing = useAppSelector(selectIsCustomizing);
 
     const title = isCustomizing ? 'edit' : 'hi'
@@ -48,7 +48,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
 
     useEffect(() => {
         dispatch(fetchContentOfSources(sourceIds))
-    }, [sources])
+    }, [collectionId, sources])
 
     useEffect(() => {
         dispatch(resetThemeColours())

@@ -1,4 +1,4 @@
-use std::{time::Duration};
+use std::time::Duration;
 
 pub async fn continual_updates() {
     // Repeatedly call update.

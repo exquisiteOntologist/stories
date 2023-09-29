@@ -1,6 +1,9 @@
 use std::error::Error;
 
-use crate::{db::{db_list_content, db_list_content_full, db_content_bodies}, entities::{self}};
+use crate::{
+    db::{db_content_bodies, db_list_content, db_list_content_of_sources, db_list_content_full},
+    entities::{self},
+};
 
 pub fn list_content_action() -> Result<(), Box<dyn Error>> {
     let content_list = list_content()?;
@@ -25,36 +28,25 @@ pub fn list_content() -> Result<Vec<entities::Content>, Box<dyn Error>> {
     Ok(content_list)
 }
 
-pub fn list_content_full_action() -> Result<(), Box<dyn Error>> {
-    let content_list_full = list_content_full()?;
+pub fn list_content_of_sources(
+    source_ids: &Vec<i32>,
+) -> Result<Vec<entities::Content>, Box<dyn Error>> {
+    let content_list = db_list_content_of_sources(source_ids)?;
 
-    for c in content_list_full {
-        let id = c.content.id;
-        let title = c.content.title;
-        let url = c.content.url;
-        let date = c.content.date_published;
-        let media = c.content_media.first();
-        let media_src = if media.is_some() {
-            media.unwrap().src.clone()
-        } else {
-            " ".into()
-        };
-        println!("{id}: \"{title}\"");
-        println!("  url: {url}");
-        println!("  date: {date}");
-        println!(" media: {media_src}")
-    }
-
-    Ok(())
+    Ok(content_list)
 }
 
-pub fn list_content_full() -> Result<Vec<entities::FullContent>, Box<dyn Error>> {
-    let content_list_full = db_list_content_full()?;
+pub fn list_content_full(
+    source_ids: &Vec<i32>,
+) -> Result<Vec<entities::FullContent>, Box<dyn Error>> {
+    let content_list_full = db_list_content_full(source_ids)?;
 
     Ok(content_list_full)
 }
 
-pub fn content_bodies(content_ids: Vec<String>) -> Result<Vec<entities::ContentBody>, Box<dyn Error>> {
+pub fn content_bodies(
+    content_ids: Vec<String>,
+) -> Result<Vec<entities::ContentBody>, Box<dyn Error>> {
     let bodies: Vec<entities::ContentBody> = db_content_bodies(content_ids)?;
 
     Ok(bodies)

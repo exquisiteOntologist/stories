@@ -1,8 +1,8 @@
 use chirp::entities::{ContentDto, ContentBody};
 
 #[tauri::command]
-pub fn list_content() -> Result<Vec<ContentDto>, ()> {
-    let fc_results = chirp::actions::content::list_content_full().unwrap();
+pub fn list_content(source_ids: Vec<i32>) -> Result<Vec<ContentDto>, ()> {
+    let fc_results = chirp::actions::content::list_content_full(&source_ids).unwrap();
     let c_dto = fc_results.into_iter().map(chirp::entities::full_content_to_content_dto).collect();
 
     Ok(c_dto)

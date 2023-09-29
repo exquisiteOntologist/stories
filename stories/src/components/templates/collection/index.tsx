@@ -2,7 +2,7 @@ import * as React from 'react'
 import { useEffect } from 'react'
 import { motion } from "framer-motion";
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
-import { fetchContent, selectContentOfCollection } from '../../../redux/features/contentsSlice'
+import { fetchContent, fetchContentOfSources, selectContentOfCollection } from '../../../redux/features/contentsSlice'
 import { fetchSourcesOfCollection, sourcesSelectors } from '../../../redux/features/sourcesSlice'
 import { resetThemeColours } from '../../../redux/features/themeSlice'
 import { collectionsSelectors, fetchCollection, fetchNestedCollections, selectNestedCollections } from '../../../redux/features/collectionsSlice'
@@ -16,6 +16,7 @@ import { CollectionCustomizer } from '../../organisms/collection-customizer'
 import { CollectionViewProps } from './interface'
 import { motionProps } from '../../../utilities/animate'
 import { CollectionEmptyMessage } from '../../organisms/collection-empty-message';
+import { selectNestedSourceIds } from '../../../redux/features/collectionToSourceSlice';
 
 const clientItemsLimit: number = 100
 const time = (s: string): number => new Date(s).getTime()
@@ -28,8 +29,10 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     const collection = useAppSelector(s => collectionsSelectors.selectById(s, collectionId))
     const nestedCollections = useAppSelector(selectNestedCollections)
     const collectionSettings = useAppSelector(s => collectionSettingsSelectors.selectById(s, collectionId))
+    // these source selectors assume that the sources store only has the current sources
     const sources = useAppSelector(sourcesSelectors.selectAll)
-    const contents = useAppSelector(selectContentOfCollection).slice(0, clientItemsLimit).sort(sortContentPublished)
+    const sourceIds = useAppSelector(selectNestedSourceIds)
+    const contents = useAppSelector(selectContentOfCollection).sort(sortContentPublished).slice(0, clientItemsLimit)
     const isCustomizing = useAppSelector(selectIsCustomizing);
 
     const title = isCustomizing ? 'edit' : 'hi'
@@ -44,8 +47,8 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     }, [collection, collectionSettings])
 
     useEffect(() => {
-        dispatch(fetchContent())
-    }, [sources])
+        dispatch(fetchContentOfSources(sourceIds))
+    }, [collectionId, sources])
 
     useEffect(() => {
         dispatch(resetThemeColours())

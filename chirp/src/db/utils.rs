@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use rusqlite::{Connection, types::Value};
+use rusqlite::{types::Value, Connection};
 
 pub fn db_connect() -> Result<Connection, rusqlite::Error> {
     // https://github.com/rusqlite/rusqlite#usage
@@ -11,9 +11,16 @@ pub fn load_rarray_table(conn: &Connection) -> Result<(), rusqlite::Error> {
     rusqlite::vtab::array::load_module(&conn) // <- Adds "rarray" table function
 }
 
-pub fn create_rarray_values<T>(values_vec: Vec<T>) -> Rc<Vec<Value>> where T: From<T>, Value: From<T> {
-    let values = values_vec.into_iter().map(Value::from).collect::<Vec<Value>>();
-    let rc= Rc::new(values);
+pub fn create_rarray_values<T>(values_vec: Vec<T>) -> Rc<Vec<Value>>
+where
+    T: From<T>,
+    Value: From<T>,
+{
+    let values = values_vec
+        .into_iter()
+        .map(Value::from)
+        .collect::<Vec<Value>>();
+    let rc = Rc::new(values);
 
     rc
 }

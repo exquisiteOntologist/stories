@@ -1,4 +1,4 @@
-use chrono::{TimeZone, Utc, DateTime};
+use chrono::DateTime;
 use rusqlite::{Connection, Params, Statement};
 use std::error::Error;
 

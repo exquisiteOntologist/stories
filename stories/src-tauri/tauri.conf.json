@@ -31,7 +31,10 @@
         "icons/icon.ico"
       ],
       "identifier": "com.stories.dev",
-      "targets": "all"
+      "targets": "all",
+      "macOS": {
+        "minimumSystemVersion": "13.4"
+      }
     },
     "security": {
       "csp": null

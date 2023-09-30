@@ -6,7 +6,7 @@ import { contentBodiesSelectors } from '../../../redux/features/contentBodiesSli
 import { contentsSelectors, fetchContent } from '../../../redux/features/contentsSlice'
 import { selectColours, setThemeColours } from '../../../redux/features/themeSlice'
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
-import { createHslaString, generateContentColours } from '../../../utilities/graphics/colours'
+import { createHslaString } from '../../../utilities/graphics/colours'
 import { IconChat } from '../../atoms/icons/chat'
 import { Button } from '../../atoms/button'
 import { ReaderViewProps } from './reader.interfaces'

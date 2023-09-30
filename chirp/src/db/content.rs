@@ -1,4 +1,4 @@
-use chrono::{TimeZone, Utc};
+use chrono::{TimeZone, Utc, DateTime};
 use rusqlite::{Connection, Params, Statement};
 use std::error::Error;
 
@@ -28,12 +28,10 @@ pub fn db_map_content_query<P: Params>(
             source_id: row.get(1)?,
             title: content_title_clean(title), // row.get(2)?,
             url: row.get(3)?,
-            date_published: Utc
-                .datetime_from_str(&date_published, &DATE_FROM_FORMAT)
+            date_published: DateTime::parse_from_str(&date_published, &DATE_FROM_FORMAT)
                 .unwrap_or_default()
                 .into(),
-            date_retrieved: Utc
-                .datetime_from_str(&date_retrieved, &DATE_FROM_FORMAT)
+            date_retrieved: DateTime::parse_from_str(&date_retrieved, &DATE_FROM_FORMAT)
                 .unwrap_or_default()
                 .into(),
         })

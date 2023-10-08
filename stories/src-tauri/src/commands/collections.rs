@@ -1,5 +1,3 @@
-
-
 #[tauri::command]
 pub fn add_collection(c_name: String, c_parent_id: i32) -> Result<(), String> {
     let c_res = chirp::actions::collections::collection_add(&c_name, &c_parent_id);
@@ -12,7 +10,10 @@ pub fn add_collection(c_name: String, c_parent_id: i32) -> Result<(), String> {
 }
 
 #[tauri::command]
-pub fn remove_collection(parent_collection_id: i32, collection_ids: Vec<i32>) -> Result<(), String> {
+pub fn remove_collection(
+    parent_collection_id: i32,
+    collection_ids: Vec<i32>,
+) -> Result<(), String> {
     let rm_res = chirp::actions::collection_remove(&parent_collection_id, &collection_ids);
     if rm_res.is_err() {
         return Err("Unable to remove some collections".into());
@@ -33,21 +34,31 @@ pub fn rename_collection(collection_id: i32, name: String) -> Result<(), String>
 }
 
 #[tauri::command]
-pub fn get_collection(collection_ids: Vec<i32>) -> Result<Vec<chirp::entities::Collection>, String> {
-    let c = chirp::actions::collections::collection_get(&collection_ids).unwrap();
+pub fn get_collection(
+    collection_ids: Vec<i32>,
+) -> Result<Vec<chirp::entities::Collection>, String> {
+    let c_res = chirp::actions::collections::collection_get(&collection_ids);
 
-    Ok(c)
+    if c_res.is_err() {
+        let num_ids = collection_ids.len();
+        return Err(
+            format!("It seems there was an issue retrieving the {num_ids} collections").into(),
+        );
+    }
+
+    Ok(c_res.unwrap())
 }
 
 #[tauri::command]
-pub fn get_collection_settings(collection_ids: Vec<i32>) -> Result<Vec<chirp::entities::CollectionSettings>, String> {
-    if collection_ids.is_empty() {
-        return Err("No collection ids provided to fetch settings for".into());
+pub fn get_collection_settings(
+    collection_ids: Vec<i32>,
+) -> Result<Vec<chirp::entities::CollectionSettings>, String> {
+    let c_settings_res = chirp::actions::collections::collection_settings_get(&collection_ids);
+    if c_settings_res.is_err() {
+        return Err("Failed to retrieve collection settings".into());
     }
-    println!("Getting settings {:?}", &collection_ids.first().unwrap());
-    let c_settings = chirp::actions::collections::collection_settings_get(&collection_ids).unwrap();
 
-    Ok(c_settings)
+    Ok(c_settings_res.unwrap())
 }
 
 #[tauri::command]
@@ -63,15 +74,23 @@ pub fn set_collection_settings(cs: chirp::entities::CollectionSettings) -> Resul
 }
 
 #[tauri::command]
-pub fn get_collection_to_collection(parent_ids: Vec<i32>) -> Result<Vec<chirp::entities::CollectionToCollection>, String> {
+pub fn get_collection_to_collection(
+    parent_ids: Vec<i32>,
+) -> Result<Vec<chirp::entities::CollectionToCollection>, String> {
     let c = chirp::actions::collections::collection_to_collection_get(&parent_ids).unwrap();
 
     Ok(c)
 }
 
 #[tauri::command]
-pub fn get_collection_to_source(collection_ids: Vec<i32>) -> Vec<chirp::entities::CollectionToSource> {
-    let collection_to_source = chirp::actions::collections::collection_to_source_get(&collection_ids).unwrap();
-    println!("Collection to sources found {:?}", collection_to_source.clone().len());
+pub fn get_collection_to_source(
+    collection_ids: Vec<i32>,
+) -> Vec<chirp::entities::CollectionToSource> {
+    let collection_to_source =
+        chirp::actions::collections::collection_to_source_get(&collection_ids).unwrap();
+    println!(
+        "Collection to sources found {:?}",
+        collection_to_source.clone().len()
+    );
     collection_to_source
 }

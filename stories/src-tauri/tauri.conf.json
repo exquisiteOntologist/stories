@@ -7,14 +7,14 @@
     "withGlobalTauri": true
   },
   "package": {
-    "productName": "stories",
+    "productName": "Stories",
     "version": "0.0.0"
   },
   "tauri": {
     "allowlist": {
       "all": false,
       "os": {
-        "all": true
+        "all": false
       },
       "shell": {
         "all": false,
@@ -33,6 +33,7 @@
       "identifier": "com.stories.dev",
       "targets": "all",
       "macOS": {
+        "entitlements": "./entitlements.mac.plist",
         "minimumSystemVersion": "13.4"
       }
     },
@@ -44,11 +45,14 @@
     },
     "windows": [
       {
+        "titleBarStyle": "Visible",
         "fullscreen": false,
         "resizable": true,
         "title": "Stories",
         "width": 1280,
-        "height": 800
+        "height": 800,
+        "closable": true,
+        "hiddenTitle": true
       }
     ]
   }

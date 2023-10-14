@@ -35,7 +35,8 @@ const contentsSlice = createSlice({
     initialState: contentsAdapter.getInitialState(),
     reducers: {
         setAllContents: contentsAdapter.setAll,
-        addContents: contentsAdapter.addMany
+        addContents: contentsAdapter.addMany,
+        upsertContents: contentsAdapter.upsertMany
     },
     extraReducers: {}
 })

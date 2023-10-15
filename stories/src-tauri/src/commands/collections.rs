@@ -77,20 +77,24 @@ pub fn set_collection_settings(cs: chirp::entities::CollectionSettings) -> Resul
 pub fn get_collection_to_collection(
     parent_ids: Vec<i32>,
 ) -> Result<Vec<chirp::entities::CollectionToCollection>, String> {
-    let c = chirp::actions::collections::collection_to_collection_get(&parent_ids).unwrap();
+    let c_res = chirp::actions::collections::collection_to_collection_get(&parent_ids);
 
-    Ok(c)
+    if c_res.is_err() {
+        return Err("Cannot get collection to collection".into());
+    }
+
+    Ok(c_res.unwrap())
 }
 
 #[tauri::command]
 pub fn get_collection_to_source(
     collection_ids: Vec<i32>,
-) -> Vec<chirp::entities::CollectionToSource> {
-    let collection_to_source =
-        chirp::actions::collections::collection_to_source_get(&collection_ids).unwrap();
-    println!(
-        "Collection to sources found {:?}",
-        collection_to_source.clone().len()
-    );
-    collection_to_source
+) -> Result<Vec<chirp::entities::CollectionToSource>, String> {
+    let cs_res = chirp::actions::collections::collection_to_source_get(&collection_ids);
+
+    if cs_res.is_err() {
+        return Err("Cannot get collection to source".into());
+    }
+
+    Ok(cs_res.unwrap())
 }

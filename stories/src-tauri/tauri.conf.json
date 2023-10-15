@@ -44,7 +44,7 @@
             "targets": "all",
             "macOS": {
                 "entitlements": "./entitlements.mac.plist",
-                "minimumSystemVersion": "13.4"
+                "minimumSystemVersion": "14.0"
             }
         },
         "security": {

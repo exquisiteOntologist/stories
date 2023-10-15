@@ -6,7 +6,7 @@ pub fn db_connect() -> Result<Connection, rusqlite::Error> {
     // https://github.com/rusqlite/rusqlite#usage
     let conn = Connection::open("./chirp.db");
     if conn.is_err() {
-        panic!("DB connetion failed {:?}", conn.err());
+        println!("DB connection failed {:?}", &conn.as_ref().err());
     }
     conn
 }

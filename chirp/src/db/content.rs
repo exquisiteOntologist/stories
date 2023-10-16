@@ -333,8 +333,8 @@ pub fn db_list_content_full(source_ids: &Vec<i32>) -> Result<Vec<FullContent>, B
     let medias_res: Vec<ContentMedia> =
         db_map_content_media_query(&mut medias_query, params.clone())?;
 
-    println!("bodies count {:?}", bodies_res.clone().len());
-    println!("medias count {:?}", medias_res.clone().len());
+    // println!("bodies count {:?}", bodies_res.clone().len());
+    // println!("medias count {:?}", medias_res.clone().len());
 
     let mut bodies = bodies_res.into_iter();
     let medias = medias_res.into_iter();

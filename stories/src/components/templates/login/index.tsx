@@ -1,7 +1,7 @@
 // import { useAuth0 } from '@auth0/auth0-react'
 import * as React from 'react'
 // import Helmet from 'react-helmet'
-import LoginButton from '../../molecules/auth/login-button'
+// import LoginButton from '../../molecules/auth/login-button'
 
 const LoginView: React.FC = () => {
     // const { isLoading } = useAuth0()
@@ -18,7 +18,7 @@ const LoginView: React.FC = () => {
                         <h1 className='text-4xl font-semibold mb-24'>you were?</h1>
                         <div className="text-lg">
                             <p className="text-md mb-8">Sorry, we have no clue who you are. Before continuing, first login or sign-up.<br></br> Once we know, we can provide you your collections, search, and narrative.</p>
-                            <LoginButton />
+                            {/* <LoginButton /> */}
                         </div>
                     </div>
                 )

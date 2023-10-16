@@ -1,14 +1,14 @@
-import ColorThief from "./color-thief"
-import { loadImage } from "./image"
+// import ColorThief from "./color-thief"
+// import { loadImage } from "./image"
 
 type PaletteRGB = [number, number, number]
 
-export const imageColoursPalette = async (imageUrl: string): Promise<PaletteRGB[]> => {
-    const img = await loadImage(imageUrl)
-    const palette = ColorThief.getPalette(img, 5, 1)
+// export const imageColoursPalette = async (imageUrl: string): Promise<PaletteRGB[]> => {
+//     const img = await loadImage(imageUrl)
+//     const palette = ColorThief.getPalette(img, 5, 1)
 
-    return palette;
-}
+//     return palette;
+// }
 
 export const createRgbString = (palette: PaletteRGB, alpha: number = 1) => `rgba(${palette.join(',')},${alpha})`
 
@@ -71,33 +71,33 @@ export interface ContentColours {
     backgroundLightnessAdjusted?: string | null,
 }
 
-export const generateContentColours = async (imageUrl: string): Promise<ContentColours> => {
-    const colours = await imageColoursPalette(imageUrl);
+// export const generateContentColours = async (imageUrl: string): Promise<ContentColours> => {
+//     const colours = await imageColoursPalette(imageUrl);
 
-    const primary = colours[0]
-    const secondary = colours[1]
+//     const primary = colours[0]
+//     const secondary = colours[1]
 
-    const primaryHslVals = changeRgbToHsl(...primary)
-    const primaryLightnessAdjustedVals = [primaryHslVals[0], primaryHslVals[1], 40]
+//     const primaryHslVals = changeRgbToHsl(...primary)
+//     const primaryLightnessAdjustedVals = [primaryHslVals[0], primaryHslVals[1], 40]
 
-    const bgHslVals = changeRgbToHsl(...secondary)
-    const bgLightnessAdjustedVals = [bgHslVals[0], bgHslVals[1], 95]
+//     const bgHslVals = changeRgbToHsl(...secondary)
+//     const bgLightnessAdjustedVals = [bgHslVals[0], bgHslVals[1], 95]
 
-    const contentColours = {
-        primary: createRgbString(primary),
-        primaryHslVals: primaryHslVals,
-        primaryLightnessAdjusted: createHslaString(primaryLightnessAdjustedVals[0], primaryLightnessAdjustedVals[1], primaryLightnessAdjustedVals[2]),
-        title: createRgbString(primary),
-        text: createRgbString(primary),
-        background: createRgbString(secondary, 0.05),
-        backgroundLightnessAdjusted: createHslaString(bgLightnessAdjustedVals[0], bgLightnessAdjustedVals[1], bgLightnessAdjustedVals[2])
-    }
+//     const contentColours = {
+//         primary: createRgbString(primary),
+//         primaryHslVals: primaryHslVals,
+//         primaryLightnessAdjusted: createHslaString(primaryLightnessAdjustedVals[0], primaryLightnessAdjustedVals[1], primaryLightnessAdjustedVals[2]),
+//         title: createRgbString(primary),
+//         text: createRgbString(primary),
+//         background: createRgbString(secondary, 0.05),
+//         backgroundLightnessAdjusted: createHslaString(bgLightnessAdjustedVals[0], bgLightnessAdjustedVals[1], bgLightnessAdjustedVals[2])
+//     }
 
-    return contentColours
-}
+//     return contentColours
+// }
 
 export const setBodyBackground = (backgroundColour?: string) => {
     if (!backgroundColour) return
 
-    document.body.parentElement.style.background = backgroundColour
+    (document.body.parentElement as HTMLHtmlElement).style.background = backgroundColour
 }

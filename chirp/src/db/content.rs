@@ -1,11 +1,13 @@
-use chrono::{TimeZone, Utc};
+use chrono::{DateTime, NaiveDateTime, Utc};
 use rusqlite::{Connection, Params, Statement};
 use std::error::Error;
 
 use super::{create_rarray_values, db_connect, load_rarray_table};
 use crate::entities::{Content, ContentBody, ContentMedia, FullContent, MediaKind};
 
-const DATE_FROM_FORMAT: &str = "%F %T%.6f %Z";
+//                              2024-11-15 05:22:11.034340 UTC
+//                              2023-10-07 13:46:54.605157 UTC
+const DATE_FROM_FORMAT: &str = "%Y-%m-%d %H:%M:%S%.f %Z";
 
 pub fn content_title_clean(mut title: String) -> String {
     let pipe_offset = title.find(&['|', '-']).unwrap_or(title.len());
@@ -23,19 +25,25 @@ pub fn db_map_content_query<P: Params>(
         let date_published: String = row.get(4)?;
         let date_retrieved: String = row.get(5)?;
 
+        let date_published_date: DateTime<Utc> =
+            NaiveDateTime::parse_from_str(&date_published, &DATE_FROM_FORMAT)
+                .unwrap()
+                .and_utc();
+        let date_retrieved_date: DateTime<Utc> =
+            NaiveDateTime::parse_from_str(&date_retrieved, &DATE_FROM_FORMAT)
+                .unwrap_or_default()
+                .and_utc();
+
+        // println!("date published {:?}", &date_published);
+        // println!("date {:?}", date_published_date.naive_utc().time());
+
         Ok(Content {
             id: row.get(0)?,
             source_id: row.get(1)?,
             title: content_title_clean(title), // row.get(2)?,
             url: row.get(3)?,
-            date_published: Utc
-                .datetime_from_str(&date_published, &DATE_FROM_FORMAT)
-                .unwrap_or_default()
-                .into(),
-            date_retrieved: Utc
-                .datetime_from_str(&date_retrieved, &DATE_FROM_FORMAT)
-                .unwrap_or_default()
-                .into(),
+            date_published: date_published_date,
+            date_retrieved: date_retrieved_date,
         })
     });
 
@@ -325,8 +333,8 @@ pub fn db_list_content_full(source_ids: &Vec<i32>) -> Result<Vec<FullContent>, B
     let medias_res: Vec<ContentMedia> =
         db_map_content_media_query(&mut medias_query, params.clone())?;
 
-    println!("bodies count {:?}", bodies_res.clone().len());
-    println!("medias count {:?}", medias_res.clone().len());
+    // println!("bodies count {:?}", bodies_res.clone().len());
+    // println!("medias count {:?}", medias_res.clone().len());
 
     let mut bodies = bodies_res.into_iter();
     let medias = medias_res.into_iter();

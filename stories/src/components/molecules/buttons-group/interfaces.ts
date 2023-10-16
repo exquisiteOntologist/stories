@@ -1,4 +1,7 @@
+import { ReactNode } from "react";
+
 export interface ButtonGroupProps {
+    children: ReactNode
     className?: string
     expands?: boolean
     /** Expands leftwards? (from right opens leftwards) */

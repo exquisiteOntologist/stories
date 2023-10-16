@@ -4,7 +4,11 @@ use rusqlite::{types::Value, Connection};
 
 pub fn db_connect() -> Result<Connection, rusqlite::Error> {
     // https://github.com/rusqlite/rusqlite#usage
-    Connection::open("./chirp.db")
+    let conn = Connection::open("./chirp.db");
+    if conn.is_err() {
+        println!("DB connection failed {:?}", &conn.as_ref().err());
+    }
+    conn
 }
 
 pub fn load_rarray_table(conn: &Connection) -> Result<(), rusqlite::Error> {

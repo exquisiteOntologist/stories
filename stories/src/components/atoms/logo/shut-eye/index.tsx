@@ -89,6 +89,9 @@ export const ShutEye: React.FC = () => {
     const onHover = () => setActive(true)
     const onLeave = () => setActive(false)
 
+    // progress.to(p => generateCanvasEye(Number(p.toFixed(2)), canvasRef.current, colour))
+    
+
     return (
         <div
             className={buttonClassesPadding}
@@ -102,7 +105,7 @@ export const ShutEye: React.FC = () => {
                 height="160"
                 style={{ width: 40, height: 40 }}
             >
-                {progress.to(p => generateCanvasEye(Number(p.toFixed(2)), canvasRef.current, colour))}
+                {progress.to(p => generateCanvasEye(Number(p.toFixed(2)), canvasRef.current, colour)) as any}
             </animated.canvas>
         </div>
     );

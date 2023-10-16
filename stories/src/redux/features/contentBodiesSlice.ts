@@ -16,13 +16,13 @@ export const fetchContentBodies = createAsyncThunk(
             // There are limits to how many IDs are accepted from a GET request
             const atOnce = 50
             let i = 0
-            while (i < contentIds.length) {
+            while (!!contentIds && i < contentIds.length) {
                 const idsToFetchThisIteration = contentIds.slice(i, i + atOnce)
                 i += atOnce
 
                 const contentBodies = await invoke('content_bodies', {
                     contentIds: idsToFetchThisIteration
-                })
+                }) as ContentBody[]
 
                 allContentBodiesData.push(...contentBodies)
 

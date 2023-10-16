@@ -2,7 +2,7 @@ import * as React from 'react'
 import { useEffect } from 'react'
 import { motion } from "framer-motion";
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
-import { fetchContent, fetchContentOfSources, selectContentOfCollection } from '../../../redux/features/contentsSlice'
+import { contentsSelectors, fetchContent, fetchContentOfSources, selectContentOfCollection } from '../../../redux/features/contentsSlice'
 import { fetchSourcesOfCollection, sourcesSelectors } from '../../../redux/features/sourcesSlice'
 import { resetThemeColours } from '../../../redux/features/themeSlice'
 import { collectionsSelectors, fetchCollection, fetchNestedCollections, selectNestedCollections } from '../../../redux/features/collectionsSlice'
@@ -21,6 +21,8 @@ import { selectNestedSourceIds } from '../../../redux/features/collectionToSourc
 const clientItemsLimit: number = 100
 const time = (s: string): number => new Date(s).getTime()
 const sortContentPublished = (cA: ContentDto, cB: ContentDto) => time(cB.date_published) - time(cA.date_published)
+// in the event multiple items have same date, but not fetched together, you could append id to time string in comparison
+const sortId = (cA: ContentDto, cB: ContentDto) => cB.id - cA.id
 
 const CollectionView: React.FC<CollectionViewProps> = () => {
     const dispatch = useAppDispatch()
@@ -53,6 +55,8 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     useEffect(() => {
         dispatch(resetThemeColours())
     }, [dispatch])
+
+    // console.log('contents', contents.map(c => [c.title, c.date_published]))
 
     return (
         <motion.div {...motionProps} className="collection w-full max-w-7xl mx-4 h-min-content">

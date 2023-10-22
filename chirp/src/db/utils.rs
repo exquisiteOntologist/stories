@@ -1,14 +1,32 @@
 use std::rc::Rc;
 
+use directories::ProjectDirs;
 use rusqlite::{types::Value, Connection};
 
 pub fn db_connect() -> Result<Connection, rusqlite::Error> {
+    let p = db_path_get().unwrap();
+
     // https://github.com/rusqlite/rusqlite#usage
-    let conn = Connection::open("./chirp.db");
+    let conn = Connection::open(p);
     if conn.is_err() {
         println!("DB connection failed {:?}", &conn.as_ref().err());
     }
     conn
+}
+
+pub fn db_path_get() -> Result<String, Box<()>> {
+    // "com.stories.dev" same as "CFBundleIdentifier"
+    let project_dirs = ProjectDirs::from("com", "stories",  "dev").unwrap();
+
+    // a lot of lifetime problems make the code inelegant
+    let dirs = project_dirs;
+    let dir = dirs.data_local_dir();
+    let buf = dir.join("stories.db");
+    let p = buf.to_str().unwrap();
+
+    println!("DB Path: {:?}", p);
+
+    Ok(p.into())
 }
 
 pub fn load_rarray_table(conn: &Connection) -> Result<(), rusqlite::Error> {

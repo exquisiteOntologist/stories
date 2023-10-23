@@ -60,7 +60,7 @@ const AppMenuActions: React.FC<AppHeaderProps> = ({location}) => {
         <ButtonsGroup className="grow justify-end pointer-events-auto pl-20 py-4" expands={true} IconExpand={IconEllipsis} leftward={true}>
             <Button
                 Icon={IconPaintRoller}
-                label="Customize"
+                label="Style"
                 action={() => {
                     if (location?.pathname === routeCollectionView) {
                         dispatch(toggleIsCustomizing())
@@ -72,7 +72,7 @@ const AppMenuActions: React.FC<AppHeaderProps> = ({location}) => {
             />
             <Button
                 Icon={IconShapes}
-                label="Sources"
+                label="Contents"
                 // linkTo={`${location.pathname}/edit`}
                 linkTo={routeSourcesEdit}
             />

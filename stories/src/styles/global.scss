@@ -63,6 +63,11 @@ body {
     position: relative;
 }
 
+html {
+    --titlebar-height: 28px;
+    padding-top: var(--titlebar-height);
+}
+
 html a {
     color: inherit;
 }

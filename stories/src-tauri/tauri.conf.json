@@ -54,7 +54,7 @@
       },
       "windows": [
           {
-              "titleBarStyle": "Visible",
+              "titleBarStyle": "Overlay",
               "fullscreen": false,
               "resizable": true,
               "title": "Stories",

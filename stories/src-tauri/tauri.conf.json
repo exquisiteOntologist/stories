@@ -54,14 +54,16 @@
       },
       "windows": [
           {
-              "titleBarStyle": "Visible",
+              "titleBarStyle": "Overlay",
               "fullscreen": false,
               "resizable": true,
               "title": "Stories",
-              "width": 1280,
-              "height": 800,
+              "minWidth": 1280,
+              "minHeight": 1000,
+              "center": true,
               "closable": true,
-              "hiddenTitle": true
+              "hiddenTitle": true,
+              "acceptFirstMouse": true
           }
       ]
   }

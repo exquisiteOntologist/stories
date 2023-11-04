@@ -25,6 +25,8 @@ $system-font: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Appl
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     -webkit-text-size-adjust: 100%;
+
+    user-select: none;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -61,6 +63,11 @@ body {
     // overflow-x: hidden;
     // overflow-y: hidden;
     position: relative;
+}
+
+html {
+    --titlebar-height: 28px;
+    padding-top: var(--titlebar-height);
 }
 
 html a {

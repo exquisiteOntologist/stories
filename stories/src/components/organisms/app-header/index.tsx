@@ -60,7 +60,7 @@ const AppMenuActions: React.FC<AppHeaderProps> = ({location}) => {
         <ButtonsGroup className="grow justify-end pointer-events-auto pl-20 py-4" expands={true} IconExpand={IconEllipsis} leftward={true}>
             <Button
                 Icon={IconPaintRoller}
-                label="Customize"
+                label="Style"
                 action={() => {
                     if (location?.pathname === routeCollectionView) {
                         dispatch(toggleIsCustomizing())
@@ -72,7 +72,7 @@ const AppMenuActions: React.FC<AppHeaderProps> = ({location}) => {
             />
             <Button
                 Icon={IconShapes}
-                label="Sources"
+                label="Contents"
                 // linkTo={`${location.pathname}/edit`}
                 linkTo={routeSourcesEdit}
             />
@@ -122,7 +122,7 @@ const headerStyles: React.CSSProperties = {
 } as React.CSSProperties;
 
 export const AppHeader: React.FC<AppHeaderProps> = ({location}) => (
-    <header className="app-header flex items-start justify-between px-4 py-0 sticky top-0 right-0 left-0 z-50 pointer-events-none" style={headerStyles}>
+    <header className="app-header flex items-start justify-between px-4 py-0 sticky top-8 right-0 left-0 z-50 pointer-events-none" style={headerStyles}>
         <AppHeaderShortcutHandlers />
         <div className="app-header--a flex items-center">
             <AppMenuNavigation location={location} />

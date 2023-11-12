@@ -3,7 +3,7 @@ import { SourceLinkProps } from './interfaces'
 
 export const SourceLink: React.FC<SourceLinkProps> = ({source, isBlock }) => source ? (
     <a
-        className={`${isBlock ? 'block' : 'inline ml-2'} text-gray-300 dark:opacity-70 group-hover:text-rose-400 transition-all duration-100`}
+        className={`${isBlock ? 'block' : 'inline ml-2'} truncate text-gray-300 dark:opacity-70 group-hover:text-rose-400 transition-all duration-100`}
         href={source.site_url}
         target="_blank"
         // style={{ color: source?.metaBrand?.colourPrimary }}

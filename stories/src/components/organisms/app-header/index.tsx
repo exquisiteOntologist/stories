@@ -11,7 +11,7 @@ import { ShutEye } from "../../atoms/logo/shut-eye";
 import { ButtonsGroup } from "../../molecules/buttons-group";
 import { SearchShortcutHandlers } from "../../alternate/search-shortcut-handler";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { chooseCollection, selectHistory, setIsCustomizing, toggleIsCustomizing } from "../../../redux/features/navSlice";
+import { chooseCollection, selectHistory, selectIsCustomizing, setIsCustomizing, toggleIsCustomizing } from "../../../redux/features/navSlice";
 
 const scrollToTop = () => scrollTo({top: 0})
 
@@ -55,6 +55,9 @@ const AppMenuNavigation: React.FC<AppMenuNavigationProps> = ({location}) => {
 const AppMenuActions: React.FC<AppHeaderProps> = ({location}) => {
     const dispatch = useAppDispatch()
     const navigate = useNavigate()
+    const isCustomizing = useAppSelector(selectIsCustomizing);
+
+    console.log('is custom', isCustomizing)
 
     return (
         <ButtonsGroup className="grow justify-end pointer-events-auto pl-20 py-4" expands={true} IconExpand={IconEllipsis} leftward={true}>
@@ -62,12 +65,16 @@ const AppMenuActions: React.FC<AppHeaderProps> = ({location}) => {
                 Icon={IconPaintRoller}
                 label="Style"
                 action={() => {
+                    const needScroll = !isCustomizing
+
                     if (location?.pathname === routeCollectionView) {
                         dispatch(toggleIsCustomizing())
                     } else {
                         dispatch(setIsCustomizing(true))
                         navigate(routeCollectionView)
                     }
+
+                    if (needScroll) scrollToTop()
                 }}
             />
             <Button

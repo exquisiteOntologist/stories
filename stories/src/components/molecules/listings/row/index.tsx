@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { motionProps } from '../../../../utilities/animate'
 import { SourceLink } from '../source-link/source-link'
 import { ListingRowProps } from './interfaces'
+import dayjs from 'dayjs'
 
 export const ListingRow: React.FC<ListingRowProps> = ({ title, linkUrl, action, content, source }) => {
     // const description = content && (
@@ -28,11 +29,16 @@ export const ListingRow: React.FC<ListingRowProps> = ({ title, linkUrl, action, 
         </span>
     ))
 
+    const date_relative = content?.date_published ? dayjs(content?.date_published).fromNow() : null
+
     return (
         <motion.article {...motionProps} className="relative group border-b border-gray-100 dark:border-slate-800">
-            <h1 className="text-base mx-0 my-2 dark:text-slate-300">
-                {titleInner}
-                <SourceLink source={source} isBlock={false} />
+            <h1 className="flex text-base whitespace-nowrap mx-0 my-2 dark:text-slate-300">
+                <span className="truncate">
+                    {titleInner}
+                    <SourceLink source={source} isBlock={false} />
+                </span>
+                <span className="ml-2 text-gray-300">{date_relative}</span>
             </h1>
         </motion.article>
     )

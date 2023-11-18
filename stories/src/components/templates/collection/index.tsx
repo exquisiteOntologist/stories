@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from "framer-motion";
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
 import { contentsSelectors, fetchContent, fetchContentOfSources, selectContentOfCollection } from '../../../redux/features/contentsSlice'
@@ -36,6 +36,9 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     const sourceIds = useAppSelector(selectNestedSourceIds)
     const contents = useAppSelector(selectContentOfCollection).sort(sortContentPublished).slice(0, clientItemsLimit)
     const isCustomizing = useAppSelector(selectIsCustomizing);
+    const [doRefresh, setDoUpdate] = useState<boolean>(true)
+    const [contentsVisible, setContentsVisible] = useState<ContentDto[]>([])
+    const [filteringCollectionId, setFilteringCollectionId] = useState<number | null>(null)
 
     const title = isCustomizing ? 'edit' : 'hi'
     
@@ -56,10 +59,30 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
         dispatch(resetThemeColours())
     }, [dispatch])
 
+    useEffect(() => {
+        console.log('refresh?', doRefresh)
+        if (doRefresh && contents.length) {
+            setContentsVisible(contents)
+            setDoUpdate(false)
+            setFilteringCollectionId(collectionId)
+        }
+        console.log('refresh after?', doRefresh)
+    }, [contents])
+
+    useEffect(() => {
+        setContentsVisible(contents)
+        setDoUpdate(true)
+        setFilteringCollectionId(collectionId)
+        console.log('set update to true again')
+    }, [collectionId])
+
     // console.log('contents', contents.map(c => [c.title, c.date_published]))
 
+    // know whether to just show content of collection or to show recency-based filtered list (cycles & speed)
+    const isFilteredCollection = filteringCollectionId === collectionId
+
     return (
-        <motion.div {...motionProps} className="collection w-full max-w-7xl mx-4 h-min-content">
+        <motion.div {...motionProps} key={collectionId} className="collection w-full max-w-7xl mx-4 h-min-content">
             <div className="flex justify-between">
                 <TitleCrumbs collectionId={collectionId} title={title} />
                 <CollectionCustomizer collectionSettings={collectionSettings} isCustomizing={isCustomizing} /> 
@@ -73,7 +96,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
             />
             <ListingsContainerContent
                 view={collectionSettings?.layout as SettingsLayout}
-                contents={contents}
+                contents={!isFilteredCollection ? contents : contentsVisible}
                 sources={sources}
             />
         </motion.div>

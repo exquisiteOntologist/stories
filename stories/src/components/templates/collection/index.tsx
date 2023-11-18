@@ -36,11 +36,13 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     const sourceIds = useAppSelector(selectNestedSourceIds)
     const contents = useAppSelector(selectContentOfCollection).sort(sortContentPublished).slice(0, clientItemsLimit)
     const isCustomizing = useAppSelector(selectIsCustomizing);
-    const [doRefresh, setDoUpdate] = useState<boolean>(true)
+    const [doRefresh, setDoRefresh] = useState<boolean>(true)
     const [contentsVisible, setContentsVisible] = useState<ContentDto[]>([])
     const [filteringCollectionId, setFilteringCollectionId] = useState<number | null>(null)
 
     const title = isCustomizing ? 'edit' : 'hi'
+
+    console.log('c to s', collectionId, sourceIds)
     
     useEffect(() => {
         dispatch(fetchCollection([collectionId]))
@@ -56,25 +58,48 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     }, [collectionId, sources])
 
     useEffect(() => {
+        let t: NodeJS.Timeout | undefined
+
+        /** fetch content from the DB, but don't display it until desired (see `doRefresh`) */
+        const fetchCurrentContent = () => {
+            dispatch(fetchContentOfSources(sourceIds))
+            console.log('updated', collectionId, sourceIds)
+            t = setTimeout(() => requestAnimationFrame(fetchCurrentContent), 1000 * 30);
+        }
+
+        fetchCurrentContent()
+
+        return () => t && clearTimeout(t)
+    }, [dispatch])
+
+    useEffect(() => {
         dispatch(resetThemeColours())
     }, [dispatch])
 
     useEffect(() => {
         console.log('refresh?', doRefresh)
         if (doRefresh && contents.length) {
+            // set contents visible items to avoid shifting items in view after new updates
             setContentsVisible(contents)
-            setDoUpdate(false)
+            setDoRefresh(false)
             setFilteringCollectionId(collectionId)
         }
         console.log('refresh after?', doRefresh)
     }, [contents])
 
     useEffect(() => {
+        // when changing collections enable the content queue to refresh
         setContentsVisible(contents)
-        setDoUpdate(true)
+        setDoRefresh(true)
         setFilteringCollectionId(collectionId)
         console.log('set update to true again')
     }, [collectionId])
+
+    useEffect(() => {
+        if (doRefresh) {
+            setContentsVisible(contents)
+        }
+    }, [doRefresh])
 
     // console.log('contents', contents.map(c => [c.title, c.date_published]))
 
@@ -94,9 +119,10 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
                 collections={nestedCollections}
                 selectAction={c => dispatch(chooseCollection(c.id))}
             />
+            <button className="underline" onClick={() => setDoRefresh(true)}>Show more recent</button>
             <ListingsContainerContent
                 view={collectionSettings?.layout as SettingsLayout}
-                contents={!isFilteredCollection ? contents : contentsVisible}
+                contents={isFilteredCollection ? contentsVisible : contents}
                 sources={sources}
             />
         </motion.div>

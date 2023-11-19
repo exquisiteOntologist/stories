@@ -17,6 +17,7 @@ import { CollectionViewProps } from './interface'
 import { motionProps } from '../../../utilities/animate'
 import { CollectionEmptyMessage } from '../../organisms/collection-empty-message';
 import { selectNestedSourceIds } from '../../../redux/features/collectionToSourceSlice';
+import { RefreshRow } from '../../molecules/listings/refresh-row';
 
 const clientItemsLimit: number = 100
 const time = (s: string): number => new Date(s).getTime()
@@ -61,7 +62,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
         /** fetch content from the DB, but don't display it until desired (see `doRefresh`) */
         const fetchCurrentContent = () => {
             dispatch(fetchContentOfSources(sourceIds))
-            // console.log('updated', collectionId, sourceIds)
+            console.log('updated', collectionId, sourceIds)
             t = setTimeout(() => requestAnimationFrame(fetchCurrentContent), 1000 * 30);
         }
 
@@ -75,14 +76,14 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     }, [dispatch])
 
     useEffect(() => {
-        // console.log('refresh?', doRefresh)
+        console.log('refresh?', doRefresh)
         if (doRefresh && contents.length) {
             // set contents visible items to avoid shifting items in view after new updates
             setContentsVisible(contents)
             setDoRefresh(false)
             setFilteringCollectionId(collectionId)
         }
-        // console.log('refresh after?', doRefresh)
+        console.log('refresh after?', doRefresh)
     }, [contents])
 
     useEffect(() => {
@@ -90,7 +91,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
         setContentsVisible(contents)
         setDoRefresh(true)
         setFilteringCollectionId(collectionId)
-        // console.log('set update to true again')
+        console.log('set update to true again')
     }, [collectionId])
 
     useEffect(() => {
@@ -104,6 +105,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     // know whether to just show content of collection or to show recency-based filtered list (cycles & speed)
     const isFilteredCollection = filteringCollectionId === collectionId
     const isShowingMostCurrent = contents[0]?.date_published === contentsVisible[0]?.date_published
+        && contents[0]?.url === contentsVisible[0]?.url
     // console.log('first date', contents[0].date_published, contentsVisible[0].date_published, isShowingMostCurrent)
 
     return (
@@ -119,7 +121,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
                 collections={nestedCollections}
                 selectAction={c => dispatch(chooseCollection(c.id))}
             />
-            <button className="underline" onClick={() => setDoRefresh(true)}>{isShowingMostCurrent ? 'Refresh for no reason' : 'Show more recent'}</button>
+            <RefreshRow refreshAction={() => setDoRefresh(true)} refreshPossibe={!isShowingMostCurrent} />
             <ListingsContainerContent
                 view={collectionSettings?.layout as SettingsLayout}
                 contents={isFilteredCollection ? contentsVisible : contents}

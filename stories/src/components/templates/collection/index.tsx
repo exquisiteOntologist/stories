@@ -121,7 +121,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
                 collections={nestedCollections}
                 selectAction={c => dispatch(chooseCollection(c.id))}
             />
-            <RefreshRow refreshAction={() => setDoRefresh(true)} refreshPossibe={!isShowingMostCurrent} />
+            <RefreshRow refreshAction={() => setDoRefresh(true)} refreshPossibe={isFilteredCollection && !isShowingMostCurrent} />
             <ListingsContainerContent
                 view={collectionSettings?.layout as SettingsLayout}
                 contents={isFilteredCollection ? contentsVisible : contents}

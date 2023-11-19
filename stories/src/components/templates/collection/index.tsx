@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from "framer-motion";
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
 import { contentsSelectors, fetchContent, fetchContentOfSources, selectContentOfCollection } from '../../../redux/features/contentsSlice'
@@ -17,6 +17,7 @@ import { CollectionViewProps } from './interface'
 import { motionProps } from '../../../utilities/animate'
 import { CollectionEmptyMessage } from '../../organisms/collection-empty-message';
 import { selectNestedSourceIds } from '../../../redux/features/collectionToSourceSlice';
+import { RefreshRow } from '../../molecules/listings/refresh-row';
 
 const clientItemsLimit: number = 100
 const time = (s: string): number => new Date(s).getTime()
@@ -36,6 +37,9 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     const sourceIds = useAppSelector(selectNestedSourceIds)
     const contents = useAppSelector(selectContentOfCollection).sort(sortContentPublished).slice(0, clientItemsLimit)
     const isCustomizing = useAppSelector(selectIsCustomizing);
+    const [doRefresh, setDoRefresh] = useState<boolean>(true)
+    const [contentsVisible, setContentsVisible] = useState<ContentDto[]>([])
+    const [filteringCollectionId, setFilteringCollectionId] = useState<number | null>(null)
 
     const title = isCustomizing ? 'edit' : 'hi'
     
@@ -53,13 +57,59 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     }, [collectionId, sources])
 
     useEffect(() => {
+        let t: NodeJS.Timeout | undefined
+
+        /** fetch content from the DB, but don't display it until desired (see `doRefresh`) */
+        const fetchCurrentContent = () => {
+            dispatch(fetchContentOfSources(sourceIds))
+            console.log('updated', collectionId, sourceIds)
+            t = setTimeout(() => requestAnimationFrame(fetchCurrentContent), 1000 * 30);
+        }
+
+        fetchCurrentContent()
+
+        return () => t && clearTimeout(t)
+    }, [dispatch])
+
+    useEffect(() => {
         dispatch(resetThemeColours())
     }, [dispatch])
 
+    useEffect(() => {
+        console.log('refresh?', doRefresh)
+        if (doRefresh && contents.length) {
+            // set contents visible items to avoid shifting items in view after new updates
+            setContentsVisible(contents)
+            setDoRefresh(false)
+            setFilteringCollectionId(collectionId)
+        }
+        console.log('refresh after?', doRefresh)
+    }, [contents])
+
+    useEffect(() => {
+        // when changing collections enable the content queue to refresh
+        setContentsVisible(contents)
+        setDoRefresh(true)
+        setFilteringCollectionId(collectionId)
+        console.log('set update to true again')
+    }, [collectionId])
+
+    useEffect(() => {
+        if (doRefresh) {
+            setContentsVisible(contents)
+        }
+    }, [doRefresh])
+
     // console.log('contents', contents.map(c => [c.title, c.date_published]))
 
+    // know whether to just show content of collection or to show recency-based filtered list (cycles & speed)
+    const isFilteredCollection = filteringCollectionId === collectionId
+    const isShowingMostCurrent = contents[0]?.date_published === contentsVisible[0]?.date_published
+        && contents[0]?.url === contentsVisible[0]?.url
+    // console.log('first date', contents[0].date_published, contentsVisible[0].date_published, isShowingMostCurrent)
+
     return (
-        <motion.div {...motionProps} className="collection w-full max-w-7xl mx-4 h-min-content">
+        <motion.div {...motionProps} key={collectionId} className="collection w-full max-w-7xl mx-4 h-min-content">
             <div className="flex justify-between">
                 <TitleCrumbs collectionId={collectionId} title={title} />
                 <CollectionCustomizer collectionSettings={collectionSettings} isCustomizing={isCustomizing} /> 
@@ -71,9 +121,10 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
                 collections={nestedCollections}
                 selectAction={c => dispatch(chooseCollection(c.id))}
             />
+            <RefreshRow refreshAction={() => setDoRefresh(true)} refreshPossibe={isFilteredCollection && !isShowingMostCurrent} />
             <ListingsContainerContent
                 view={collectionSettings?.layout as SettingsLayout}
-                contents={contents}
+                contents={isFilteredCollection ? contentsVisible : contents}
                 sources={sources}
             />
         </motion.div>

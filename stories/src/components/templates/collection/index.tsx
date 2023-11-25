@@ -35,6 +35,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     // these source selectors assume that the sources store only has the current sources
     const sources = useAppSelector(sourcesSelectors.selectAll)
     const sourceIds = useAppSelector(selectNestedSourceIds)
+    console.log('source ids', sourceIds)
     const contents = useAppSelector(selectContentOfCollection).sort(sortContentPublished).slice(0, clientItemsLimit)
     const isCustomizing = useAppSelector(selectIsCustomizing);
     const [doRefresh, setDoRefresh] = useState<boolean>(true)
@@ -42,6 +43,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     const [filteringCollectionId, setFilteringCollectionId] = useState<number | null>(null)
 
     const title = isCustomizing ? 'edit' : 'hi'
+    let updateTimeout: NodeJS.Timeout | undefined
     
     useEffect(() => {
         dispatch(fetchCollection([collectionId]))
@@ -57,19 +59,19 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     }, [collectionId, sources])
 
     useEffect(() => {
-        let t: NodeJS.Timeout | undefined
+        updateTimeout && clearTimeout(updateTimeout)
 
         /** fetch content from the DB, but don't display it until desired (see `doRefresh`) */
         const fetchCurrentContent = () => {
             dispatch(fetchContentOfSources(sourceIds))
             console.log('updated', collectionId, sourceIds)
-            t = setTimeout(() => requestAnimationFrame(fetchCurrentContent), 1000 * 30);
+            updateTimeout = setTimeout(() => requestAnimationFrame(fetchCurrentContent), 1000 * 30);
         }
 
         fetchCurrentContent()
 
-        return () => t && clearTimeout(t)
-    }, [dispatch])
+        return () => updateTimeout && clearTimeout(updateTimeout)
+    }, [dispatch, sourceIds])
 
     useEffect(() => {
         dispatch(resetThemeColours())

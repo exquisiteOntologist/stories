@@ -18,8 +18,8 @@ export const RefreshRow: React.FC<RefreshRowProps> = ({ refreshAction: action, r
 
     return (
         <AnimatePresence>
-            {refreshPossibe && <motion.nav {...motionPropsRefreshRow} onClick={action} className="cursor-pointer w-2/3 max-w-xl px-7 py-2 z-50 fixed bottom-10 left-1/2 -translate-x-1/2 rounded-full border-b border-transparent bg-black text-white dark:bg-white dark:text-slate-800 shadow-md shadow-yellow-400">
-                <h1 className="flex justify-between align-middle items-center text-base leading-none whitespace-nowrap mx-0 dark:text-slate-300">
+            {refreshPossibe && <motion.nav {...motionPropsRefreshRow} onClick={action} className="cursor-pointer w-2/3 max-w-xl px-7 py-2 z-50 fixed bottom-10 left-1/2 -translate-x-1/2 rounded-full border-b border-transparent bg-black text-white shadow-md shadow-white dark:shadow-black">
+                <h1 className="flex justify-between align-middle items-center text-base leading-none whitespace-nowrap mx-0 dark:text-gray-300">
                     <span className="text-lg">
                         {labelText}
                     </span>

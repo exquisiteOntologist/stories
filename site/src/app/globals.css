@@ -6,7 +6,8 @@
     'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
 
   --foreground-rgb: 46, 44, 42;
-  --background-rgb: #FFFDF8;
+  --background-colour: #FFFDF8;
+  --background-alt-colour: #2b2b2b;
   --h1-hex: #2E2C2A;
   --h2-hex: rgba(var(--foreground-rgb), 0.7); /* hsla(30,5%,17%,0.7); */
   /* --background-start-rgb: 214, 219, 220;
@@ -46,7 +47,8 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
-    --background-rgb: #2b2b2b;
+    --background-colour: #2b2b2b;
+    --background-alt-colour: #FFFDF8;
     --h1-hex: #eeddcc;
     --h2-hex: hsla(24, 27%, 85%, 0.7);
     /* --background-start-rgb: 0, 0, 0;
@@ -93,7 +95,7 @@ body {
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: var(--background-rgb);
+  background: var(--background-colour);
   /* background: linear-gradient(
       to bottom,
       transparent,

@@ -69,10 +69,8 @@ export default function Home() {
       </section>
       <section>
         <div>
-          <h2>Compatible with any desktop OS.</h2>
-          <p>You can use it locally on any major desktop OS, or alternatively leave it autonomously running in a warehouse somewhere while you outside.</p>
-          <p>&nbsp;</p>
-          <p>It’s ultrafast too.</p>
+          <h2>Compatible. Decent.</h2>
+          <p>You can use it on any major desktop OS and you don't need to hand anything over just to experience it.</p>
           <p>&nbsp;</p>
           <AppIcon />
         </div>

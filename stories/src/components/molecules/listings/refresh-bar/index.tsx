@@ -1,11 +1,11 @@
 import React from 'react'
-import { RefreshRowProps } from './interfaces'
+import { RefreshBarProps } from './interfaces'
 import { AnimatePresence, motion } from 'framer-motion'
 
 /**
  * https://www.framer.com/motion/component/
  */
-export const motionPropsRefreshRow = {
+export const motionPropsRefreshBar = {
     // NOTE: It does not like durations less than 1. Gets choppy.
     initial:{ opacity: 0.1, x: '-50%', y: 30, z: 1, filter: 'blur(100px)', transition: { duration: 1 } },
     animate:{ opacity: 1, x: '-50%', y: 0, z: 0, filter: 'blur(0)', transition: { duration: 1 } },
@@ -13,11 +13,11 @@ export const motionPropsRefreshRow = {
     transition: { ease: 'anticipate' }
 }
 
-export const RefreshRow: React.FC<RefreshRowProps> = ({ refreshAction: action, refreshPossibe}) => (
+export const RefreshBar: React.FC<RefreshBarProps> = ({ refreshAction: action, refreshPossibe }) => (
     <AnimatePresence>
         {refreshPossibe && (
             <motion.nav
-                {...motionPropsRefreshRow}
+                {...motionPropsRefreshBar}
                 onClick={action}
                 className="cursor-pointer w-2/3 max-w-xl px-7 py-2 z-50 fixed bottom-10 left-1/2 -translate-x-1/2 rounded-full border-b border-transparent bg-black text-white shadow-md shadow-white dark:shadow-black"
             >

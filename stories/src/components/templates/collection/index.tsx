@@ -17,7 +17,7 @@ import { CollectionViewProps } from './interface'
 import { motionProps } from '../../../utilities/animate'
 import { CollectionEmptyMessage } from '../../organisms/collection-empty-message';
 import { selectNestedSourceIds } from '../../../redux/features/collectionToSourceSlice';
-import { RefreshRow } from '../../molecules/listings/refresh-row';
+import { RefreshBar } from '../../molecules/listings/refresh-bar';
 
 const clientItemsLimit: number = 100
 const time = (s: string): number => new Date(s).getTime()
@@ -116,7 +116,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
                 <TitleCrumbs collectionId={collectionId} title={title} />
                 <CollectionCustomizer collectionSettings={collectionSettings} isCustomizing={isCustomizing} /> 
             </div>
-            <RefreshRow refreshAction={() => setDoRefresh(true)} refreshPossibe={isFilteredCollection && !isShowingMostCurrent} />
+            <RefreshBar refreshAction={() => setDoRefresh(true)} refreshPossibe={isFilteredCollection && !isShowingMostCurrent} />
             <CollectionEmptyMessage />
             <ListingsContainerCollections
                 className="mb-12"

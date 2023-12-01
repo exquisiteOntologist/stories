@@ -1,6 +1,7 @@
 .heroBg {
   position: absolute;
   pointer-events: none;
-  min-width: 600px;
+  min-width: 800px;
   max-width: 1440px;
+  width: 100%;
 }

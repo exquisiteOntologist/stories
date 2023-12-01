@@ -27,6 +27,18 @@ export default function Home() {
       </header>
       <section>
         <div>
+          <h2>Your Sources are your Program</h2>
+          <p>Add your chosen websites and APIs for your content, and automatically receive content updates.</p>
+          <p>&nbsp;</p>
+          <p>Viewing content opens original web pages. Publishers rejoice!</p>
+          <Chip variant="blue">Read Websites today. More soon.</Chip>
+        </div>
+        <div className={styles.middle}>
+          <video className={styles.floating} src="/videos/stories-vi-02.mp4" poster="/videos/stories-vi-02.jpg" muted autoPlay loop width={393} height={341}></video>
+        </div>
+      </section>
+      <section>
+        <div>
           <h2>Your Questions Answered</h2>
           <p>Have information work for you. Your questions and your goals are answered &amp; updated as times change. You don’t have to read the internet yourself.</p>
           {chipComingSoon}
@@ -43,18 +55,6 @@ export default function Home() {
         </div>
         <div className={styles.middle}>
           <img className={styles.floating} src="/images/early-screenshot-find.png" alt="Find things that are associated" width={1200/3} height={1000/3} />
-        </div>
-      </section>
-      <section>
-        <div>
-          <h2>Your Sources are your Program</h2>
-          <p>Add your chosen websites and APIs for your content, and automatically receive content updates.</p>
-          <p>&nbsp;</p>
-          <p>Viewing content opens original web pages. Publishers rejoice!</p>
-          <Chip variant="blue">Read Websites today. More soon.</Chip>{/* <Chip variant="orange">Features coming soon</Chip> */}
-        </div>
-        <div className={styles.middle}>
-          <video className={styles.floating} src="/videos/stories-vi-02.mp4" poster="/videos/stories-vi-02.jpg" muted autoPlay loop width={393} height={341}></video>
         </div>
       </section>
       <section>

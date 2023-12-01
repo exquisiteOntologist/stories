@@ -1,0 +1,33 @@
+.downloadBar {
+    position: fixed;
+    bottom: 3.3rem;
+    left: 50%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 90%;
+    width: 832px;
+    padding: 1rem 2.5rem;
+    font-size: 21px;
+    line-height: 1;
+    border-radius: 10rem;
+    transform: translateX(-50%);
+    background-color: #000;
+    color: #fff;
+}
+
+.semibold {
+    font-weight: 600;
+} 
+
+.downloadButton {
+    display: block;
+    padding: 11px 20px;
+    border-radius: 3px;
+    border: 1px solid var(--download-b-rgb);
+    font-size: 16px;
+    background-color: #EFB56C;
+    color: #000;
+}
+
+

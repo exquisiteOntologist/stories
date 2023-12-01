@@ -7,6 +7,7 @@ import { DownloadButton } from '@/components/buttons/download-button'
 import { HeroBg } from '@/components/illustrations/hero-bg'
 import React from 'react'
 import { HeroLogo } from '@/components/logos/hero-logo'
+import { DownloadBar } from '@/components/download-bar'
 
 export default function Home() {
   const chipComingSoon = <Chip variant="orange">Coming Soon</Chip>
@@ -24,6 +25,7 @@ export default function Home() {
           {/* <video src="/videos/stories-new.mp4" poster="/videos/stories-new.jpg" muted autoPlay loop width={1280} height={605}></video> */}
           <video src="/videos/stories-new.mp4" poster="/videos/stories-new.jpg" muted autoPlay loop width={1024} height={544}></video>
         </figure>
+        <DownloadBar />
       </header>
       <section>
         <div>
@@ -69,7 +71,7 @@ export default function Home() {
         </div>
       </section>
       <footer>
-        <DownloadButton />
+        you're welcome
       </footer>
     </main>
   )

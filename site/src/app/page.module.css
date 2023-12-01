@@ -11,8 +11,9 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  padding: 3rem 6rem;
   min-height: 100vh;
+  padding: 3rem 6rem;
+  margin-bottom: var(--section-gap);
 }
 
 @media (max-width: 1280px) {

@@ -13,21 +13,23 @@ export const motionPropsRefreshRow = {
     transition: { ease: 'anticipate' }
 }
 
-export const RefreshRow: React.FC<RefreshRowProps> = ({ refreshAction: action, refreshPossibe}) => {
-    const labelText = 'This collection has fresh content'
-
-    return (
-        <AnimatePresence>
-            {refreshPossibe && <motion.nav {...motionPropsRefreshRow} onClick={action} className="cursor-pointer w-2/3 max-w-xl px-7 py-2 z-50 fixed bottom-10 left-1/2 -translate-x-1/2 rounded-full border-b border-transparent bg-black text-white shadow-md shadow-white dark:shadow-black">
+export const RefreshRow: React.FC<RefreshRowProps> = ({ refreshAction: action, refreshPossibe}) => (
+    <AnimatePresence>
+        {refreshPossibe && (
+            <motion.nav
+                {...motionPropsRefreshRow}
+                onClick={action}
+                className="cursor-pointer w-2/3 max-w-xl px-7 py-2 z-50 fixed bottom-10 left-1/2 -translate-x-1/2 rounded-full border-b border-transparent bg-black text-white shadow-md shadow-white dark:shadow-black"
+            >
                 <h1 className="flex justify-between align-middle items-center text-base leading-none whitespace-nowrap mx-0 dark:text-gray-300">
-                    <span className="text-lg">
-                        {labelText}
-                    </span>
+                    <div className="text-lg">
+                        This <span className="font-semibold">collection</span> has <span className="font-semibold">fresh content</span>
+                    </div>
                     <button className="font-medium px-4 py-3 rounded-[3px] bg-orange-300 text-black">
                         Reveal
                     </button>
                 </h1>
-            </motion.nav>}
-        </AnimatePresence>
-    )
-}
+            </motion.nav>
+        )}
+    </AnimatePresence>
+)

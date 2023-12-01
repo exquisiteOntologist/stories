@@ -1,4 +1,4 @@
-export interface RefreshRowProps {
+export interface RefreshBarProps {
     refreshAction: () => any
     refreshPossibe: boolean
 }

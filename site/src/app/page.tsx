@@ -70,9 +70,6 @@ export default function Home() {
           <MeDouble />
         </div>
       </section>
-      <footer>
-        you're welcome
-      </footer>
     </main>
   )
 }

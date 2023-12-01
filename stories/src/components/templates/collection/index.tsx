@@ -2,7 +2,7 @@ import * as React from 'react'
 import { useEffect, useState } from 'react'
 import { motion } from "framer-motion";
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
-import { contentsSelectors, fetchContent, fetchContentOfSources, selectContentOfCollection } from '../../../redux/features/contentsSlice'
+import { fetchContentOfSources, selectContentOfCollection } from '../../../redux/features/contentsSlice'
 import { fetchSourcesOfCollection, sourcesSelectors } from '../../../redux/features/sourcesSlice'
 import { resetThemeColours } from '../../../redux/features/themeSlice'
 import { collectionsSelectors, fetchCollection, fetchNestedCollections, selectNestedCollections } from '../../../redux/features/collectionsSlice'
@@ -17,7 +17,7 @@ import { CollectionViewProps } from './interface'
 import { motionProps } from '../../../utilities/animate'
 import { CollectionEmptyMessage } from '../../organisms/collection-empty-message';
 import { selectNestedSourceIds } from '../../../redux/features/collectionToSourceSlice';
-import { RefreshRow } from '../../molecules/listings/refresh-row';
+import { RefreshBar } from '../../molecules/listings/refresh-bar';
 
 const clientItemsLimit: number = 100
 const time = (s: string): number => new Date(s).getTime()
@@ -116,6 +116,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
                 <TitleCrumbs collectionId={collectionId} title={title} />
                 <CollectionCustomizer collectionSettings={collectionSettings} isCustomizing={isCustomizing} /> 
             </div>
+            <RefreshBar refreshAction={() => setDoRefresh(true)} refreshPossibe={isFilteredCollection && !isShowingMostCurrent} />
             <CollectionEmptyMessage />
             <ListingsContainerCollections
                 className="mb-12"
@@ -123,7 +124,6 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
                 collections={nestedCollections}
                 selectAction={c => dispatch(chooseCollection(c.id))}
             />
-            <RefreshRow refreshAction={() => setDoRefresh(true)} refreshPossibe={isFilteredCollection && !isShowingMostCurrent} />
             <ListingsContainerContent
                 view={collectionSettings?.layout as SettingsLayout}
                 contents={isFilteredCollection ? contentsVisible : contents}

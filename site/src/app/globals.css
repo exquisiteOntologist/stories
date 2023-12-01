@@ -46,7 +46,8 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
-    --background-rgb: #2b2b2b;
+    --background-colour: #2b2b2b;
+    --background-alt-colour: #FFFDF8;
     --h1-hex: #eeddcc;
     --h2-hex: hsla(24, 27%, 85%, 0.7);
     /* --background-start-rgb: 0, 0, 0;
@@ -93,7 +94,7 @@ body {
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: var(--background-rgb);
+  background: var(--background-colour);
   /* background: linear-gradient(
       to bottom,
       transparent,

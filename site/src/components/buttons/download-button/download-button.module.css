@@ -21,13 +21,13 @@
 .downloadButton:hover {
     /* background-color: lightcoral; */
     background-color: var(--download-b-rgb);
-    color: var(--background-rgb);
+    color: var(--background-colour);
 }
 
 /* .download:hover .downloadButton:hover {
     background-color: orange;
     border-color: orange;
-    color: var(--background-rgb);
+    color: var(--background-colour);
 } */
 
 .byTheWay {
@@ -42,5 +42,5 @@
 
 /* .download:hover .byTheWay {
     color: var(--foreground-rgb);
-    background-color: var(--background-rgb);
+    background-color: var(--background-colour);
 } */

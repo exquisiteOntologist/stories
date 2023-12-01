@@ -1,4 +1,3 @@
-import { LogoAlt } from '@/components/logos/logo-alt'
 import Image from 'next/image'
 import styles from './page.module.css'
 import { Me, MeDouble } from '../components/illustrations/me'
@@ -45,7 +44,7 @@ export default function Home() {
       </section>
       <section>
         <div>
-          <h2>Take a Breath &amp; Go Out</h2>
+          <h2>Context Sensitive</h2>
           <p>Any word, concept, or context has associated words, concepts, and contexts. You can dive deeper into anything. An article could lead to an academic paper and a video, or a wiki.</p>
           {chipComingSoon}
         </div>

@@ -6,7 +6,7 @@
     'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
 
   --foreground-rgb: 46, 44, 42;
-  --background-rgb: #FFFDF8;
+  --background-rgb: #FFF;
   --h1-hex: #2E2C2A;
   --h2-hex: rgba(var(--foreground-rgb), 0.7); /* hsla(30,5%,17%,0.7); */
   /* --background-start-rgb: 214, 219, 220;

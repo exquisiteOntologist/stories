@@ -9,26 +9,30 @@ import { Chip } from '../components/chip'
 // import imgScreenshotCards from '../../public/images/early-screenshot-cards.png'
 // import imgScreenshotAddSource from '../../public/images/sources-screenshot.png'
 import { DownloadButton } from '@/components/buttons/download-button'
+import { HeroBg } from '@/components/illustrations/hero-bg'
+import React from 'react'
+import { HeroLogo } from '@/components/logos/hero-logo'
 
 export default function Home() {
   const chipComingSoon = <Chip variant="orange">Coming Soon</Chip>
 
   return (
     <main className={styles.main}>
+      <HeroBg />
       <header className={styles.headerTop}>
-        <LogoAlt />
-        <DownloadButton />
+        <span className={styles.devil}>👹</span>
+        <div className={styles.intro}>
+          <HeroLogo />
+          <h1>Make sense of our world<span>,</span></h1>
+        </div>
+        <figure className={styles.introImg}>
+          {/* <Image src={imgScreenshot} alt="Stories provides a view of the world" width={2880/2} height={1424/2} /> */}
+          {/* <img src="/images/early-screenshot.png" alt="Stories provides a view of the world" width={2880/2} height={1424/2} /> */}
+          {/* <video src="/videos/stories-new.mp4" poster="/videos/stories-new.jpg" muted autoPlay loop width={1280} height={605}></video> */}
+          <video src="/videos/stories-new.mp4" poster="/videos/stories-new.jpg" muted autoPlay loop width={1024} height={544}></video>
+          {/* <Image src={imgScreenshotCards} alt="Stories provides a view of the world" width={3204/2} height={1660/2} /> */}
+        </figure>
       </header>
-      <div className={styles.intro}>
-        <h1>Make sense of our world</h1>
-        <h2>Browsing, Updates, Answers.</h2>
-      </div>
-      <figure className={styles.introImg}>
-        {/* <Image src={imgScreenshot} alt="Stories provides a view of the world" width={2880/2} height={1424/2} /> */}
-        {/* <img src="/images/early-screenshot.png" alt="Stories provides a view of the world" width={2880/2} height={1424/2} /> */}
-        <video src="/videos/stories-new.mp4" poster="/videos/stories-new.jpg" muted autoPlay loop width={1280} height={605}></video>
-        {/* <Image src={imgScreenshotCards} alt="Stories provides a view of the world" width={3204/2} height={1660/2} /> */}
-      </figure>
       <section>
         <div>
           <h2>Your Questions Answered</h2>

@@ -1,6 +1,12 @@
-
+.devil {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  font-size: 1.5rem;
+}
 
 .main {
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -16,14 +22,21 @@
 }
 
 .headerTop {
+  z-index: 30;
   width: 100%;
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
+  align-items: center;
   user-select: none;
 }
 
 .headerTop .logo {
   color: var(--foreground-rgb);
+}
+
+.hero {
+  display: block;
 }
 
 .intro {
@@ -37,7 +50,10 @@
   color: var(--h1-hex);
   width: 388px;
   max-width: 100%;
-  margin-top: 1rem;
+}
+
+.intro h1 span {
+  color: hsla(360, 93%, 53%, 0.12);
 }
 
 .intro h2 {
@@ -50,7 +66,7 @@
 
 .introImg {
   display: inline-block;
-  margin: 4rem 0 0 0;
+  margin: 2rem 0 0 0;
   padding: 0.5rem;
   border: solid 4px rgba(var(--foreground-rgb), 1);
   border-radius: 12px;
@@ -71,6 +87,7 @@
 }
 
 .main section {
+  z-index: 10;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-column-gap: 3rem;

@@ -30,4 +30,15 @@
     color: #000;
 }
 
+@media (max-width: 900px) {
+    .downloadBar {
+      flex-direction: column;
+      text-align: center;
+      border-radius: 3rem;
+    }
 
+    .downloadButton {
+        margin-top: 1rem;
+    }
+  }
+  

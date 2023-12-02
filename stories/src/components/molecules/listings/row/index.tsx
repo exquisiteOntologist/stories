@@ -36,6 +36,11 @@ export const ListingRow: React.FC<ListingRowProps> = ({ title, linkUrl, action, 
                     {titleInner}
                     <SourceLink source={source} isBlock={false} />
                 </span>
+                {linkUrl && (
+                    <span className="mx-1 text-teal-500">
+                        news
+                    </span>
+                )}
                 <span className="ml-2 text-gray-300">
                     <RelativeDate date={content?.date_published} />    
                 </span>

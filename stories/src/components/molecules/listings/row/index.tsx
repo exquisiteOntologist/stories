@@ -29,6 +29,8 @@ export const ListingRow: React.FC<ListingRowProps> = ({ title, linkUrl, action, 
         </span>
     ))
 
+    const isPromo = source?.id === 1
+
     return (
         <motion.article {...motionProps} className="relative group border-b border-gray-100 dark:border-slate-800">
             <h1 className="flex text-base whitespace-nowrap mx-0 my-2 dark:text-slate-300">
@@ -37,8 +39,8 @@ export const ListingRow: React.FC<ListingRowProps> = ({ title, linkUrl, action, 
                     <SourceLink source={source} isBlock={false} />
                 </span>
                 {linkUrl && (
-                    <span className="mx-1 text-teal-500">
-                        news
+                    <span className={`mx-1 ${isPromo ? 'text-blue-500' : 'text-teal-500'}`}>
+                        {isPromo ? 'promotion' : 'news'}
                     </span>
                 )}
                 <span className="ml-2 text-gray-300">

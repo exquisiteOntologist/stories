@@ -39,7 +39,10 @@ export const ListingRow: React.FC<ListingRowProps> = ({ title, linkUrl, action, 
                     <SourceLink source={source} isBlock={false} />
                 </span>
                 {linkUrl && (
-                    <span className={`mx-1 ${isPromo ? 'text-blue-500' : 'text-teal-500'}`}>
+                    <span
+                        className={`mx-1 cursor-help ${isPromo ? 'text-blue-500' : 'text-teal-500'}`}
+                        title={isPromo ? `Discusses a company's service offering` : 'Discusses world events'}
+                    >
                         {isPromo ? 'promotion' : 'news'}
                     </span>
                 )}

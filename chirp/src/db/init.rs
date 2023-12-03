@@ -49,6 +49,15 @@ pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
     )?;
 
     conn.execute(
+        "CREATE TABLE IF NOT EXISTS log (
+            id                      INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+            date_of_failure         TEXT,
+            message                 TEXT
+        )",
+        (),
+    )?;
+
+    conn.execute(
         "CREATE TABLE IF NOT EXISTS retrieval (
             source_id               INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
             date_last_success       TEXT,

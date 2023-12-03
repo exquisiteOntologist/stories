@@ -14,8 +14,9 @@ pub async fn fetch_url_to_string(url: &String) -> Result<String, Box<dyn Error +
 	println!("fetching {:?}", url);
 	let res = reqwest::get(url.to_owned())
 		.await?;
-	if let Err(_e) = &res.error_for_status_ref() {
-		return Err(format!("There was an error fetching {url}").into());
+	if let Err(e) = &res.error_for_status_ref() {
+		eprint!("URL retrieval error for {:1}\n{:2}\n", url, e.to_string());
+		return Err(e.to_string().into());
 	}
 	let content_bytes = res.bytes()
 		.await?;

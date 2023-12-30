@@ -32,9 +32,7 @@ async fn main() {
             commands::search::search
         ])
         .setup(|_app| {
-            // _app.path_resolver().app_local_data_dir(); // <-- likely of use later
-
-            // if it can't spawn due to lack of send due to bug in chirp most likely
+            // the spawned function and the functions that it calls must have the Send trait
             tokio::spawn(continual_updates());
 
             Ok(())
@@ -42,4 +40,3 @@ async fn main() {
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
-

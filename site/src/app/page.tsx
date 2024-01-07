@@ -41,16 +41,6 @@ export default function Home() {
       </section>
       <section>
         <div>
-          <h2>Your Questions Answered</h2>
-          <p>Have information work for you. Your questions and your goals are answered &amp; updated as times change. You don’t have to read the internet yourself.</p>
-          {chipComingSoon}
-        </div>
-        <div className={styles.middle}>
-          <QuestionsAnsweredText />
-        </div>
-      </section>
-      <section>
-        <div>
           <h2>Context Sensitive</h2>
           <p>Any word, concept, or context has associated words, concepts, and contexts. You can dive deeper into anything. An article could lead to an academic paper and a video, or a wiki.</p>
           {chipComingSoon}

@@ -8,6 +8,9 @@ pub use collection::*;
 mod content;
 pub use content::*;
 
+mod logging;
+pub use logging::*;
+
 mod retrievals;
 pub use retrievals::*;
 

@@ -1,9 +1,0 @@
-.heroLogo {
-  transform: translateX(-90%);
-}
-
-@media (max-width: 1280px) {
-  .heroLogo {
-    transform: translateX(0);
-  }
-}

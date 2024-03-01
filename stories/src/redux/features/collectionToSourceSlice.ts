@@ -1,5 +1,5 @@
 import { createAsyncThunk, createEntityAdapter, createSelector, createSlice } from "@reduxjs/toolkit";
-import { invoke } from "@tauri-apps/api";
+import { invoke } from "@tauri-apps/api/core";
 import { CollectionToSource } from "../../data/chirp-types";
 import { RootState } from "../store";
 import { selectCollectionId } from './navSlice'

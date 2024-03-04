@@ -16,7 +16,7 @@ export const motionPropsRefreshBar = {
 
 export const RefreshBar: React.FC<RefreshBarProps> = ({ refreshAction: action, refreshPossibe }) => (
     <AnimatePresence>
-        {(refreshPossibe || true) && (
+        {refreshPossibe && (
             <motion.nav
                 {...motionPropsRefreshBar}
                 onClick={action}

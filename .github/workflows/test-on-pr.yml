@@ -6,7 +6,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [macos-latest, ubuntu-20.04, windows-latest]
+        platform: [macos-latest, ubuntu-22.04, windows-latest]
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -19,7 +19,7 @@ jobs:
         uses: dtolnay/rust-toolchain@nightly
       - name: install dependencies (ubuntu only)
         # consult https://packages.ubuntu.com/
-        if: matrix.platform == 'ubuntu-20.04'
+        if: matrix.platform == 'ubuntu-22.04'
         run: |
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev libglib2.0-0 libglib2.0-dev libglib2.0-dev-bin libsoup2.4-dev libsoup2.4-cil-dev libavahi-gobject0 libavahi-gobject-dev libwebkit2gtk-4.0-dev libappindicator3-dev libappindicator3-0.1-cil-dev librsvg2-dev patchelf

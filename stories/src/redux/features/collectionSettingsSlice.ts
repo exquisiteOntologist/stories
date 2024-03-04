@@ -1,5 +1,5 @@
 import { AsyncThunk, createAsyncThunk, createEntityAdapter, createSlice } from "@reduxjs/toolkit";
-import { invoke } from "@tauri-apps/api";
+import { invoke } from "@tauri-apps/api/core";
 import { CollectionSettings, SourceDto } from "../../data/chirp-types";
 import { RootState } from "../store";
 

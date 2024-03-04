@@ -1,5 +1,5 @@
 import { createAsyncThunk, createEntityAdapter, createSlice } from "@reduxjs/toolkit";
-import { invoke } from "@tauri-apps/api";
+import { invoke } from "@tauri-apps/api/core";
 import { ContentBody } from "../../data/chirp-types";
 // import { components } from "../../data/openapi";
 // import { getContentBodies } from "../../utilities/requests";

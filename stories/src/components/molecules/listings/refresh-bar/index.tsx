@@ -27,7 +27,7 @@ export const RefreshBar: React.FC<RefreshBarProps> = ({ refreshAction: action, r
                         This <span className="font-semibold">collection</span> has <span className="font-semibold">fresh content</span>
                     </div>
                     <button className="font-medium p-0 w-11 h-11 rounded-full overflow-hidden relative bg-rose-700 text-black">
-                        <IconRefresh className="w-16 h-19 max-w-none absolute -bottom-4 -left-3" />
+                        <IconRefresh className="w-20 h-24 max-w-none absolute -bottom-5 -left-4" />
                     </button>
                 </h1>
             </motion.nav>

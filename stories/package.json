@@ -8,11 +8,12 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "tauri": "tauri",
-    "tauri-dev": "tauri dev"
+    "tauri-dev": "tauri dev",
+    "tauri-migrate": "tauri migrate"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.5",
-    "@tauri-apps/api": "^1.5.0",
+    "@tauri-apps/api": "^2.0.0-beta.3",
     "autoprefixer": "^10.4.14",
     "dayjs": "^1.11.10",
     "framer-motion": "^10.12.21",
@@ -29,7 +30,7 @@
     "tailwindcss": "^3.3.3"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^1.5.0",
+    "@tauri-apps/cli": "^2.0.0-beta.6",
     "@types/lodash": "^4.14.195",
     "@types/node": "^20.4.2",
     "@types/react": "^18.2.15",

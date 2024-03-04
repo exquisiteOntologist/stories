@@ -1,6 +1,6 @@
 use std::error::Error;
 use rusqlite::Result;
-use crate::db::{db_source_add, db_content_add, db_source_get_id, db_source_retrievals_add, db_source_retrievals_update_success, db_source_add_data, db_source_get};
+use crate::db::{db_source_add, db_content_add, db_source_get_id, db_source_retrievals_add, db_source_retrievals_update_success, db_source_add_data, db_source_get, db_log_add};
 use crate::entities::{FullContent, Source};
 use crate::feed::feed_fetch;
 
@@ -27,9 +27,10 @@ pub async fn source_add(url: &String, other_param: &String, collection_id: &i32)
 
     let feed_result = feed_fetch(0, url.to_owned(), &other_param).await;
 
-    if feed_result.is_err() {
-        println!("Could not add feed");
-        return Err("Could not add feed".into());
+    if let Err(err) = feed_result {
+        // _ = db_log_add(err.to_string().as_str()); // already logged in feed_fetch
+        println!("Could not add feed {:?}", url);
+        return Err(err);
     }
 
     let (source, feed_contents) = feed_result.unwrap();

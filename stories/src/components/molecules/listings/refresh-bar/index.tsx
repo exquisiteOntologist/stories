@@ -1,6 +1,7 @@
 import React from 'react'
-import { RefreshBarProps } from './interfaces'
 import { AnimatePresence, motion } from 'framer-motion'
+import { IconRefresh } from '../../../atoms/icons/refresh'
+import { RefreshBarProps } from './interfaces'
 
 /**
  * https://www.framer.com/motion/component/
@@ -15,7 +16,7 @@ export const motionPropsRefreshBar = {
 
 export const RefreshBar: React.FC<RefreshBarProps> = ({ refreshAction: action, refreshPossibe }) => (
     <AnimatePresence>
-        {refreshPossibe && (
+        {(refreshPossibe || true) && (
             <motion.nav
                 {...motionPropsRefreshBar}
                 onClick={action}
@@ -25,8 +26,8 @@ export const RefreshBar: React.FC<RefreshBarProps> = ({ refreshAction: action, r
                     <div className="text-lg">
                         This <span className="font-semibold">collection</span> has <span className="font-semibold">fresh content</span>
                     </div>
-                    <button className="font-medium px-4 py-3 rounded-[3px] bg-orange-300 text-black">
-                        Reveal
+                    <button className="font-medium p-0 w-11 h-11 rounded-full overflow-hidden relative bg-rose-700 text-black">
+                        <IconRefresh className="w-16 h-19 max-w-none absolute -bottom-4 -left-3" />
                     </button>
                 </h1>
             </motion.nav>

@@ -489,6 +489,11 @@
   resolved "https://registry.yarnpkg.com/@remix-run/router/-/router-1.13.0.tgz#7e29c4ee85176d9c08cb0f4456bff74d092c5065"
   integrity sha512-5dMOnVnefRsl4uRnAdoWjtVTdh8e6aZqgM4puy9nmEADH72ck+uXwzpJLEKE9Q6F8ZljNewLgmTfkxUrBdv4WA==
 
+"@tauri-apps/api@2.0.0-beta.2":
+  version "2.0.0-beta.2"
+  resolved "https://registry.yarnpkg.com/@tauri-apps/api/-/api-2.0.0-beta.2.tgz#adec036f5ece03b88f59fdb7fa18e315c77d0738"
+  integrity sha512-4r1r6kgttzIWxJ3HxkZQH+b7EiUtKhdUCPbi0KSalD+2T3j6klw+v8VyxhKwEdjM/eo60NE+J33v1E/Urq8puw==
+
 "@tauri-apps/api@^2.0.0-beta.3":
   version "2.0.0-beta.3"
   resolved "https://registry.yarnpkg.com/@tauri-apps/api/-/api-2.0.0-beta.3.tgz#aae36cae870d342bdf40b1301d270a10bbf758ce"
@@ -559,6 +564,13 @@
     "@tauri-apps/cli-win32-arm64-msvc" "2.0.0-beta.6"
     "@tauri-apps/cli-win32-ia32-msvc" "2.0.0-beta.6"
     "@tauri-apps/cli-win32-x64-msvc" "2.0.0-beta.6"
+
+"@tauri-apps/plugin-shell@2.0.0-beta.1":
+  version "2.0.0-beta.1"
+  resolved "https://registry.yarnpkg.com/@tauri-apps/plugin-shell/-/plugin-shell-2.0.0-beta.1.tgz#e22b3c3ee8ca30c241467fe947a82ef5d229374d"
+  integrity sha512-yMf9CMHCRkGnx0pv420MptEeUdk+bVrXyM5zwFisy75GBhXgvEEtSjAkubTsC0jkzLfn4EInizaW2GER9ub7cQ==
+  dependencies:
+    "@tauri-apps/api" "2.0.0-beta.2"
 
 "@types/babel__core@^7.20.4":
   version "7.20.5"

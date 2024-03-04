@@ -15,6 +15,7 @@ async fn main() {
     tauri::Builder::default()
         // note that this plugin for window state does not work with current versions and setup (it did before migration)
         .plugin(tauri_plugin_window_state::Builder::default().build())
+        .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![
             greet,
             commands::collections::add_collection,

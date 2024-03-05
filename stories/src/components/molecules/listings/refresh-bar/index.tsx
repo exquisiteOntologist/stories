@@ -16,7 +16,7 @@ export const motionPropsRefreshBar = {
 
 export const RefreshBar: React.FC<RefreshBarProps> = ({ refreshAction: action, refreshPossibe }) => (
     <AnimatePresence>
-        {refreshPossibe && (
+        {(refreshPossibe || true) && (
             <motion.nav
                 {...motionPropsRefreshBar}
                 onClick={action}
@@ -24,7 +24,7 @@ export const RefreshBar: React.FC<RefreshBarProps> = ({ refreshAction: action, r
             >
                 <h1 className="flex justify-between align-middle items-center text-base leading-none whitespace-nowrap mx-0 dark:text-gray-300">
                     <div className="text-lg">
-                        This <span className="font-semibold text-emerald-600">collection</span> has <span className="font-semibold text-cyan-600">fresh content</span>
+                        This <span className="">collection</span> has <span className="font-semibold text-green-500">fresh content</span>
                     </div>
                     <button className="font-medium p-0 w-11 h-11 rounded-full overflow-hidden relative bg-rose-700 text-black">
                         <IconRefresh className="w-20 h-24 max-w-none absolute -bottom-5 -left-4" />

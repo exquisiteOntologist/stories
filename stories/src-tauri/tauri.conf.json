@@ -28,12 +28,10 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "titleBarStyle": "Overlay",
+        "titleBarStyle": "Visible",
         "fullscreen": false,
         "resizable": true,
         "title": "Stories",
-        "minWidth": 1280,
-        "minHeight": 1000,
         "center": true,
         "closable": true,
         "hiddenTitle": true,

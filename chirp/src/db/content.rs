@@ -81,7 +81,7 @@ pub fn db_map_content_body_query<P: Params>(
 }
 
 const SQL_DELETE_OLD_BODIES: &str =
-    "DELETE FROM content_body WHERE id < (select max(id) from content_body) - 1000";
+    "DELETE FROM content_body WHERE id < (SELECT MAX(id) FROM content_body) - 1000";
 
 pub fn db_content_save_space() -> Result<(), Box<dyn Error>> {
     let conn = db_connect()?;

@@ -30,7 +30,7 @@ export const ListingRow: React.FC<ListingRowProps> = ({ title, linkUrl, action, 
     ))
 
     return (
-        <motion.article {...motionProps} className="relative group border-b border-gray-100 dark:border-slate-800">
+        <motion.article {...motionProps} className="relative group border-b border-gray-100 dark:border-slate-800 select-none">
             <h1 className="flex text-base whitespace-nowrap mx-0 my-2 dark:text-slate-300">
                 <span className="truncate">
                     {titleInner}

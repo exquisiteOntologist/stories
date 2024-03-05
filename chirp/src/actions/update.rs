@@ -57,7 +57,7 @@ pub async fn update_single_feed(source: &Source) -> Result<(), Box<dyn Error + S
 
     println!("finished updating {:?}", source.name);
 
-    db_content_save_space();
+    _ = db_content_save_space();
 
     Ok(())
 }

@@ -32,6 +32,8 @@
         "fullscreen": false,
         "resizable": true,
         "title": "Stories",
+        "minWidth": 1920,
+        "minHeight": 1000,
         "center": true,
         "closable": true,
         "hiddenTitle": true,

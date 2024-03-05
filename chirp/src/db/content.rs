@@ -80,6 +80,18 @@ pub fn db_map_content_body_query<P: Params>(
     Ok(bodies)
 }
 
+const SQL_DELETE_OLD_BODIES: &str =
+    "DELETE FROM content_body WHERE id < (select max(id) from content_body) - 1000";
+
+pub fn db_content_save_space() -> Result<(), Box<dyn Error>> {
+    let conn = db_connect()?;
+    if let Err(e) = conn.execute(&SQL_DELETE_OLD_BODIES, []) {
+        println!("Error deleting old bodies from content_body");
+    }
+
+    Ok(())
+}
+
 pub fn db_map_content_media_query<P: Params>(
     s: &mut Statement,
     p: P,

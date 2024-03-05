@@ -4,7 +4,7 @@ use rusqlite::Result;
 use std::error::Error;
 
 use crate::db::{
-    db_content_add, db_log_add, db_source_get_data_web_url_segment,
+    db_content_add, db_content_save_space, db_log_add, db_source_get_data_web_url_segment,
     db_source_retrievals_update_failures, db_source_retrievals_update_success,
     db_sources_retrieve_outdated,
 };
@@ -56,6 +56,8 @@ pub async fn update_single_feed(source: &Source) -> Result<(), Box<dyn Error + S
     db_source_retrievals_update_success(&source.id).unwrap();
 
     println!("finished updating {:?}", source.name);
+
+    db_content_save_space();
 
     Ok(())
 }

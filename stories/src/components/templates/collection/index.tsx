@@ -120,7 +120,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
                 <TitleCrumbs collectionId={collectionId} title={title} />
                 <CollectionCustomizer collectionSettings={collectionSettings} isCustomizing={isCustomizing} />
             </div>
-            <RefreshBar refreshAction={() => setDoRefresh(true)} refreshPossibe={isFilteredCollection && !isShowingMostCurrent} />
+            <RefreshBar refreshAction={() => setDoRefresh(true)} refreshPossible={isFilteredCollection && !isShowingMostCurrent} />
             <CollectionEmptyMessage />
             <ListingsContainerCollections className="mb-12" view={collectionSettings?.layout as SettingsLayout} collections={nestedCollections} selectAction={(c) => dispatch(chooseCollection(c.id))} />
             <ListingsContainerContent view={collectionSettings?.layout as SettingsLayout} contents={isFilteredCollection ? contentsVisible : contents} sources={sources} />

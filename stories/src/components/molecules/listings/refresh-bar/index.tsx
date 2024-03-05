@@ -14,9 +14,9 @@ export const motionPropsRefreshBar = {
     transition: { ease: 'anticipate' }
 }
 
-export const RefreshBar: React.FC<RefreshBarProps> = ({ refreshAction: action, refreshPossibe }) => (
+export const RefreshBar: React.FC<RefreshBarProps> = ({ refreshAction: action, refreshPossible }) => (
     <AnimatePresence>
-        {(refreshPossibe || true) && (
+        {refreshPossible && (
             <motion.nav
                 {...motionPropsRefreshBar}
                 onClick={action}

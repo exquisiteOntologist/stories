@@ -6,17 +6,18 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-atom_syndication = "0.12.1"
-chrono = "0.4.24"
-directories = "5.0.1"
-futures = "0.3.28"
+article_scraper = "2"
+atom_syndication = "0.12.2"
+chrono = "0.4.35"
+directories = "5"
+futures = "0.3.30"
 reqwest = "0.11.24"
-rss = "2.0.7"
-rusqlite = { version = "0.29.0", features = ["bundled", "vtab", "array"] }
+rss = "2"
+rusqlite = { version = "0.31.0", features = ["bundled", "vtab", "array"] }
 scraper = "0.19.0"
-serde = { version = "1.0.163", features = ["derive"] }
-tokio = { version = "1.36.0", features = ["full"] }
+serde = { version = "1", features = ["derive"] }
+tokio = { version = "1", features = ["full"] }
 # typeshare is built on serde so maybe conflicts in future?
-typeshare = "1.0.1"
+typeshare = "1"
 # url may conflict with reqwest::Url
-url = "2.3.1"
+url = "2"

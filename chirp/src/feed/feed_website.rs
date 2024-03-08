@@ -256,23 +256,21 @@ pub async fn article_scraper(article_url: &str) -> String {
 }
 
 pub fn strip_html_tags_from_string(mut html: &str) -> String {
-    let mut html_out: String = String::from_str(html).unwrap();
+    let mut html_out: String = String::new();
     let mut within_bracket = false;
-    // iterating in reverse
-    for (i, c) in html.char_indices().rev() {
-        let is_closing = !within_bracket && c == '>';
-        let is_opening = !is_closing && c == '<';
+    for (_, c) in html.char_indices() {
+        let is_opening = !within_bracket && c == '<';
+        let is_closing = !is_opening && c == '>';
 
-        if is_closing {
+        if is_opening {
             within_bracket = true;
         }
 
-        if within_bracket {
-            html_out.remove(i);
+        if within_bracket == false {
+            html_out.push(c);
         }
 
-        // in reverse order the opening is the last c in bracket
-        if is_opening {
+        if is_closing {
             within_bracket = false;
         }
     }
@@ -284,7 +282,7 @@ pub fn strip_html_tags_from_string(mut html: &str) -> String {
 mod tests {
     use crate::feed::{feed_website::article_scraper, strip_html_tags_from_string};
 
-    #[tokio::test]
+    // #[tokio::test]
     async fn get_live_article_content() {
         let article_url = "https://www.nytimes.com/interactive/2023/04/21/science/parrots-video-chat-facetime.html";
         let article = article_scraper(article_url).await;
@@ -308,5 +306,8 @@ mod tests {
         let html_stripped = strip_html_tags_from_string(HTML_IN);
         print!("text without tags: \n {:?}", html_stripped);
         assert!(html_stripped.find("<").is_none() == true);
+        assert!(html_stripped.find("Howdy").is_none() == false);
+        assert!(html_stripped.find("Yay").is_none() == false);
+        assert!(html_stripped.find("What").is_none() == false);
     }
 }

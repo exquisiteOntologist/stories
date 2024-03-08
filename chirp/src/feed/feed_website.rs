@@ -2,7 +2,7 @@ use article_scraper::ArticleScraper;
 use futures::future::join_all;
 use reqwest::Client;
 use scraper::{Html, Selector};
-use std::{borrow::Borrow, collections::HashSet, error::Error, str::FromStr, vec};
+use std::{borrow::Borrow, collections::HashSet, error::Error, vec};
 use url::Url;
 
 use crate::{
@@ -255,10 +255,10 @@ pub async fn article_scraper(article_url: &str) -> String {
     article.html.unwrap()
 }
 
-pub fn strip_html_tags_from_string(mut html: &str) -> String {
+pub fn strip_html_tags_from_string(html: &str) -> String {
     let mut html_out: String = String::new();
     let mut within_bracket = false;
-    for (_, c) in html.char_indices() {
+    for c in html.chars() {
         let is_opening = !within_bracket && c == '<';
         let is_closing = !is_opening && c == '>';
 
@@ -282,7 +282,7 @@ pub fn strip_html_tags_from_string(mut html: &str) -> String {
 mod tests {
     use crate::feed::{feed_website::article_scraper, strip_html_tags_from_string};
 
-    // #[tokio::test]
+    #[tokio::test]
     async fn get_live_article_content() {
         let article_url = "https://www.nytimes.com/interactive/2023/04/21/science/parrots-video-chat-facetime.html";
         let article = article_scraper(article_url).await;

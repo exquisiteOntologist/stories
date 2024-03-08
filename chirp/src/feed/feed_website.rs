@@ -2,7 +2,7 @@ use article_scraper::ArticleScraper;
 use futures::future::join_all;
 use reqwest::Client;
 use scraper::{Html, Selector};
-use std::{borrow::Borrow, collections::HashSet, error::Error, vec};
+use std::{borrow::Borrow, collections::HashSet, error::Error, str::FromStr, vec};
 use url::Url;
 
 use crate::{
@@ -255,11 +255,34 @@ pub async fn article_scraper(article_url: &str) -> String {
     article.html.unwrap()
 }
 
+pub fn strip_html_tags_from_string(mut html: &str) -> String {
+    let mut html_out: String = String::from_str(html).unwrap();
+    let mut within_bracket = false;
+    // iterating in reverse
+    for (i, c) in html.char_indices().rev() {
+        let is_closing = !within_bracket && c == '>';
+        let is_opening = !is_closing && c == '<';
+
+        if is_closing {
+            within_bracket = true;
+        }
+
+        if within_bracket {
+            html_out.remove(i);
+        }
+
+        // in reverse order the opening is the last c in bracket
+        if is_opening {
+            within_bracket = false;
+        }
+    }
+
+    html_out
+}
+
 #[cfg(test)]
 mod tests {
-    use futures::FutureExt;
-
-    use crate::feed::feed_website::article_scraper;
+    use crate::feed::{feed_website::article_scraper, strip_html_tags_from_string};
 
     #[tokio::test]
     async fn get_live_article_content() {
@@ -267,5 +290,23 @@ mod tests {
         let article = article_scraper(article_url).await;
         print!("article \n {:?}", article);
         assert!(article.is_empty() == false);
+    }
+
+    #[test]
+    fn remove_tags_from_html() {
+        const HTML_IN: &str = "
+            <div>
+                <hr />
+                <h1>Howdy</h1>
+                <main>
+                    <div>Yay</div>
+                    What?
+                </main>
+            </div>
+        ";
+        assert!(HTML_IN.find("<").is_none() == false);
+        let html_stripped = strip_html_tags_from_string(HTML_IN);
+        print!("text without tags: \n {:?}", html_stripped);
+        assert!(html_stripped.find("<").is_none() == true);
     }
 }

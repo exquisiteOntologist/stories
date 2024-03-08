@@ -1,4 +1,5 @@
 use article_scraper::ArticleScraper;
+use chrono::{DateTime, Utc};
 use futures::future::join_all;
 use reqwest::Client;
 use scraper::{Html, Selector};
@@ -247,12 +248,29 @@ pub fn scrape_links(
     Ok(links)
 }
 
-pub async fn article_scraper(article_url: &str) -> String {
+pub struct ScrapedArticle {
+    pub title: Option<String>,
+    pub author: Option<String>,
+    pub url: Url,
+    pub date: Option<DateTime<Utc>>,
+    pub thumbnail_url: Option<String>,
+    pub html: Option<String>,
+}
+
+pub async fn article_scraper(article_url: &str) -> ScrapedArticle {
     let scraper = ArticleScraper::new(None).await;
     let url = Url::parse(article_url).unwrap();
     let client = Client::new();
-    let article = scraper.parse(&url, false, &client, None).await.unwrap();
-    article.html.unwrap()
+    let scraped = scraper.parse(&url, false, &client, None).await.unwrap();
+    let article = ScrapedArticle {
+        title: scraped.title,
+        author: scraped.author,
+        url: scraped.url,
+        date: scraped.date,
+        thumbnail_url: scraped.thumbnail_url,
+        html: scraped.html,
+    };
+    article
 }
 
 pub fn strip_html_tags_from_string(html: &str) -> String {
@@ -286,8 +304,9 @@ mod tests {
     async fn get_live_article_content() {
         let article_url = "https://www.nytimes.com/interactive/2023/04/21/science/parrots-video-chat-facetime.html";
         let article = article_scraper(article_url).await;
-        print!("article \n {:?}", article);
-        assert!(article.is_empty() == false);
+        let html = article.html.unwrap();
+        print!("article \n {:?}", html);
+        assert!(html.is_empty() == false);
     }
 
     #[test]

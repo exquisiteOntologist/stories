@@ -13,6 +13,7 @@ export const ListingsContainerCollections: React.FC<ListingsContainerCollections
                     id={c.id}
                     title={c.name}
                     action={() => selectAction(c)}
+                    bold={true}
                 />
             ))
         }

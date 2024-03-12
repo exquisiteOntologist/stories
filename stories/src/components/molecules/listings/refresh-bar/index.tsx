@@ -24,7 +24,7 @@ export const RefreshBar: React.FC<RefreshBarProps> = ({ refreshAction: action, r
             >
                 <h1 className="flex justify-between align-middle items-center text-base leading-none whitespace-nowrap mx-0 group dark:text-gray-300">
                     <div className="text-lg text-slate-50">
-                        This <span className="">collection</span> has <span className="font-semibold text-teal-400">fresh content</span>
+                        This <span className="">collection</span> has <span className="font-semibold text-yellow-500">fresh content</span>
                     </div>
                     <button className="font-medium p-0 w-11 h-11 rounded-full overflow-hidden relative bg-rose-900 group-hover:bg-emerald-600 text-black transition-colors">
                         <IconRefresh className="w-20 h-24 max-w-none absolute -bottom-5 -left-4" />

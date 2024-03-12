@@ -1,3 +1,4 @@
+/// Article scraper
 pub mod articles;
-/// Note this was the original article scraper
+/// Page scraper
 pub mod page;

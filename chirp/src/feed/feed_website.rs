@@ -20,20 +20,6 @@ pub async fn parse_website(
     article_url_segment: &String,
 ) -> Result<(Source, Vec<FullContent>), Box<dyn Error + Send + Sync>> {
     if article_url_segment.is_empty() {
-        print!(
-            "
-				For website sources...
-
-					Also provide a typical article URL path segment.
-
-				\"add {{URL}} {{SEGMENT}}\"
-
-				For example, if website.com has articles under \"/articles/\",
-					as you would see with URLs like \"website.com/articles/an-informative-article\",
-					then we want to pass that URL segment when calling \"add\".
-					\"add website.com articles\"
-			"
-        );
         return Err("Cannot add website without path segment".into());
     }
 

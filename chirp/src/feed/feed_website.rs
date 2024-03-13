@@ -83,10 +83,10 @@ pub async fn parse_web_articles(
     // or alternatively use borrows
     let urls_to_crawl: Vec<String> = article_urls
         .into_iter()
-        .filter(|au| {
+        .filter(|url| {
             (urls_already_crawled.borrow() as &Vec<String>)
                 .into_iter()
-                .find(|uac| &au == uac)
+                .find(|existing_url| &url == existing_url)
                 .is_none()
         })
         .collect();

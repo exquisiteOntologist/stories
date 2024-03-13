@@ -23,6 +23,19 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev libglib2.0-0 libglib2.0-dev libglib2.0-dev-bin libsoup-3.0-dev libavahi-gobject0 libavahi-gobject-dev libwebkit2gtk-4.1-dev libjavascriptcoregtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+      - name: install dependencies (Windows only)
+        # consult https://packages.ubuntu.com/
+        if: matrix.platform == 'windows-latest'
+        run: |
+          Invoke-WebRequest -Uri 'https://github.com/mhils/libxml2-win-binaries/archive/refs/heads/master.zip' -OutFile 'c:\temp\libxml2.zip'
+          Expand-Archive 'c:\temp\libxml2.zip' -DestinationPath 'c:\temp\libxml2-x'
+          cd 'c:\temp\libxml2-x'
+          Set-ExecutionPolicy remotesigned
+          Find-Package pscx | ? ProviderName -eq PSModule | Install-Package -Force
+          'c:\temp\libxml2-x\build.ps1'
+          New-Item -Path Env:\libxml2 -Value 'c:\temp\libxml2-x\libxml2-2.9.5.win64'
+          #Set-Location Env:
+          #Env:\> $Env:libxml2 = "c:\temp\libxml2-x\libxml2-2.9.5.win64"
       - name: install Tauri CLI
         run: yarn global add typescript @tauri-apps/cli # because not root
       - name: install frontend dependencies

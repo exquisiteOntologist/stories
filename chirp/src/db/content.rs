@@ -41,6 +41,7 @@ pub fn db_map_content_query<P: Params>(
             id: row.get(0)?,
             source_id: row.get(1)?,
             title: content_title_clean(title), // row.get(2)?,
+            author: String::new(),
             url: row.get(3)?,
             date_published: date_published_date,
             date_retrieved: date_retrieved_date,

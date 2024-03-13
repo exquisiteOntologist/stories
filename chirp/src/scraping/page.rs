@@ -11,7 +11,7 @@ use crate::{
     utils::{fetch_url_to_string, fully_form_url, get_datetime_now},
 };
 
-// For a URL get the page doc, scrape the page, and return the Contents
+/// For a URL get the page doc, scrape the page, and return the Contents
 pub async fn contents_from_page(url: String) -> Result<FullContent, Box<dyn Error + Send + Sync>> {
     let doc: Result<Html, Box<dyn Error + Send + Sync>> = get_page_doc(&url).await;
 
@@ -26,6 +26,7 @@ pub async fn contents_from_page(url: String) -> Result<FullContent, Box<dyn Erro
             id: 0,
             source_id: 0,
             title: page.title,
+            author: String::new(),
             url: page.url,
             date_published: get_datetime_now(),
             date_retrieved: get_datetime_now(),
@@ -50,7 +51,7 @@ pub async fn contents_from_page(url: String) -> Result<FullContent, Box<dyn Erro
     Ok(contents)
 }
 
-// Scrape the content of a web page
+/// Scrape the content of a web page
 pub fn scrape_web_page(doc: &Html, url: &String) -> Result<WebPage, Box<dyn Error>> {
     let page = WebPage {
         url: url.to_owned(),

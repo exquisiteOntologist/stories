@@ -1,7 +1,14 @@
+use std::error::Error;
+
 use article_scraper::ArticleScraper;
 use chrono::{DateTime, Utc};
 use reqwest::Client;
 use url::Url;
+
+use crate::{
+    entities::{Content, ContentBody, ContentMedia, FullContent, MediaKind},
+    utils::get_datetime_now,
+};
 
 pub struct ScrapedArticle {
     pub title: Option<String>,
@@ -10,6 +17,45 @@ pub struct ScrapedArticle {
     pub date: Option<DateTime<Utc>>,
     pub thumbnail_url: Option<String>,
     pub html: Option<String>,
+}
+
+pub async fn contents_from_article(
+    url: String,
+) -> Result<FullContent, Box<dyn Error + Send + Sync>> {
+    let article = article_scraper(&url).await;
+    let html = article.html.unwrap();
+    // for now we just want the text, but if we add reader features we will want the html
+    // (fortunately we don't risk bypassing paywalls as they involve accounts)
+    let body_text = strip_html_tags_from_string(&html);
+
+    let contents = FullContent {
+        content: Content {
+            id: 0,
+            source_id: 0,
+            title: article.title.unwrap_or_default(),
+            author: article.author.unwrap_or_default(),
+            url: article.url.to_string(),
+            date_published: article.date.unwrap_or(get_datetime_now()),
+            date_retrieved: get_datetime_now(),
+        },
+        content_body: ContentBody {
+            id: 0,
+            content_id: 0,
+            body_text,
+        },
+        content_media: if article.thumbnail_url.is_some() {
+            vec![ContentMedia {
+                id: 0,
+                content_id: 0,
+                src: article.thumbnail_url.unwrap(),
+                kind: MediaKind::IMAGE,
+            }]
+        } else {
+            vec![]
+        },
+    };
+
+    Ok(contents)
 }
 
 pub async fn article_scraper(article_url: &str) -> ScrapedArticle {

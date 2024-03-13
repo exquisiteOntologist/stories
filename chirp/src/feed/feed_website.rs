@@ -9,7 +9,10 @@ use crate::{
     entities::{
         Content, ContentBody, ContentMedia, FullContent, MediaKind, Source, SourceKind, WebPage,
     },
-    scraping::page::{contents_from_page, scrape_links, scrape_title},
+    scraping::{
+        articles::contents_from_article,
+        page::{scrape_links, scrape_title},
+    },
     utils::{fetch_url_to_string, fully_form_url, get_datetime_now},
 };
 
@@ -93,11 +96,15 @@ pub async fn parse_web_articles(
 
     println!("Urls to crawl {:?}", urls_to_crawl.len());
 
-    let article_futures = urls_to_crawl
-        .into_iter()
-        .map(|p_url| contents_from_page(p_url.to_string()));
+    // let articles_being_retrieved = urls_to_crawl
+    //     .into_iter()
+    //     .map(|p_url| contents_from_page(p_url.to_string()));
 
-    let website_contents: Vec<FullContent> = join_all(article_futures)
+    let articles_being_retrieved = urls_to_crawl
+        .into_iter()
+        .map(|p_url| contents_from_article(p_url.to_string()));
+
+    let website_contents: Vec<FullContent> = join_all(articles_being_retrieved)
         .await
         .into_iter()
         .filter(|af| af.is_ok())

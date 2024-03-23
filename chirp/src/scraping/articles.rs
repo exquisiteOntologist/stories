@@ -22,7 +22,10 @@ pub struct ScrapedArticle {
 pub async fn contents_from_article(
     url: String,
 ) -> Result<FullContent, Box<dyn Error + Send + Sync>> {
-    let article = article_scraper(&url).await;
+    let article = match article_scraper(&url).await {
+        Ok(v) => v,
+        Err(e) => return Err(e),
+    };
     let html = article.html.unwrap();
     // for now we just want the text, but if we add reader features we will want the html
     // (fortunately we don't risk bypassing paywalls as they involve accounts)
@@ -58,11 +61,19 @@ pub async fn contents_from_article(
     Ok(contents)
 }
 
-pub async fn article_scraper(article_url: &str) -> ScrapedArticle {
+pub async fn article_scraper(
+    article_url: &str,
+) -> Result<ScrapedArticle, Box<dyn Error + Send + Sync>> {
     let scraper = ArticleScraper::new(None).await;
     let url = Url::parse(article_url).unwrap();
     let client = Client::new();
-    let scraped = scraper.parse(&url, false, &client, None).await.unwrap();
+    let scraped = match scraper.parse(&url, false, &client, None).await {
+        Ok(v) => v,
+        Err(e) => {
+            eprintln!("Error scraping article: {:?}", &e.to_string());
+            return Err(Box::new(e));
+        }
+    };
     let article = ScrapedArticle {
         title: scraped.title,
         author: scraped.author,
@@ -71,7 +82,7 @@ pub async fn article_scraper(article_url: &str) -> ScrapedArticle {
         thumbnail_url: scraped.thumbnail_url,
         html: scraped.html,
     };
-    article
+    Ok(article)
 }
 
 pub fn strip_html_tags_from_string(html: &str) -> String {

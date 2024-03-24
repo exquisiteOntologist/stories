@@ -40,6 +40,8 @@ jobs:
           Get-Item -Path Env:\PSModulePath*
           Get-Item -Path Env:\VCPKG_ROOT*
           Get-Item -Path Env:\VCPKG_INSTALLED_ROOT*
+          # Sort out vcpkg packages
+          vcpkg list
       - name: install Tauri CLI
         run: yarn global add typescript @tauri-apps/cli # because not root
       - name: install frontend dependencies

@@ -32,7 +32,7 @@ jobs:
           .\vcpkg\bootstrap-vcpkg.bat
           setx /M PATH "%PATH%;c:\vcpkg" && setx VCPKGRS_DYNAMIC "1" /M
           refreshenv
-          vcpkg install libxml2:x64-windows
+          vcpkg install --triplet x64-windows libxml2:x64-windows
           vcpkg integrate install
           # I want to see all the env variables
           Get-ChildItem Env:
@@ -42,6 +42,8 @@ jobs:
           Get-Item -Path Env:\VCPKG_INSTALLED_ROOT*
           # Sort out vcpkg packages
           vcpkg list
+          # $libxmlpath = 
+          # Set-Item -Path Env:\LIBXML2 -Value $libxmlpath
       - name: install Tauri CLI
         run: yarn global add typescript @tauri-apps/cli # because not root
       - name: install frontend dependencies

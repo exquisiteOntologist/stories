@@ -27,12 +27,19 @@ jobs:
         # consult https://packages.ubuntu.com/
         if: matrix.platform == 'windows-latest'
         run: |
+          # Add vcpkg and use it to add libxml2 for x64
           git clone https://github.com/microsoft/vcpkg
           .\vcpkg\bootstrap-vcpkg.bat
           setx /M PATH "%PATH%;c:\vcpkg" && setx VCPKGRS_DYNAMIC "1" /M
           refreshenv
           vcpkg install libxml2:x64-windows
           vcpkg integrate install
+          # I want to see all the env variables
+          Get-ChildItem Env:
+          # I want to see specific env variables that I expect
+          Get-Item -Path Env:\PSModulePath*
+          Get-Item -Path Env:\VCPKG_ROOT*
+          Get-Item -Path Env:\VCPKG_INSTALLED_ROOT*
       - name: install Tauri CLI
         run: yarn global add typescript @tauri-apps/cli # because not root
       - name: install frontend dependencies

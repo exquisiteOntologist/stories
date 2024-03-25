@@ -28,6 +28,7 @@ jobs:
         if: matrix.platform == 'windows-latest'
         run: |
           cd c:\
+          rm ./vcpkg -r -fo
           # Add vcpkg and use it to add libxml2 for x64
           git clone https://github.com/microsoft/vcpkg
           .\vcpkg\bootstrap-vcpkg.bat

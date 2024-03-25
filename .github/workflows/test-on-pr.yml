@@ -37,7 +37,8 @@ jobs:
           # setx VCPKGRS_DYNAMIC "1" /M
           # refreshenv
           # cd c:\
-          vcpkg install libxml2:x64-windows
+          # vcpkg install libxml2:x64-windows
+          vcpkg install libxml2
           vcpkg integrate install
           # I want to see all the env variables
           Get-ChildItem Env:

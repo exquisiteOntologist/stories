@@ -31,5 +31,5 @@ custom-protocol = ["tauri/custom-protocol"]
 # `cargo vcpkg build`
 [package.metadata.vcpkg]
 git = "https://github.com/microsoft/vcpkg"
-rev = "4c1db68"
+rev = "a34c873"
 dependencies = ["libxml2"]

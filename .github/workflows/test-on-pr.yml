@@ -26,16 +26,16 @@ jobs:
       - name: install dependencies (Windows only)
         if: matrix.platform == 'windows-latest'
         run: |
-          cd c:\
+          # cd c:\
           # rm ./vcpkg -r -fo
           # Add vcpkg and use it to add libxml2 for x64
           # git clone https://github.com/microsoft/vcpkg
           # .\vcpkg\bootstrap-vcpkg.bat
           # setx /M PATH "%PATH%;c:\vcpkg"
-          setx VCPKGRS_DYNAMIC "1" /M
-          refreshenv
-          cd c:\
-          vcpkg install --triplet x64-windows libxml2:x64-windows
+          # setx VCPKGRS_DYNAMIC "1" /M
+          # refreshenv
+          # cd c:\
+          vcpkg install libxml2:x64-windows
           vcpkg integrate install
           # I want to see all the env variables
           Get-ChildItem Env:

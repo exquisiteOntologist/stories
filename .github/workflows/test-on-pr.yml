@@ -24,15 +24,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev libglib2.0-0 libglib2.0-dev libglib2.0-dev-bin libsoup-3.0-dev libavahi-gobject0 libavahi-gobject-dev libwebkit2gtk-4.1-dev libjavascriptcoregtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
       - name: install dependencies (Windows only)
-        # consult https://packages.ubuntu.com/
         if: matrix.platform == 'windows-latest'
         run: |
           cd c:\
-          rm ./vcpkg -r -fo
+          # rm ./vcpkg -r -fo
           # Add vcpkg and use it to add libxml2 for x64
-          git clone https://github.com/microsoft/vcpkg
-          .\vcpkg\bootstrap-vcpkg.bat
-          setx /M PATH "%PATH%;c:\vcpkg"
+          # git clone https://github.com/microsoft/vcpkg
+          # .\vcpkg\bootstrap-vcpkg.bat
+          # setx /M PATH "%PATH%;c:\vcpkg"
           setx VCPKGRS_DYNAMIC "1" /M
           refreshenv
           cd c:\

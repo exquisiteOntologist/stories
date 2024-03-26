@@ -6,11 +6,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [macos-latest, ubuntu-22.04, windows-latest]
+        platform: [macos-latest, ubuntu-22.04]
     runs-on: ${{ matrix.platform }}
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      VCPKG_FEATURE_FLAGS: dependencygraph
     steps:
       - uses: actions/checkout@v3
       - name: setup node
@@ -25,15 +24,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev libglib2.0-0 libglib2.0-dev libglib2.0-dev-bin libsoup-3.0-dev libavahi-gobject0 libavahi-gobject-dev libwebkit2gtk-4.1-dev libjavascriptcoregtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
-      - name: install dependencies (Windows only)
-        if: matrix.platform == 'windows-latest'
-        run: |
-          # assuming in the project directory
-          cd ./stories/src-tauri # into cargo project
-          cargo install cargo-vcpkg
-          cargo vcpkg build
-          ls ./target/vcpkg
-          cd ../../ # back to start location
       - name: install Tauri CLI
         run: yarn global add typescript @tauri-apps/cli # because not root
       - name: install frontend dependencies

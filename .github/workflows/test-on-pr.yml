@@ -11,7 +11,6 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       VCPKG_FEATURE_FLAGS: dependencygraph
-      VC_ROOT: none
     steps:
       - uses: actions/checkout@v3
       - name: setup node
@@ -30,14 +29,10 @@ jobs:
         if: matrix.platform == 'windows-latest'
         run: |
           # assuming in the project directory
-          cd ./stories/src-tauri
+          cd ./stories/src-tauri # into cargo project
           cargo install cargo-vcpkg
           cargo vcpkg build
-          cd ./target/vcpkgs
-          ls ./packages
-          $VC_ROOT = pwd
-          echo $VC_ROOT
-          cd ../../ # back to src-tauri
+          ls ./target/vcpkgs
           cd ../../ # back to start location
       - name: install Tauri CLI
         run: yarn global add typescript @tauri-apps/cli # because not root
@@ -48,4 +43,3 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           projectPath: './stories'
-          args: VCPKG_ROOT=$VC_ROOT

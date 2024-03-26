@@ -32,7 +32,7 @@ jobs:
           cd ./stories/src-tauri # into cargo project
           cargo install cargo-vcpkg
           cargo vcpkg build
-          ls ./target/vcpkgs
+          ls ./target/vcpkg
           cd ../../ # back to start location
       - name: install Tauri CLI
         run: yarn global add typescript @tauri-apps/cli # because not root

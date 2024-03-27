@@ -7,13 +7,13 @@ use url::Url;
 use crate::{
     db::db_check_content_existing_urls,
     entities::{
-        Content, ContentBody, ContentMedia, FullContent, MediaKind, Source, SourceKind, WebPage,
+        FullContent, Source, SourceKind,
     },
     scraping::{
         articles::contents_from_article,
         page::{scrape_links, scrape_title},
     },
-    utils::{fetch_url_to_string, fully_form_url, get_datetime_now},
+    utils::fully_form_url,
 };
 
 pub async fn parse_website(

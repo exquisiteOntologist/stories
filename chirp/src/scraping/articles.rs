@@ -29,7 +29,6 @@ pub async fn contents_from_article(
     let html = article.html.unwrap();
     // for now we just want the text, but if we add reader features we will want the html
     // (fortunately we don't risk bypassing paywalls as they involve accounts)
-    let body_text = strip_html_tags_from_string(&html);
 
     let contents = FullContent {
         content: Content {
@@ -44,7 +43,7 @@ pub async fn contents_from_article(
         content_body: ContentBody {
             id: 0,
             content_id: 0,
-            body_text,
+            body_text: html,
         },
         content_media: if article.thumbnail_url.is_some() {
             vec![ContentMedia {

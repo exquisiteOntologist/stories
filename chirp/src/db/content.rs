@@ -1,11 +1,12 @@
-use chrono::{DateTime, NaiveDateTime, Utc};
-use rusqlite::{Connection, Params, Statement};
-use std::error::Error;
-
 use super::{create_rarray_values, db_connect, load_rarray_table};
 use crate::entities::{Content, ContentBody, ContentMedia, FullContent, MediaKind};
-
-//                              2024-11-15 05:22:11.034340 UTC
+use crate::scraping::articles::strip_html_tags_from_string;
+use chrono::DateTime;
+use chrono::NaiveDateTime;
+use chrono::Utc;
+use labels::actions::collect_word_tallies_with_intersections;
+use rusqlite::{Connection, Params, Statement};
+use std::error::Error;
 //                              2023-10-07 13:46:54.605157 UTC
 const DATE_FROM_FORMAT: &str = "%Y-%m-%d %H:%M:%S%.f %Z";
 
@@ -93,7 +94,7 @@ const SQL_DELETE_OLD_CONTENT: &str =
 
 pub fn db_content_save_space() -> Result<(), Box<dyn Error>> {
     let conn = db_connect()?;
-    if let Err(e) = conn.execute(&SQL_DELETE_OLD_CONTENT, []) {
+    if let Err(_e) = conn.execute(&SQL_DELETE_OLD_CONTENT, []) {
         println!("Error deleting old bodies from content_body");
     }
 
@@ -145,8 +146,8 @@ pub fn db_content_add(contents: Vec<FullContent>) -> Result<(), Box<dyn Error + 
         }
 
         let cc = c.content;
-        let b = c.content_body;
-        let m = c.content_media;
+        let cb = c.content_body;
+        let cm = c.content_media;
 
         let content_in_res = conn.execute(
 			"INSERT INTO content (source_id, title, url, date_published, date_retrieved) VALUES (?1, ?2, ?3, ?4, ?5) ON CONFLICT DO NOTHING",
@@ -160,7 +161,7 @@ pub fn db_content_add(contents: Vec<FullContent>) -> Result<(), Box<dyn Error + 
             return Ok(());
         }
 
-        if b.body_text.is_empty() && m.is_empty() {
+        if cb.body_text.is_empty() && cm.is_empty() {
             continue;
         }
 
@@ -178,14 +179,16 @@ pub fn db_content_add(contents: Vec<FullContent>) -> Result<(), Box<dyn Error + 
 
         let cc_id: i32 = cc_id_res.unwrap();
 
-        if b.body_text.is_empty() == false {
+        if cb.body_text.is_empty() == false {
             conn.execute(
 				"INSERT INTO content_body (content_id, body_text) VALUES (?1, ?2) ON CONFLICT DO NOTHING",
-				(cc_id, &b.body_text),
+				(cc_id, &cb.body_text),
 			)?;
+
+            db_content_add_words_phrases(cb);
         }
 
-        for mi in m.into_iter() {
+        for mi in cm.into_iter() {
             conn.execute(
 				"INSERT INTO content_media (content_id, src, kind) VALUES (?1, ?2, ?3) ON CONFLICT DO NOTHING",
 				(cc_id, &mi.src, 0 /* mi.kind */),
@@ -198,13 +201,44 @@ pub fn db_content_add(contents: Vec<FullContent>) -> Result<(), Box<dyn Error + 
     Ok(())
 }
 
+pub fn db_content_add_words_phrases(cb: ContentBody) -> Result<(), Box<dyn Error + Send + Sync>> {
+    let clean_text = strip_html_tags_from_string(&cb.body_text);
+    let phrases_tallies = collect_word_tallies_with_intersections(&clean_text);
+
+    let mut phrases: Vec<String> = Vec::new();
+    let mut tallies: Vec<i32> = Vec::new();
+
+    for (phrase, tally) in phrases_tallies {
+        phrases.push(phrase.join(" "));
+        tallies.push(tally);
+    }
+
+    let phrases_r = create_rarray_values(phrases);
+    let tallies_r = create_rarray_values(tallies);
+
+    let conn = db_connect()?;
+    load_rarray_table(&conn)?;
+
+    let mut phrases_query: Statement = conn.prepare(
+        ""
+        /*"INSERT INTO
+                WHERE phrase IN (SELECT * FROM rarray(?1))
+                LIMIT 150
+        ",*/
+    )?;
+
+    phrases_query.execute([phrases_r, tallies_r])?;
+
+    Ok(())
+}
+
 // singular - see also db_contents_retrieve
 pub fn db_content_retrieve(id: i32) -> Result<Content, Box<dyn Error>> {
     let conn = db_connect()?;
 
     let mut content_query = conn.prepare("SELECT * FROM content WHERE id = :ID LIMIT 1")?;
     let id_string = id.to_string();
-    let named_params = [(":ID", id_string.as_str())];
+    let named_params = [(":ID ", id_string.as_str())];
     let content_res = db_map_content_query(&mut content_query, &named_params);
 
     if content_res.is_err() {
@@ -214,7 +248,7 @@ pub fn db_content_retrieve(id: i32) -> Result<Content, Box<dyn Error>> {
     let content = content_res?;
 
     if content.len() == 0 {
-        return Err("Content was not found".into());
+        return Err("Content was not found ".into());
     }
 
     let out = content.get(0).unwrap().to_owned();
@@ -233,7 +267,7 @@ pub fn db_contents_retrieve(content_ids: &Vec<i32>) -> Result<Vec<Content>, Box<
     let contents_res = db_map_content_query(&mut contents_query, [content_id_values]);
 
     if let Err(e) = contents_res {
-        println!("Error retrieving contents");
+        println!("Error retrieving contents ");
         println!("{:?}", e);
         return Err(e);
     }
@@ -257,7 +291,7 @@ pub fn db_check_content_existing_urls(
     let existing_urls_res = db_map_content_urls(&mut content_url_query, params.clone());
 
     if existing_urls_res.is_err() {
-        println!("Error retrieving existing content URLs");
+        println!("Error retrieving existing content URLs ");
         let err = existing_urls_res.unwrap_err();
         println!("{:?}", err);
         return Err(err);
@@ -294,7 +328,7 @@ pub fn db_list_content_of_source(source_id: i32) -> Result<Vec<Content>, Box<dyn
 
     let mut content_list_query: Statement = conn.prepare(SQL_CONTENT_OF_SOURCE)?;
     let id_string = source_id.to_string();
-    let named_params = [(":ID", id_string.as_str())];
+    let named_params = [(":ID ", id_string.as_str())];
     let content_list_res = db_map_content_query(&mut content_list_query, &named_params);
 
     if content_list_res.is_err() {
@@ -405,7 +439,7 @@ pub fn db_content_bodies(content_ids: Vec<String>) -> Result<Vec<ContentBody>, B
     let bodies_res = db_map_content_body_query(&mut bodies_query, params.clone());
 
     if bodies_res.is_err() {
-        println!("Error retrieving content bodies");
+        println!("Error retrieving content bodies ");
         let err = bodies_res.unwrap_err();
         println!("{:?}", err);
         return Err(err);

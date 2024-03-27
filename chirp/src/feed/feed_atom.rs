@@ -1,6 +1,6 @@
 use atom_syndication::Feed;
 use chrono::{DateTime, FixedOffset, Utc};
-use std::{error::Error, ops::Deref};
+use std::error::Error;
 
 use crate::{
     entities::{Content, ContentBody, FullContent, Source, SourceKind},

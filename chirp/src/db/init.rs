@@ -10,6 +10,8 @@ pub fn db_init() -> Result<(), Box<dyn Error>> {
 }
 
 pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
+    conn.execute("VACUUM;PRAGMA auto_vacuum = FULL;", ())?;
+
     conn.execute(
         "CREATE TABLE IF NOT EXISTS source (
             id          INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,

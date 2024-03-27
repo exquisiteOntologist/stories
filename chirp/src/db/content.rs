@@ -185,7 +185,7 @@ pub fn db_content_add(contents: Vec<FullContent>) -> Result<(), Box<dyn Error + 
 				(cc_id, &cb.body_text),
 			)?;
 
-            let _ = _ = db_content_add_words_phrases(cb);
+            _ = db_content_add_words_phrases(cb);
         }
 
         for mi in cm.into_iter() {
@@ -205,28 +205,52 @@ pub fn db_content_add_words_phrases(cb: ContentBody) -> Result<(), Box<dyn Error
     let clean_text = strip_html_tags_from_string(&cb.body_text);
     let phrases_tallies = collect_word_tallies_with_intersections(&clean_text);
 
+    let mut content_ids: Vec<i32> = Vec::new();
     let mut phrases: Vec<String> = Vec::new();
     let mut tallies: Vec<i32> = Vec::new();
 
     for (phrase, tally) in phrases_tallies {
+        content_ids.push(cb.id);
         phrases.push(phrase.join(" "));
         tallies.push(tally);
     }
 
+    let c_ids_r = create_rarray_values(content_ids);
     let phrases_r = create_rarray_values(phrases);
     let tallies_r = create_rarray_values(tallies);
 
     let conn = db_connect()?;
     load_rarray_table(&conn)?;
 
-    let mut phrases_query: Statement = conn.prepare(
-        "", /*"INSERT INTO
-                   WHERE phrase IN (SELECT * FROM rarray(?1))
-                   LIMIT 150
-           ",*/
-    )?;
+    let phrases_query_res = conn.prepare(
+        // INSERT INTO phrase (phrase) VALUES(phrase)
+        // WHERE phrase NOT IN (
+        //     SELECT * FROM rarray(?1) EXCEPT SELECT phrase FROM phrase
+        // );
+        "
+            INSERT INTO phrase(phrase)
+                SELECT * from (
+                    SELECT * FROM rarray(?2) EXCEPT SELECT phrase FROM phrase
+                );
+            INSERT INTO content_phrase(phrase, c_id, tally)
+                SELECT * FROM phrase WHERE phrase.phrase IN (
+                    SELECT * (
+                        SELECT id FROM phrase WHERE phrase IN (
+                            SELECT * FROM rarray(?2)
+                        )
+                    ) JOIN rarray(?1) JOIN rarray(?3);
+                );
+        ",
+    );
 
-    phrases_query.execute([phrases_r, tallies_r])?;
+    if let Err(err) = &phrases_query_res {
+        eprintln!("Failed to add phrases {:?}", err);
+    }
+
+    let mut phrases_query: Statement = phrases_query_res.unwrap();
+    if let Err(err) = phrases_query.execute([c_ids_r, phrases_r, tallies_r]) {
+        eprintln!("Failed to execute add phrases {:?}", err);
+    };
 
     Ok(())
 }

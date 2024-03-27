@@ -1,14 +1,9 @@
 use futures::future::join_all;
-use reqwest::Client;
-use scraper::{Html, Selector};
-use std::{borrow::Borrow, collections::HashSet, error::Error, vec};
-use url::Url;
+use std::{borrow::Borrow, error::Error, vec};
 
 use crate::{
     db::db_check_content_existing_urls,
-    entities::{
-        FullContent, Source, SourceKind,
-    },
+    entities::{FullContent, Source, SourceKind},
     scraping::{
         articles::contents_from_article,
         page::{scrape_links, scrape_title},

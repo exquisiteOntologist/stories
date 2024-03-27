@@ -115,7 +115,7 @@ mod tests {
     async fn get_live_article_content() {
         let article_url = "https://www.nytimes.com/interactive/2023/04/21/science/parrots-video-chat-facetime.html";
         let article = article_scraper(article_url).await;
-        let html = article.html.unwrap();
+        let html = article.unwrap().html.unwrap();
         print!("article \n {:?}", html);
         assert!(html.is_empty() == false);
     }

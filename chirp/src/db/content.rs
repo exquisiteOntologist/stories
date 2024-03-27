@@ -185,7 +185,7 @@ pub fn db_content_add(contents: Vec<FullContent>) -> Result<(), Box<dyn Error + 
 				(cc_id, &cb.body_text),
 			)?;
 
-            db_content_add_words_phrases(cb);
+            let _ = _ = db_content_add_words_phrases(cb);
         }
 
         for mi in cm.into_iter() {
@@ -220,11 +220,10 @@ pub fn db_content_add_words_phrases(cb: ContentBody) -> Result<(), Box<dyn Error
     load_rarray_table(&conn)?;
 
     let mut phrases_query: Statement = conn.prepare(
-        ""
-        /*"INSERT INTO
-                WHERE phrase IN (SELECT * FROM rarray(?1))
-                LIMIT 150
-        ",*/
+        "", /*"INSERT INTO
+                   WHERE phrase IN (SELECT * FROM rarray(?1))
+                   LIMIT 150
+           ",*/
     )?;
 
     phrases_query.execute([phrases_r, tallies_r])?;

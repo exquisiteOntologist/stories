@@ -1,5 +1,5 @@
-use std::{error::Error};
 use rusqlite::Connection;
+use std::error::Error;
 
 use super::db_connect;
 
@@ -69,13 +69,13 @@ pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
         )",
         (),
     )?;
-    
+
     conn.execute(
         "CREATE INDEX IF NOT EXISTS retrieval_date_last_attempt_index on
             retrieval (date_last_attempt)",
         (),
     )?;
-    
+
     conn.execute(
         "CREATE INDEX IF NOT EXISTS retrieval_fails_since_success_index on
             retrieval (fails_since_success)",
@@ -91,7 +91,7 @@ pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
     )?;
 
     conn.execute(
-        "INSERT INTO collection (id, name) VALUES (0, 'Home') 
+        "INSERT INTO collection (id, name) VALUES (0, 'Home')
             ON CONFLICT DO NOTHING",
         (),
     )?;
@@ -119,7 +119,7 @@ pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
     )?;
 
     conn.execute(
-        "INSERT INTO collection_settings (id, collection_id, layout) VALUES (0, 0, 'ROWS') 
+        "INSERT INTO collection_settings (id, collection_id, layout) VALUES (0, 0, 'ROWS')
             ON CONFLICT DO NOTHING",
         (),
     )?;
@@ -186,11 +186,11 @@ pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
             content (url)",
         (),
     )?;
-    
+
     conn.execute(
         "CREATE INDEX IF NOT EXISTS content_date_published on
             content (date_published)",
-        ()
+        (),
     )?;
 
     conn.execute(
@@ -206,12 +206,6 @@ pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
     conn.execute(
         "CREATE INDEX IF NOT EXISTS content_body_id_index on
             content_body (id)",
-        (),
-    )?;
-
-    conn.execute(
-        "CREATE INDEX IF NOT EXISTS content_body_text_index on
-            content_body (body_text)",
         (),
     )?;
 
@@ -252,6 +246,6 @@ pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
     // TODO: Add "group_to_person" (id, group_id, person_id)
     // TODO: Add "density" table long shot (id, content_id, avg_words_per_concept, conformity_index, answer_confidence)
     // TODO: Add "source_meta" table (id, content_id, )
-    
+
     Ok(())
 }

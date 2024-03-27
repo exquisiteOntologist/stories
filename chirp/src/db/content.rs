@@ -81,12 +81,19 @@ pub fn db_map_content_body_query<P: Params>(
     Ok(bodies)
 }
 
-const SQL_DELETE_OLD_BODIES: &str =
-    "DELETE FROM content_body WHERE id < (SELECT MAX(id) FROM content_body) - 1000";
+// TODO: Update query
+// Note that this will need to be updated in relation to the sources
+// & that will be a much slower query
+/// Delete old content. Where tables cascade, associated rows also get deleted.
+const SQL_DELETE_OLD_CONTENT: &str =
+    "DELETE FROM content WHERE id < (SELECT MAX(id) FROM content) - 3000";
+
+// const SQL_DELETE_OLD_BODIES: &str =
+//     "DELETE FROM content_body WHERE id < (SELECT MAX(id) FROM content_body) - 1000";
 
 pub fn db_content_save_space() -> Result<(), Box<dyn Error>> {
     let conn = db_connect()?;
-    if let Err(e) = conn.execute(&SQL_DELETE_OLD_BODIES, []) {
+    if let Err(e) = conn.execute(&SQL_DELETE_OLD_CONTENT, []) {
         println!("Error deleting old bodies from content_body");
     }
 

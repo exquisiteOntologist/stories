@@ -1,4 +1,5 @@
 use super::{create_rarray_values, db_connect, load_rarray_table};
+use crate::db::db_log_add;
 use crate::entities::{Content, ContentBody, ContentMedia, FullContent, MediaKind};
 use crate::scraping::articles::strip_html_tags_from_string;
 use chrono::DateTime;
@@ -245,11 +246,13 @@ pub fn db_content_add_words_phrases(cb: ContentBody) -> Result<(), Box<dyn Error
 
     if let Err(err) = &phrases_query_res {
         eprintln!("Failed to add phrases {:?}", err);
+        _ = db_log_add(err.to_string().as_str());
     }
 
     let mut phrases_query: Statement = phrases_query_res.unwrap();
     if let Err(err) = phrases_query.execute([c_ids_r, phrases_r, tallies_r]) {
         eprintln!("Failed to execute add phrases {:?}", err);
+        _ = db_log_add(err.to_string().as_str());
     };
 
     Ok(())

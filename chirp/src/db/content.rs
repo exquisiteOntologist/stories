@@ -41,6 +41,7 @@ pub fn db_map_content_query<P: Params>(
             id: row.get(0)?,
             source_id: row.get(1)?,
             title: content_title_clean(title), // row.get(2)?,
+            author: String::new(),
             url: row.get(3)?,
             date_published: date_published_date,
             date_retrieved: date_retrieved_date,
@@ -78,6 +79,25 @@ pub fn db_map_content_body_query<P: Params>(
         .collect::<Vec<ContentBody>>();
 
     Ok(bodies)
+}
+
+// TODO: Update query
+// Note that this will need to be updated in relation to the sources
+// & that will be a much slower query
+/// Delete old content. Where tables cascade, associated rows also get deleted.
+const SQL_DELETE_OLD_CONTENT: &str =
+    "DELETE FROM content WHERE id < (SELECT MAX(id) FROM content) - 30000";
+
+// const SQL_DELETE_OLD_BODIES: &str =
+//     "DELETE FROM content_body WHERE id < (SELECT MAX(id) FROM content_body) - 1000";
+
+pub fn db_content_save_space() -> Result<(), Box<dyn Error>> {
+    let conn = db_connect()?;
+    if let Err(e) = conn.execute(&SQL_DELETE_OLD_CONTENT, []) {
+        println!("Error deleting old bodies from content_body");
+    }
+
+    Ok(())
 }
 
 pub fn db_map_content_media_query<P: Params>(

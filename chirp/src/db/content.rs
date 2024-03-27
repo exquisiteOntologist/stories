@@ -233,7 +233,7 @@ pub fn db_content_add_words_phrases(cb: ContentBody) -> Result<(), Box<dyn Error
                 SELECT * from (
                     SELECT * FROM rarray(?2) EXCEPT SELECT phrase FROM phrase
                 );
-            INSERT INTO content_phrase(phrase, c_id, tally)
+            INSERT INTO content_phrase(phrase_id, content_id, frequency)
                 SELECT * FROM phrase WHERE phrase.phrase IN (
                     SELECT * (
                         SELECT id FROM phrase WHERE phrase IN (

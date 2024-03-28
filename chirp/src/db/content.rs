@@ -230,9 +230,7 @@ pub fn db_content_add_words_phrases(
     let phrases_insert_res = conn.prepare(
         "
             INSERT INTO phrase(phrase)
-                SELECT * from (
-                    SELECT * FROM rarray(?1) EXCEPT SELECT phrase FROM phrase
-                );
+                SELECT value AS phrase FROM rarray(?1);
         ",
     );
 
@@ -256,7 +254,7 @@ pub fn db_content_add_words_phrases(
             INSERT INTO content_phrase(phrase_id, content_id, frequency)
                 SELECT phrase_id, content_id, frequency FROM (
                     SELECT
-                        id as phrase_id,
+                        id AS phrase_id,
                         ROW_NUMBER() OVER (
                             ORDER BY id
                         ) row_num
@@ -264,7 +262,7 @@ pub fn db_content_add_words_phrases(
                     )A
                     JOIN (
                         SELECT
-                            value as content_id,
+                            value AS content_id,
                             ROW_NUMBER() OVER (
                                 ORDER BY value
                             ) row_num
@@ -272,7 +270,7 @@ pub fn db_content_add_words_phrases(
                     )B USING (row_num)
                     JOIN (
                         SELECT
-                            value as frequency,
+                            value AS frequency,
                             ROW_NUMBER() OVER (
                                 ORDER BY value
                             ) row_num

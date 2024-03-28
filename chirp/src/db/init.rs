@@ -247,24 +247,25 @@ pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
             id              INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
             phrase_id       INTEGER NOT NULL,
             content_id      INTEGER NOT NULL,
-            frequency       INTEGER NOT NULL,
-            FOREIGN KEY (phrase_id) REFERENCES phrase(id) ON DELETE CASCADE,
-            FOREIGN KEY (content_id) REFERENCES content(id) ON DELETE CASCADE
+            frequency       INTEGER NOT NULL
         )",
+        //     FOREIGN KEY (phrase_id) REFERENCES phrase(id) ON DELETE CASCADE,
+        //     FOREIGN KEY (content_id) REFERENCES content(id) ON DELETE CASCADE
+        // )",
         (),
     )?;
 
-    conn.execute(
-        "CREATE UNIQUE INDEX IF NOT EXISTS phrase_to_content_index on
-            content_phrase (phrase_id, content_id)",
-        (),
-    )?;
+    // conn.execute(
+    //     "CREATE UNIQUE INDEX IF NOT EXISTS phrase_to_content_index on
+    //         content_phrase (phrase_id, content_id)",
+    //     (),
+    // )?;
 
-    conn.execute(
-        "CREATE UNIQUE INDEX IF NOT EXISTS content_to_phrase_index on
-            content_phrase (content_id, phrase_id)",
-        (),
-    )?;
+    // conn.execute(
+    //     "CREATE UNIQUE INDEX IF NOT EXISTS content_to_phrase_index on
+    //         content_phrase (content_id, phrase_id)",
+    //     (),
+    // )?;
 
     // TODO: Add "entity" table (id, text, date_added)
     // TODO: Add "dictionary" table (id, lang, word, description)

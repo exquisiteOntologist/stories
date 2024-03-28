@@ -6,7 +6,7 @@ use chrono::DateTime;
 use chrono::NaiveDateTime;
 use chrono::Utc;
 use labels::actions::collect_word_tallies_with_intersections;
-use rusqlite::{Connection, Params, Statement};
+use rusqlite::{params, Connection, Params, Statement};
 use std::error::Error;
 //                              2023-10-07 13:46:54.605157 UTC
 const DATE_FROM_FORMAT: &str = "%Y-%m-%d %H:%M:%S%.f %Z";
@@ -146,6 +146,7 @@ pub fn db_content_add(contents: Vec<FullContent>) -> Result<(), Box<dyn Error + 
             // wait
         }
 
+        // note the ID does not exist yet (not using GUIDs)
         let cc = c.content;
         let cb = c.content_body;
         let cm = c.content_media;
@@ -186,7 +187,7 @@ pub fn db_content_add(contents: Vec<FullContent>) -> Result<(), Box<dyn Error + 
 				(cc_id, &cb.body_text),
 			)?;
 
-            _ = db_content_add_words_phrases(cb);
+            _ = db_content_add_words_phrases(cc_id, cb);
         }
 
         for mi in cm.into_iter() {
@@ -202,7 +203,10 @@ pub fn db_content_add(contents: Vec<FullContent>) -> Result<(), Box<dyn Error + 
     Ok(())
 }
 
-pub fn db_content_add_words_phrases(cb: ContentBody) -> Result<(), Box<dyn Error + Send + Sync>> {
+pub fn db_content_add_words_phrases(
+    cc_id: i32,
+    cb: ContentBody,
+) -> Result<(), Box<dyn Error + Send + Sync>> {
     let clean_text = strip_html_tags_from_string(&cb.body_text);
     let phrases_tallies = collect_word_tallies_with_intersections(&clean_text);
 
@@ -211,7 +215,8 @@ pub fn db_content_add_words_phrases(cb: ContentBody) -> Result<(), Box<dyn Error
     let mut tallies: Vec<i32> = Vec::new();
 
     for (phrase, tally) in phrases_tallies {
-        content_ids.push(cb.id);
+        println!("c {:1}, p {:2}, t {:3}", &cc_id, &phrase.join(" "), &tally);
+        content_ids.push(cc_id);
         phrases.push(phrase.join(" "));
         tallies.push(tally);
     }
@@ -222,37 +227,78 @@ pub fn db_content_add_words_phrases(cb: ContentBody) -> Result<(), Box<dyn Error
 
     let conn = db_connect()?;
     load_rarray_table(&conn)?;
-
-    let phrases_query_res = conn.prepare(
-        // INSERT INTO phrase (phrase) VALUES(phrase)
-        // WHERE phrase NOT IN (
-        //     SELECT * FROM rarray(?1) EXCEPT SELECT phrase FROM phrase
-        // );
+    let phrases_insert_res = conn.prepare(
         "
             INSERT INTO phrase(phrase)
                 SELECT * from (
-                    SELECT * FROM rarray(?2) EXCEPT SELECT phrase FROM phrase
-                );
-            INSERT INTO content_phrase(phrase_id, content_id, frequency)
-                SELECT * FROM phrase WHERE phrase.phrase IN (
-                    SELECT * (
-                        SELECT id FROM phrase WHERE phrase IN (
-                            SELECT * FROM rarray(?2)
-                        )
-                    ) JOIN rarray(?1) JOIN rarray(?3);
+                    SELECT * FROM rarray(?1) EXCEPT SELECT phrase FROM phrase
                 );
         ",
     );
 
-    if let Err(err) = &phrases_query_res {
+    if let Err(err) = &phrases_insert_res {
         eprintln!("Failed to add phrases {:?}", err);
         _ = db_log_add(err.to_string().as_str());
+        return Err(phrases_insert_res.unwrap_err().into());
     }
 
-    let mut phrases_query: Statement = phrases_query_res.unwrap();
-    if let Err(err) = phrases_query.execute([c_ids_r, phrases_r, tallies_r]) {
+    let mut phrases_query: Statement = phrases_insert_res.unwrap();
+    if let Err(err) = phrases_query.execute(params![&phrases_r]) {
         eprintln!("Failed to execute add phrases {:?}", err);
         _ = db_log_add(err.to_string().as_str());
+        return Err(err.into());
+    };
+
+    let conn = db_connect()?;
+    load_rarray_table(&conn)?;
+    let content_phrase_res = conn.prepare(
+        "
+            INSERT INTO content_phrase(phrase_id, content_id, frequency)
+                SELECT phrase_id, content_id, frequency FROM (
+                    SELECT
+                        id as phrase_id,
+                            ROW_NUMBER() OVER (
+                        ORDER BY id
+                        ) row_num
+                    FROM phrase WHERE phrase IN (SELECT * FROM rarray(?1))
+                    )A
+                    JOIN (
+                    SELECT
+                        value as content_id,
+                            ROW_NUMBER() OVER (
+                            ORDER BY value
+                        ) row_num
+                    FROM (SELECT value FROM rarray(?2))
+                    )B USING (row_num)
+                    JOIN (
+                    SELECT
+                        value as frequency,
+                        ROW_NUMBER() OVER (
+                            ORDER BY value
+                        ) row_num
+                    FROM (SELECT value FROM rarray(?3))
+                    )C USING (row_num);
+        ",
+    );
+
+    if let Err(err) = &content_phrase_res {
+        eprintln!("Failed to add phrases {:?}", err);
+        _ = db_log_add(err.to_string().as_str());
+        return Err(content_phrase_res.unwrap_err().into());
+        //return Ok(()); // types too confusing with send and sync
+    }
+
+    let mut content_phrase: Statement = content_phrase_res.unwrap();
+    if let Err(err) = content_phrase.execute(params![&phrases_r, &c_ids_r, &tallies_r]) {
+        eprintln!("Failed to execute add content phrases {:?}", err);
+        eprintln!(
+            "lengths {:1} {:2} {:3}",
+            phrases_r.len(),
+            c_ids_r.len(),
+            tallies_r.len()
+        );
+        _ = db_log_add(err.to_string().as_str());
+        return Err(err.into());
     };
 
     Ok(())

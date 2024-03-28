@@ -257,26 +257,26 @@ pub fn db_content_add_words_phrases(
                 SELECT phrase_id, content_id, frequency FROM (
                     SELECT
                         id as phrase_id,
-                            ROW_NUMBER() OVER (
-                        ORDER BY id
+                        ROW_NUMBER() OVER (
+                            ORDER BY id
                         ) row_num
                     FROM phrase WHERE phrase IN (SELECT * FROM rarray(?1))
                     )A
                     JOIN (
-                    SELECT
-                        value as content_id,
+                        SELECT
+                            value as content_id,
                             ROW_NUMBER() OVER (
-                            ORDER BY value
-                        ) row_num
-                    FROM (SELECT value FROM rarray(?2))
+                                ORDER BY value
+                            ) row_num
+                        FROM (SELECT value FROM rarray(?2))
                     )B USING (row_num)
                     JOIN (
-                    SELECT
-                        value as frequency,
-                        ROW_NUMBER() OVER (
-                            ORDER BY value
-                        ) row_num
-                    FROM (SELECT value FROM rarray(?3))
+                        SELECT
+                            value as frequency,
+                            ROW_NUMBER() OVER (
+                                ORDER BY value
+                            ) row_num
+                        FROM (SELECT value FROM rarray(?3))
                     )C USING (row_num);
         ",
     );

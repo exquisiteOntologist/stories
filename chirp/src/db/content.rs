@@ -215,7 +215,7 @@ pub fn db_content_add_words_phrases(
     let mut tallies: Vec<i32> = Vec::new();
 
     for (phrase, tally) in phrases_tallies {
-        println!("c {:1}, p {:2}, t {:3}", &cc_id, &phrase.join(" "), &tally);
+        // println!("c {:1}, p {:2}, t {:3}", &cc_id, &phrase.join(" "), &tally);
         content_ids.push(cc_id);
         phrases.push(phrase.join(" "));
         tallies.push(tally);

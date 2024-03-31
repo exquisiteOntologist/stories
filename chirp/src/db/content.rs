@@ -229,7 +229,7 @@ pub fn db_content_add_words_phrases(
     load_rarray_table(&conn)?;
     let phrases_insert_res = conn.prepare(
         "
-            INSERT INTO phrase(phrase)
+            INSERT OR IGNORE INTO phrase(phrase)
                 SELECT value AS phrase FROM rarray(?1);
         ",
     );
@@ -251,7 +251,7 @@ pub fn db_content_add_words_phrases(
     load_rarray_table(&conn)?;
     let content_phrase_res = conn.prepare(
         "
-            INSERT INTO content_phrase(phrase_id, content_id, frequency)
+            INSERT OR IGNORE INTO content_phrase(phrase_id, content_id, frequency)
                 SELECT phrase_id, content_id, frequency FROM (
                     SELECT
                         id AS phrase_id,
@@ -277,6 +277,8 @@ pub fn db_content_add_words_phrases(
                         FROM (SELECT value FROM rarray(?3))
                     )C USING (row_num);
         ",
+        // the ORDER BY is wrong and only works because there is just 1 unique content_id being used,
+        // and the phrases are sorted by frequency
     );
 
     if let Err(err) = &content_phrase_res {

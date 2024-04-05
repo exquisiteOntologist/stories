@@ -1,84 +1,87 @@
 import React from "react";
 import { Navigate, Location, useNavigate } from "react-router-dom";
-import { routeCollectionView, routeSearch, routeSourcesEdit } from '../../../data/top-routes'
+import { routeCollectionView, routeSearch, routeSourcesEdit } from "../../../data/top-routes";
 import { Button } from "../../atoms/button";
 import { IconEllipsis } from "../../atoms/icons/ellipsis";
 import { IconPaintRoller } from "../../atoms/icons/paint-roller";
 import { IconSearch } from "../../atoms/icons/search";
 import { IconShapes } from "../../atoms/icons/shapes";
-import { ShortcutCommandF } from '../../atoms/icons/shortcuts/shortcut-cmd-f'
+import { ShortcutCommandF } from "../../atoms/icons/shortcuts/shortcut-cmd-f";
 import { ShutEye } from "../../atoms/logo/shut-eye";
 import { ButtonsGroup } from "../../molecules/buttons-group";
 import { SearchShortcutHandlers } from "../../alternate/search-shortcut-handler";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { chooseCollection, selectHistory, selectIsCustomizing, setIsCustomizing, toggleIsCustomizing } from "../../../redux/features/navSlice";
+import { IconFinger } from "../../atoms/icons/finger";
+import { IconDisembodied } from "../../atoms/icons/disembodied";
+import { IconDiagonalEye } from "../../atoms/icons/diagonal-eye";
 
-const scrollToTop = () => scrollTo({top: 0})
+const scrollToTop = () => scrollTo({ top: 0 });
 
 export interface AppMenuNavigationProps {
-    location?: Location
+    location?: Location;
 }
 
-const AppMenuNavigation: React.FC<AppMenuNavigationProps> = ({location}) => {
-    const dispatch = useAppDispatch()
-    const navigate = useNavigate()
-    const submergeHistoryIds = useAppSelector(selectHistory)
-    
+const AppMenuNavigation: React.FC<AppMenuNavigationProps> = ({ location }) => {
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+    const submergeHistoryIds = useAppSelector(selectHistory);
+
     return (
         <nav className="pointer-events-auto py-4">
             <Button
                 Icon={ShutEye}
                 label=""
                 action={() => {
-                    dispatch(setIsCustomizing(false))
-                    
+                    dispatch(setIsCustomizing(false));
+
                     if (location?.pathname === routeCollectionView) {
-                        if (submergeHistoryIds.length <= 1) return
+                        if (submergeHistoryIds.length <= 1) return;
 
-                        const priorId = submergeHistoryIds[submergeHistoryIds.length - 2]
+                        const priorId = submergeHistoryIds[submergeHistoryIds.length - 2];
 
-                        dispatch(chooseCollection(priorId))
+                        dispatch(chooseCollection(priorId));
                     } else {
-                        navigate(routeCollectionView)
+                        navigate(routeCollectionView);
                     }
                 }}
                 usePadding={false}
                 sideAction={() => {
-                    const alreadyAtDest = location?.pathname === routeCollectionView
-                    if (alreadyAtDest) scrollToTop()
+                    const alreadyAtDest = location?.pathname === routeCollectionView;
+                    if (alreadyAtDest) scrollToTop();
                 }}
             />
         </nav>
-    )
-}
+    );
+};
 
-const AppMenuActions: React.FC<AppHeaderProps> = ({location}) => {
-    const dispatch = useAppDispatch()
-    const navigate = useNavigate()
+const AppMenuActions: React.FC<AppHeaderProps> = ({ location }) => {
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
     const isCustomizing = useAppSelector(selectIsCustomizing);
 
-    console.log('is custom', isCustomizing)
+    console.log("is custom", isCustomizing);
 
     return (
-        <ButtonsGroup className="grow justify-end pointer-events-auto pl-20 py-4" expands={true} IconExpand={IconEllipsis} leftward={true}>
+        <ButtonsGroup className="pointer-events-auto grow justify-end py-4 pl-20" expands={true} IconExpand={IconEllipsis} leftward={true}>
             <Button
-                Icon={IconPaintRoller}
+                Icon={IconDiagonalEye}
                 label="Style"
                 action={() => {
-                    const needScroll = !isCustomizing
+                    const needScroll = !isCustomizing;
 
                     if (location?.pathname === routeCollectionView) {
-                        dispatch(toggleIsCustomizing())
+                        dispatch(toggleIsCustomizing());
                     } else {
-                        dispatch(setIsCustomizing(true))
-                        navigate(routeCollectionView)
+                        dispatch(setIsCustomizing(true));
+                        navigate(routeCollectionView);
                     }
 
-                    if (needScroll) scrollToTop()
+                    if (needScroll) scrollToTop();
                 }}
             />
             <Button
-                Icon={IconShapes}
+                Icon={IconDisembodied}
                 label="Contents"
                 // linkTo={`${location.pathname}/edit`}
                 linkTo={routeSourcesEdit}
@@ -89,47 +92,43 @@ const AppMenuActions: React.FC<AppHeaderProps> = ({location}) => {
                 linkTo="/"
                 disabled={true}
             /> */}
-             {/* <Button
+            {/* <Button
                 Icon={IconMagic}
                 label="Magic ID"
                 action={() => console.log('magic ID')}
                 disabled={true}
             /> */}
-            <Button
-                Icon={IconSearch}
-                PopoverIcon={ShortcutCommandF}
-                label="Search"
-                linkTo={routeSearch}
-                disabled={false}
-            />
+            <Button Icon={IconFinger} PopoverIcon={ShortcutCommandF} label="Search" linkTo={routeSearch} disabled={false} />
         </ButtonsGroup>
-    )
-}
+    );
+};
 
 const AppHeaderShortcutHandlers: React.FC = () => {
-    const navigate = useNavigate()
-    
+    const navigate = useNavigate();
+
     return (
         <>
-            <SearchShortcutHandlers action={() => {
-                navigate(routeSearch)
-                const searchBox = document.querySelector('#search-box') as HTMLInputElement | null
-                searchBox?.focus()
-            }} />
+            <SearchShortcutHandlers
+                action={() => {
+                    navigate(routeSearch);
+                    const searchBox = document.querySelector("#search-box") as HTMLInputElement | null;
+                    searchBox?.focus();
+                }}
+            />
         </>
-    )
-}
+    );
+};
 
 interface AppHeaderProps {
-    location?: Location
+    location?: Location;
 }
 
 const headerStyles: React.CSSProperties = {
-    color: 'var(--primary)',
+    color: "var(--primary)",
 } as React.CSSProperties;
 
-export const AppHeader: React.FC<AppHeaderProps> = ({location}) => (
-    <header className="app-header flex items-start justify-between px-4 py-0 sticky top-8 right-0 left-0 z-50 pointer-events-none" style={headerStyles}>
+export const AppHeader: React.FC<AppHeaderProps> = ({ location }) => (
+    <header className="app-header pointer-events-none sticky left-0 right-0 top-8 z-50 flex items-start justify-between px-4 py-0" style={headerStyles}>
         <AppHeaderShortcutHandlers />
         <div className="app-header--a flex items-center">
             <AppMenuNavigation location={location} />
@@ -138,4 +137,4 @@ export const AppHeader: React.FC<AppHeaderProps> = ({location}) => (
             <AppMenuActions location={location} />
         </div>
     </header>
-)
+);

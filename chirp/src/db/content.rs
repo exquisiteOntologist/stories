@@ -247,14 +247,14 @@ pub fn db_content_add_words_phrases(
         "
             INSERT OR IGNORE INTO content_phrase(phrase_id, content_id, frequency)
                 SELECT phrase_id, content_id, frequency FROM
-                    (SELECT column1 as content_id FROM (VALUES (?2)))
+                    (SELECT column1 as content_id FROM (VALUES (?1)))
                     JOIN (
                         SELECT
                             id AS phrase_id,
                             ROW_NUMBER() OVER (
                                 ORDER BY id
                             ) row_num
-                        FROM phrase WHERE phrase IN (SELECT * FROM rarray(?1))
+                        FROM phrase WHERE phrase IN (SELECT * FROM rarray(?2))
                     )A
                     JOIN (
                         SELECT
@@ -276,9 +276,14 @@ pub fn db_content_add_words_phrases(
     }
 
     let mut content_phrase: Statement = content_phrase_res.unwrap();
-    if let Err(err) = content_phrase.execute(params![&phrases_r, &cc_id, &tallies_r]) {
+    if let Err(err) = content_phrase.execute(params![&cc_id, &phrases_r, &tallies_r]) {
         eprintln!("Failed to execute add content phrases {:?}", err);
-        eprintln!("lengths {:1} {:3}", phrases_r.len(), tallies_r.len());
+        eprintln!(
+            "lengths {:1} {:2} {:3}",
+            &cc_id,
+            phrases_r.len(),
+            tallies_r.len()
+        );
         _ = db_log_add(err.to_string().as_str());
         return Err(err.into());
     };

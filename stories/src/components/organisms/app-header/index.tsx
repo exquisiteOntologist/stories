@@ -3,9 +3,9 @@ import { Navigate, Location, useNavigate } from "react-router-dom";
 import { routeCollectionView, routeSearch, routeSourcesEdit } from "../../../data/top-routes";
 import { Button } from "../../atoms/button";
 import { IconEllipsis } from "../../atoms/icons/ellipsis";
-import { IconPaintRoller } from "../../atoms/icons/paint-roller";
-import { IconSearch } from "../../atoms/icons/search";
-import { IconShapes } from "../../atoms/icons/shapes";
+// import { IconPaintRoller } from "../../atoms/icons/paint-roller";
+// import { IconSearch } from "../../atoms/icons/search";
+// import { IconShapes } from "../../atoms/icons/shapes";
 import { ShortcutCommandF } from "../../atoms/icons/shortcuts/shortcut-cmd-f";
 import { ShutEye } from "../../atoms/logo/shut-eye";
 import { ButtonsGroup } from "../../molecules/buttons-group";
@@ -15,6 +15,7 @@ import { chooseCollection, selectHistory, selectIsCustomizing, setIsCustomizing,
 import { IconFinger } from "../../atoms/icons/finger";
 import { IconDisembodied } from "../../atoms/icons/disembodied";
 import { IconDiagonalEye } from "../../atoms/icons/diagonal-eye";
+import { IconJoin } from "../../atoms/icons/join";
 
 const scrollToTop = () => scrollTo({ top: 0 });
 
@@ -63,7 +64,7 @@ const AppMenuActions: React.FC<AppHeaderProps> = ({ location }) => {
     console.log("is custom", isCustomizing);
 
     return (
-        <ButtonsGroup className="pointer-events-auto grow justify-end py-4 pl-20" expands={true} IconExpand={IconEllipsis} leftward={true}>
+        <ButtonsGroup className="pointer-events-auto grow justify-end py-4 pl-20" expands={true} IconExpand={IconJoin} leftward={true}>
             <Button
                 Icon={IconDiagonalEye}
                 label="Style"

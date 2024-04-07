@@ -36,13 +36,10 @@ pub fn db_map_content_query<P: Params>(
                 .unwrap_or_default()
                 .and_utc();
 
-        // println!("date published {:?}", &date_published);
-        // println!("date {:?}", date_published_date.naive_utc().time());
-
         Ok(Content {
             id: row.get(0)?,
             source_id: row.get(1)?,
-            title: content_title_clean(title), // row.get(2)?,
+            title: content_title_clean(title), // row.get(2),
             author: String::new(),
             url: row.get(3)?,
             date_published: date_published_date,
@@ -67,7 +64,7 @@ pub fn db_map_content_body_query<P: Params>(
     s: &mut Statement,
     p: P,
 ) -> Result<Vec<ContentBody>, Box<dyn Error>> {
-    // assumes used a SELECT *
+    // assumes used a SELECT * from content_body
     let mapped_bodies = s.query_map(p, |row| {
         Ok(ContentBody {
             id: row.get(0)?,
@@ -285,7 +282,6 @@ pub fn db_content_add_words_phrases(
         eprintln!("Failed to add phrases {:?}", err);
         _ = db_log_add(err.to_string().as_str());
         return Err(content_phrase_res.unwrap_err().into());
-        //return Ok(()); // types too confusing with send and sync
     }
 
     let mut content_phrase: Statement = content_phrase_res.unwrap();
@@ -459,9 +455,6 @@ pub fn db_list_content_full(source_ids: &Vec<i32>) -> Result<Vec<FullContent>, B
     let medias_res: Vec<ContentMedia> =
         db_map_content_media_query(&mut medias_query, params.clone())?;
 
-    // println!("bodies count {:?}", bodies_res.clone().len());
-    // println!("medias count {:?}", medias_res.clone().len());
-
     let mut bodies = bodies_res.into_iter();
     let medias = medias_res.into_iter();
 
@@ -479,12 +472,6 @@ pub fn db_list_content_full(source_ids: &Vec<i32>) -> Result<Vec<FullContent>, B
                     body_text: String::new(),
                 }
             };
-
-            // if m.clone().count() > 0 {
-            // 	println!("Found some media for {:?}", c.title);
-            // } else if medias.clone().count() > 0 {
-            // 	println!("Missed some media for {:?}", c.title);
-            // }
 
             let fc = FullContent {
                 content: c.to_owned(),

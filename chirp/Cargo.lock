@@ -1141,6 +1141,7 @@ dependencies = [
 [[package]]
 name = "labels"
 version = "0.1.0"
+source = "git+https://github.com/exquisiteOntologist/labels.git#ed4daf9c6071e210d24a85ca1f95d8f6aaabb8f3"
 
 [[package]]
 name = "lazy_static"

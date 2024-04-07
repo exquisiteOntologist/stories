@@ -21,7 +21,7 @@ tokio = { version = "1", features = ["full"] }
 typeshare = "1"
 # url may conflict with reqwest::Url
 url = "2"
-labels = { url = "https://github.com/exquisiteOntologist/labels" }
+labels = { git = "https://github.com/exquisiteOntologist/labels.git" }
 
 [lib]
 name = "chirp"

@@ -2,7 +2,7 @@ import React from "react";
 import { Navigate, Location, useNavigate } from "react-router-dom";
 import { routeCollectionView, routeSearch, routeSourcesEdit } from "../../../data/top-routes";
 import { Button } from "../../atoms/button";
-import { IconEllipsis } from "../../atoms/icons/ellipsis";
+// import { IconEllipsis } from "../../atoms/icons/ellipsis";
 // import { IconPaintRoller } from "../../atoms/icons/paint-roller";
 // import { IconSearch } from "../../atoms/icons/search";
 // import { IconShapes } from "../../atoms/icons/shapes";
@@ -15,7 +15,8 @@ import { chooseCollection, selectHistory, selectIsCustomizing, setIsCustomizing,
 import { IconFinger } from "../../atoms/icons/finger";
 import { IconDisembodied } from "../../atoms/icons/disembodied";
 import { IconDiagonalEye } from "../../atoms/icons/diagonal-eye";
-import { IconJoin } from "../../atoms/icons/join";
+// import { IconJoin } from "../../atoms/icons/join";
+import { IconOsCheek } from "../../atoms/icons/oscheek";
 
 const scrollToTop = () => scrollTo({ top: 0 });
 
@@ -64,7 +65,7 @@ const AppMenuActions: React.FC<AppHeaderProps> = ({ location }) => {
     console.log("is custom", isCustomizing);
 
     return (
-        <ButtonsGroup className="pointer-events-auto grow justify-end py-4 pl-20" expands={true} IconExpand={IconJoin} leftward={true}>
+        <ButtonsGroup className="pointer-events-auto grow justify-end py-4 pl-20" expands={true} IconExpand={IconOsCheek} leftward={true}>
             <Button
                 Icon={IconDiagonalEye}
                 label="Style"

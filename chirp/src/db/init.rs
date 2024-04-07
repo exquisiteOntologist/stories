@@ -231,7 +231,7 @@ pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
     )?;
 
     conn.execute(
-        "CREATE INDEX IF NOT EXISTS id_index on
+        "CREATE INDEX IF NOT EXISTS phrase_id_index on
             phrase (id)",
         (),
     )?;

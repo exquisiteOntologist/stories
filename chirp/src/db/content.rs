@@ -207,18 +207,15 @@ pub fn db_content_add_words_phrases(
     let clean_text = strip_html_tags_from_string(&cb.body_text);
     let phrases_tallies = collect_word_tallies_with_intersections(&clean_text);
 
-    let mut content_ids: Vec<i32> = Vec::new();
     let mut phrases: Vec<String> = Vec::new();
     let mut tallies: Vec<i32> = Vec::new();
 
     for (phrase, tally) in phrases_tallies {
         // println!("c {:1}, p {:2}, t {:3}", &cc_id, &phrase.join(" "), &tally);
-        content_ids.push(cc_id);
         phrases.push(phrase.join(" "));
         tallies.push(tally);
     }
 
-    let c_ids_r = create_rarray_values(content_ids);
     let phrases_r = create_rarray_values(phrases);
     let tallies_r = create_rarray_values(tallies);
 
@@ -249,22 +246,16 @@ pub fn db_content_add_words_phrases(
     let content_phrase_res = conn.prepare(
         "
             INSERT OR IGNORE INTO content_phrase(phrase_id, content_id, frequency)
-                SELECT phrase_id, content_id, frequency FROM (
-                    SELECT
-                        id AS phrase_id,
-                        ROW_NUMBER() OVER (
-                            ORDER BY id
-                        ) row_num
-                    FROM phrase WHERE phrase IN (SELECT * FROM rarray(?1))
-                    )A
+                SELECT phrase_id, content_id, frequency FROM
+                    (SELECT column1 as content_id FROM (VALUES (?2)))
                     JOIN (
                         SELECT
-                            value AS content_id,
+                            id AS phrase_id,
                             ROW_NUMBER() OVER (
-                                ORDER BY value
+                                ORDER BY id
                             ) row_num
-                        FROM (SELECT value FROM rarray(?2))
-                    )B USING (row_num)
+                        FROM phrase WHERE phrase IN (SELECT * FROM rarray(?1))
+                    )A
                     JOIN (
                         SELECT
                             value AS frequency,
@@ -272,7 +263,7 @@ pub fn db_content_add_words_phrases(
                                 ORDER BY value
                             ) row_num
                         FROM (SELECT value FROM rarray(?3))
-                    )C USING (row_num);
+                    )B USING (row_num);
         ",
         // the ORDER BY is wrong and only works because there is just 1 unique content_id being used,
         // and the phrases are sorted by frequency
@@ -285,14 +276,9 @@ pub fn db_content_add_words_phrases(
     }
 
     let mut content_phrase: Statement = content_phrase_res.unwrap();
-    if let Err(err) = content_phrase.execute(params![&phrases_r, &c_ids_r, &tallies_r]) {
+    if let Err(err) = content_phrase.execute(params![&phrases_r, &cc_id, &tallies_r]) {
         eprintln!("Failed to execute add content phrases {:?}", err);
-        eprintln!(
-            "lengths {:1} {:2} {:3}",
-            phrases_r.len(),
-            c_ids_r.len(),
-            tallies_r.len()
-        );
+        eprintln!("lengths {:1} {:3}", phrases_r.len(), tallies_r.len());
         _ = db_log_add(err.to_string().as_str());
         return Err(err.into());
     };

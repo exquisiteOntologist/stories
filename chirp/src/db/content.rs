@@ -306,7 +306,7 @@ pub fn db_content_retrieve(id: i32) -> Result<Content, Box<dyn Error>> {
 
     let mut content_query = conn.prepare("SELECT * FROM content WHERE id = :ID LIMIT 1")?;
     let id_string = id.to_string();
-    let named_params = [(":ID ", id_string.as_str())];
+    let named_params = [(":ID", id_string.as_str())];
     let content_res = db_map_content_query(&mut content_query, &named_params);
 
     if content_res.is_err() {
@@ -396,7 +396,7 @@ pub fn db_list_content_of_source(source_id: i32) -> Result<Vec<Content>, Box<dyn
 
     let mut content_list_query: Statement = conn.prepare(SQL_CONTENT_OF_SOURCE)?;
     let id_string = source_id.to_string();
-    let named_params = [(":ID ", id_string.as_str())];
+    let named_params = [(":ID", id_string.as_str())];
     let content_list_res = db_map_content_query(&mut content_list_query, &named_params);
 
     if content_list_res.is_err() {
@@ -498,7 +498,7 @@ pub fn db_content_bodies(content_ids: Vec<String>) -> Result<Vec<ContentBody>, B
     let bodies_res = db_map_content_body_query(&mut bodies_query, params.clone());
 
     if bodies_res.is_err() {
-        println!("Error retrieving content bodies ");
+        println!("Error retrieving content bodies");
         let err = bodies_res.unwrap_err();
         println!("{:?}", err);
         return Err(err);

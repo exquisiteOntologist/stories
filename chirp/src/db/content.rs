@@ -1,11 +1,13 @@
-use chrono::{DateTime, NaiveDateTime, Utc};
-use rusqlite::{Connection, Params, Statement};
-use std::error::Error;
-
 use super::{create_rarray_values, db_connect, load_rarray_table};
+use crate::db::db_log_add;
 use crate::entities::{Content, ContentBody, ContentMedia, FullContent, MediaKind};
-
-//                              2024-11-15 05:22:11.034340 UTC
+use crate::scraping::articles::strip_html_tags_from_string;
+use chrono::DateTime;
+use chrono::NaiveDateTime;
+use chrono::Utc;
+use labels::actions::collect_word_tallies_with_intersections;
+use rusqlite::{params, Connection, Params, Statement};
+use std::error::Error;
 //                              2023-10-07 13:46:54.605157 UTC
 const DATE_FROM_FORMAT: &str = "%Y-%m-%d %H:%M:%S%.f %Z";
 
@@ -34,13 +36,10 @@ pub fn db_map_content_query<P: Params>(
                 .unwrap_or_default()
                 .and_utc();
 
-        // println!("date published {:?}", &date_published);
-        // println!("date {:?}", date_published_date.naive_utc().time());
-
         Ok(Content {
             id: row.get(0)?,
             source_id: row.get(1)?,
-            title: content_title_clean(title), // row.get(2)?,
+            title: content_title_clean(title), // row.get(2),
             author: String::new(),
             url: row.get(3)?,
             date_published: date_published_date,
@@ -65,7 +64,7 @@ pub fn db_map_content_body_query<P: Params>(
     s: &mut Statement,
     p: P,
 ) -> Result<Vec<ContentBody>, Box<dyn Error>> {
-    // assumes used a SELECT *
+    // assumes used a SELECT * from content_body
     let mapped_bodies = s.query_map(p, |row| {
         Ok(ContentBody {
             id: row.get(0)?,
@@ -93,7 +92,7 @@ const SQL_DELETE_OLD_CONTENT: &str =
 
 pub fn db_content_save_space() -> Result<(), Box<dyn Error>> {
     let conn = db_connect()?;
-    if let Err(e) = conn.execute(&SQL_DELETE_OLD_CONTENT, []) {
+    if let Err(_e) = conn.execute(&SQL_DELETE_OLD_CONTENT, []) {
         println!("Error deleting old bodies from content_body");
     }
 
@@ -144,9 +143,10 @@ pub fn db_content_add(contents: Vec<FullContent>) -> Result<(), Box<dyn Error + 
             // wait
         }
 
+        // note the ID does not exist yet (not using GUIDs)
         let cc = c.content;
-        let b = c.content_body;
-        let m = c.content_media;
+        let cb = c.content_body;
+        let cm = c.content_media;
 
         let content_in_res = conn.execute(
 			"INSERT INTO content (source_id, title, url, date_published, date_retrieved) VALUES (?1, ?2, ?3, ?4, ?5) ON CONFLICT DO NOTHING",
@@ -160,7 +160,7 @@ pub fn db_content_add(contents: Vec<FullContent>) -> Result<(), Box<dyn Error + 
             return Ok(());
         }
 
-        if b.body_text.is_empty() && m.is_empty() {
+        if cb.body_text.is_empty() && cm.is_empty() {
             continue;
         }
 
@@ -178,14 +178,16 @@ pub fn db_content_add(contents: Vec<FullContent>) -> Result<(), Box<dyn Error + 
 
         let cc_id: i32 = cc_id_res.unwrap();
 
-        if b.body_text.is_empty() == false {
+        if cb.body_text.is_empty() == false {
             conn.execute(
 				"INSERT INTO content_body (content_id, body_text) VALUES (?1, ?2) ON CONFLICT DO NOTHING",
-				(cc_id, &b.body_text),
+				(cc_id, &cb.body_text),
 			)?;
+
+            _ = db_content_add_words_phrases(cc_id, cb);
         }
 
-        for mi in m.into_iter() {
+        for mi in cm.into_iter() {
             conn.execute(
 				"INSERT INTO content_media (content_id, src, kind) VALUES (?1, ?2, ?3) ON CONFLICT DO NOTHING",
 				(cc_id, &mi.src, 0 /* mi.kind */),
@@ -194,6 +196,97 @@ pub fn db_content_add(contents: Vec<FullContent>) -> Result<(), Box<dyn Error + 
     }
 
     _ = conn.close();
+
+    Ok(())
+}
+
+pub fn db_content_add_words_phrases(
+    cc_id: i32,
+    cb: ContentBody,
+) -> Result<(), Box<dyn Error + Send + Sync>> {
+    let clean_text = strip_html_tags_from_string(&cb.body_text);
+    let phrases_tallies = collect_word_tallies_with_intersections(&clean_text);
+
+    let mut phrases: Vec<String> = Vec::new();
+    let mut tallies: Vec<i32> = Vec::new();
+
+    for (phrase, tally) in phrases_tallies {
+        // println!("c {:1}, p {:2}, t {:3}", &cc_id, &phrase.join(" "), &tally);
+        phrases.push(phrase.join(" "));
+        tallies.push(tally);
+    }
+
+    let phrases_r = create_rarray_values(phrases);
+    let tallies_r = create_rarray_values(tallies);
+
+    let conn = db_connect()?;
+    load_rarray_table(&conn)?;
+    let phrases_insert_res = conn.prepare(
+        "
+            INSERT OR IGNORE INTO phrase(phrase)
+                SELECT value AS phrase FROM rarray(?1);
+        ",
+    );
+
+    if let Err(err) = &phrases_insert_res {
+        eprintln!("Failed to add phrases {:?}", err);
+        _ = db_log_add(err.to_string().as_str());
+        return Err(phrases_insert_res.unwrap_err().into());
+    }
+
+    let mut phrases_query: Statement = phrases_insert_res.unwrap();
+    if let Err(err) = phrases_query.execute(params![&phrases_r]) {
+        eprintln!("Failed to execute add phrases {:?}", err);
+        _ = db_log_add(err.to_string().as_str());
+        return Err(err.into());
+    };
+
+    let conn = db_connect()?;
+    load_rarray_table(&conn)?;
+    let content_phrase_res = conn.prepare(
+        "
+            INSERT OR IGNORE INTO content_phrase(phrase_id, content_id, frequency)
+                SELECT phrase_id, content_id, frequency FROM
+                    (SELECT column1 as content_id FROM (VALUES (?1)))
+                    JOIN (
+                        SELECT
+                            id AS phrase_id,
+                            ROW_NUMBER() OVER (
+                                ORDER BY id
+                            ) row_num
+                        FROM phrase WHERE phrase IN (SELECT * FROM rarray(?2))
+                    )A
+                    JOIN (
+                        SELECT
+                            value AS frequency,
+                            ROW_NUMBER() OVER (
+                                ORDER BY value
+                            ) row_num
+                        FROM (SELECT value FROM rarray(?3))
+                    )B USING (row_num);
+        ",
+        // the ORDER BY is wrong and only works because there is just 1 unique content_id being used,
+        // and the phrases are sorted by frequency
+    );
+
+    if let Err(err) = &content_phrase_res {
+        eprintln!("Failed to add phrases {:?}", err);
+        _ = db_log_add(err.to_string().as_str());
+        return Err(content_phrase_res.unwrap_err().into());
+    }
+
+    let mut content_phrase: Statement = content_phrase_res.unwrap();
+    if let Err(err) = content_phrase.execute(params![&cc_id, &phrases_r, &tallies_r]) {
+        eprintln!("Failed to execute add content phrases {:?}", err);
+        eprintln!(
+            "lengths {:1} {:2} {:3}",
+            &cc_id,
+            phrases_r.len(),
+            tallies_r.len()
+        );
+        _ = db_log_add(err.to_string().as_str());
+        return Err(err.into());
+    };
 
     Ok(())
 }
@@ -214,7 +307,7 @@ pub fn db_content_retrieve(id: i32) -> Result<Content, Box<dyn Error>> {
     let content = content_res?;
 
     if content.len() == 0 {
-        return Err("Content was not found".into());
+        return Err("Content was not found ".into());
     }
 
     let out = content.get(0).unwrap().to_owned();
@@ -233,7 +326,7 @@ pub fn db_contents_retrieve(content_ids: &Vec<i32>) -> Result<Vec<Content>, Box<
     let contents_res = db_map_content_query(&mut contents_query, [content_id_values]);
 
     if let Err(e) = contents_res {
-        println!("Error retrieving contents");
+        println!("Error retrieving contents ");
         println!("{:?}", e);
         return Err(e);
     }
@@ -257,7 +350,7 @@ pub fn db_check_content_existing_urls(
     let existing_urls_res = db_map_content_urls(&mut content_url_query, params.clone());
 
     if existing_urls_res.is_err() {
-        println!("Error retrieving existing content URLs");
+        println!("Error retrieving existing content URLs ");
         let err = existing_urls_res.unwrap_err();
         println!("{:?}", err);
         return Err(err);
@@ -353,9 +446,6 @@ pub fn db_list_content_full(source_ids: &Vec<i32>) -> Result<Vec<FullContent>, B
     let medias_res: Vec<ContentMedia> =
         db_map_content_media_query(&mut medias_query, params.clone())?;
 
-    // println!("bodies count {:?}", bodies_res.clone().len());
-    // println!("medias count {:?}", medias_res.clone().len());
-
     let mut bodies = bodies_res.into_iter();
     let medias = medias_res.into_iter();
 
@@ -373,12 +463,6 @@ pub fn db_list_content_full(source_ids: &Vec<i32>) -> Result<Vec<FullContent>, B
                     body_text: String::new(),
                 }
             };
-
-            // if m.clone().count() > 0 {
-            // 	println!("Found some media for {:?}", c.title);
-            // } else if medias.clone().count() > 0 {
-            // 	println!("Missed some media for {:?}", c.title);
-            // }
 
             let fc = FullContent {
                 content: c.to_owned(),

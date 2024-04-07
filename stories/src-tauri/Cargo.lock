@@ -587,6 +587,7 @@ dependencies = [
  "chrono",
  "directories",
  "futures",
+ "labels",
  "reqwest",
  "rss",
  "rusqlite",
@@ -1997,7 +1998,7 @@ dependencies = [
  "httpdate",
  "itoa 1.0.10",
  "pin-project-lite",
- "socket2 0.4.10",
+ "socket2 0.5.6",
  "tokio",
  "tower-service",
  "tracing",
@@ -2279,6 +2280,11 @@ checksum = "0de8b303297635ad57c9f5059fd9cee7a47f8e8daa09df0fcd07dd39fb22977f"
 dependencies = [
  "log",
 ]
+
+[[package]]
+name = "labels"
+version = "0.1.0"
+source = "git+https://github.com/exquisiteOntologist/labels.git#ed4daf9c6071e210d24a85ca1f95d8f6aaabb8f3"
 
 [[package]]
 name = "lazy_static"

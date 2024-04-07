@@ -1,5 +1,5 @@
 use ::futures::future::join_all;
-use chrono::{DateTime, Local};
+use chrono::Local;
 use rusqlite::Result;
 use std::error::Error;
 

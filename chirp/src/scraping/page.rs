@@ -1,15 +1,9 @@
-use reqwest::Client;
-use scraper::{Html, Selector};
-use std::{borrow::Borrow, collections::HashSet, error::Error, vec};
-use url::Url;
-
 use crate::{
-    db::db_check_content_existing_urls,
-    entities::{
-        Content, ContentBody, ContentMedia, FullContent, MediaKind, Source, SourceKind, WebPage,
-    },
-    utils::{fetch_url_to_string, fully_form_url, get_datetime_now},
+    entities::{Content, ContentBody, ContentMedia, FullContent, MediaKind, WebPage},
+    utils::{fetch_url_to_string, get_datetime_now},
 };
+use scraper::{Html, Selector};
+use std::{collections::HashSet, error::Error, vec};
 
 /// For a URL get the page doc, scrape the page, and return the Contents
 pub async fn contents_from_page(url: String) -> Result<FullContent, Box<dyn Error + Send + Sync>> {

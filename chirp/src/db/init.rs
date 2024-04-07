@@ -216,9 +216,53 @@ pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
             id           INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
             content_id   INTEGER NOT NULL UNIQUE,
             src          TEXT,
-            kind   INTEGER NOT NULL,
+            kind         INTEGER NOT NULL,
             FOREIGN KEY (content_id) REFERENCES content(id) ON DELETE CASCADE
         )",
+        (),
+    )?;
+
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS phrase (
+            id           INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+            phrase       TEXT NOT NULL
+        )",
+        (),
+    )?;
+
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS phrase_id_index on
+            phrase (id)",
+        (),
+    )?;
+
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS phrase_index on
+            phrase (phrase)",
+        (),
+    )?;
+
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS content_phrase (
+            id              INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+            phrase_id       INTEGER NOT NULL,
+            content_id      INTEGER NOT NULL,
+            frequency       INTEGER NOT NULL,
+            FOREIGN KEY (phrase_id) REFERENCES phrase(id) ON DELETE CASCADE,
+            FOREIGN KEY (content_id) REFERENCES content(id) ON DELETE CASCADE
+        )",
+        (),
+    )?;
+
+    conn.execute(
+        "CREATE UNIQUE INDEX IF NOT EXISTS phrase_to_content_index on
+            content_phrase (phrase_id, content_id)",
+        (),
+    )?;
+
+    conn.execute(
+        "CREATE UNIQUE INDEX IF NOT EXISTS content_to_phrase_index on
+            content_phrase (content_id, phrase_id)",
         (),
     )?;
 

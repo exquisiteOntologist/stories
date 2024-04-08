@@ -133,20 +133,26 @@ pub async fn parse_rss(
         })
         .collect();
 
-    let update_futures = rss_contents
-        .into_iter()
-        .map(|fc| enrich_rss_article_from_page(fc));
+    rss_contents = enrich_content_further(rss_contents).await;
 
-    rss_contents = join_all(update_futures)
+    return Ok((rss_source, rss_contents));
+}
+
+async fn enrich_content_further(mut fc_items: Vec<FullContent>) -> Vec<FullContent> {
+    let update_futures = fc_items
+        .into_iter()
+        .map(|fc| enrich_content_item_from_page(fc));
+
+    fc_items = join_all(update_futures)
         .await
         .into_iter()
         .map(|r_fc| r_fc.unwrap())
         .collect();
 
-    return Ok((rss_source, rss_contents));
+    fc_items
 }
 
-async fn enrich_rss_article_from_page<'a>(
+async fn enrich_content_item_from_page<'a>(
     mut fc: FullContent,
 ) -> Result<FullContent, Box<dyn Error + Send + Sync>> {
     let missing_media = fc.content_media.is_empty();

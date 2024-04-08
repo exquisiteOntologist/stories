@@ -4,6 +4,7 @@ use std::{borrow::Borrow, error::Error, str::FromStr};
 
 use crate::{
     entities::{Content, ContentBody, ContentMedia, FullContent, MediaKind, Source, SourceKind},
+    scraping::page::contents_from_page,
     utils::get_datetime_now,
 };
 
@@ -26,7 +27,7 @@ pub fn parse_rss_date(date_str: &str) -> DateTime<Utc> {
     new_date_utc
 }
 
-pub fn parse_rss(
+pub async fn parse_rss(
     s_id: &i32,
     url: &String,
     feed_text: &String,
@@ -51,7 +52,7 @@ pub fn parse_rss(
         data: vec![],
     };
 
-    let rss_contents: Vec<FullContent> = channel
+    let mut rss_contents: Vec<FullContent> = channel
         .items
         .into_iter()
         .map(|fc| {
@@ -93,6 +94,7 @@ pub fn parse_rss(
                         for (att_name, att_value) in ext.attrs {
                             // println!("att {:1} {:2}", &att_name, &att_value);
                             if &ext.name == "media:thumbnail" && att_name == "url" {
+                                // media:thumbnail is defined by MediaRSS
                                 content_media.push(ContentMedia {
                                     id: 0,
                                     content_id: 0,
@@ -130,6 +132,19 @@ pub fn parse_rss(
             };
         })
         .collect();
+
+    for fc in &mut rss_contents {
+        let missing_media = fc.content_media.is_empty();
+        let incomplete = missing_media && !fc.content.url.is_empty();
+        if !incomplete {
+            continue;
+        }
+        if let Ok(page) = contents_from_page(fc.content.url.clone()).await {
+            for media in page.content_media {
+                fc.content_media.push(media);
+            }
+        }
+    }
 
     return Ok((rss_source, rss_contents));
 }

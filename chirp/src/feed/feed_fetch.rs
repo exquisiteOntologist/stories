@@ -32,7 +32,7 @@ pub async fn feed_fetch(
         parse_atom(&source_id, &url, &feed_text)
     } else if is_rss {
         println!("Parsing RSS {:?}", &url);
-        parse_rss(&source_id, &url, &feed_text)
+        parse_rss(&source_id, &url, &feed_text).await
     } else {
         println!("Parsing website {:?}", &url);
         parse_website(&source_id, &url, &feed_text, &other_param).await

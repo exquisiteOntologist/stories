@@ -9,7 +9,7 @@ use crate::db::{
     db_sources_retrieve_outdated,
 };
 use crate::entities::{Source, SourceKind};
-use crate::feed::feed_fetch;
+use crate::feed::feed_fetch::feed_fetch_from_url;
 
 // The match expression in "actions.rs" not expecting "Send"
 pub async fn update_action() -> Result<(), Box<dyn Error>> {
@@ -39,7 +39,8 @@ pub async fn update_single_feed(source: &Source) -> Result<(), Box<dyn Error + S
         SourceKind::WEB => db_source_get_data_web_url_segment(&source.id).unwrap(),
     };
 
-    let res_f_fetch = feed_fetch(source.id, source.url.to_owned(), &fetch_other_param).await;
+    let res_f_fetch =
+        feed_fetch_from_url(source.id, source.url.to_owned(), &fetch_other_param).await;
     if res_f_fetch.is_err() {
         db_source_retrievals_update_failures(&source.id).unwrap();
         return Err(res_f_fetch.unwrap_err());

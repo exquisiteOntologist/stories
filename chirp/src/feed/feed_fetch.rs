@@ -1,12 +1,12 @@
 use crate::{
     db::db_log_add,
     entities::{FullContent, Source},
-    feed::{parse_atom, parse_rss, parse_website},
+    feed::{feed_atom::parse_atom, feed_rss::parse_rss, feed_website::parse_website},
     utils::fetch_url_to_string,
 };
 use std::error::Error;
 
-pub async fn feed_fetch(
+pub async fn feed_fetch_from_url(
     source_id: i32,
     url: String,
     other_param: &String,

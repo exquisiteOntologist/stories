@@ -11,6 +11,8 @@ use crate::{
     utils::fully_form_url,
 };
 
+use super::feed_enrichment::enrich_content_further;
+
 pub async fn parse_website(
     s_id: &i32,
     url: &String,
@@ -36,7 +38,7 @@ pub async fn parse_website(
         data: vec![("article_url_segment".into(), article_url_segment.into())],
     };
 
-    let website_contents_res: Result<Vec<FullContent>, Box<dyn Error>> =
+    let website_contents_res: Result<Vec<FullContent>, Box<dyn Error + Send + Sync>> =
         parse_web_articles(url, &doc_text, article_url_segment).await;
 
     if website_contents_res.is_err() {
@@ -44,7 +46,7 @@ pub async fn parse_website(
         return Err("Could not find or retrieve articles".into());
     }
 
-    let website_contents: Vec<FullContent> = website_contents_res
+    let mut website_contents: Vec<FullContent> = website_contents_res
         .unwrap()
         .into_iter()
         .map(|mut c| {
@@ -54,14 +56,18 @@ pub async fn parse_website(
         .into_iter()
         .collect::<Vec<FullContent>>();
 
+    website_contents = enrich_content_further(website_contents).await;
+
     Ok((website_source, website_contents))
 }
+
+const MAX_ARTICLES_TO_CRAWL: usize = 30;
 
 pub async fn parse_web_articles(
     url: &String,
     doc_text: &String,
     article_url_segment: &String,
-) -> Result<Vec<FullContent>, Box<dyn Error>> {
+) -> Result<Vec<FullContent>, Box<dyn Error + Send + Sync>> {
     let article_links = scrape_links(&doc_text, &article_url_segment.to_string()).unwrap();
     let article_urls: Vec<String> = article_links
         .into_iter()
@@ -87,6 +93,7 @@ pub async fn parse_web_articles(
                 .find(|existing_url| &url == existing_url)
                 .is_none()
         })
+        .take(MAX_ARTICLES_TO_CRAWL)
         .collect();
 
     println!("Urls to crawl {:?}", urls_to_crawl.len());

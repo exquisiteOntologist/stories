@@ -1,13 +1,13 @@
 use chrono::{DateTime, Utc};
-use futures::future::join_all;
 use rss::Channel;
 use std::{error::Error, str::FromStr};
 
 use crate::{
     entities::{Content, ContentBody, ContentMedia, FullContent, MediaKind, Source, SourceKind},
-    scraping::page::contents_from_page,
     utils::get_datetime_now,
 };
+
+use super::feed_enrichment::enrich_content_further;
 
 // https://docs.rs/chrono/latest/chrono/format/strftime/index.html
 // "Thu, 13 Apr 2023 08:00:00 +0100"
@@ -136,35 +136,4 @@ pub async fn parse_rss(
     rss_contents = enrich_content_further(rss_contents).await;
 
     return Ok((rss_source, rss_contents));
-}
-
-async fn enrich_content_further(mut fc_items: Vec<FullContent>) -> Vec<FullContent> {
-    let update_futures = fc_items
-        .into_iter()
-        .map(|fc| enrich_content_item_from_page(fc));
-
-    fc_items = join_all(update_futures)
-        .await
-        .into_iter()
-        .map(|r_fc| r_fc.unwrap())
-        .collect();
-
-    fc_items
-}
-
-async fn enrich_content_item_from_page<'a>(
-    mut fc: FullContent,
-) -> Result<FullContent, Box<dyn Error + Send + Sync>> {
-    let missing_media = fc.content_media.is_empty();
-    let incomplete = missing_media && !fc.content.url.is_empty();
-    if !incomplete {
-        return Ok(fc);
-    }
-    if let Ok(page) = contents_from_page(fc.content.url.clone()).await {
-        fc.content.title = page.content.title;
-        for media in page.content_media {
-            fc.content_media.push(media);
-        }
-    }
-    return Ok(fc);
 }

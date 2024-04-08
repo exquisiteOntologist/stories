@@ -3,9 +3,11 @@ use rss::Channel;
 use std::{error::Error, str::FromStr};
 
 use crate::{
-    entities::{Content, ContentBody, FullContent, Source, SourceKind},
+    entities::{Content, ContentBody, ContentMedia, FullContent, MediaKind, Source, SourceKind},
     utils::get_datetime_now,
 };
+
+use super::feed_enrichment::enrich_content_further;
 
 // https://docs.rs/chrono/latest/chrono/format/strftime/index.html
 // "Thu, 13 Apr 2023 08:00:00 +0100"
@@ -26,16 +28,15 @@ pub fn parse_rss_date(date_str: &str) -> DateTime<Utc> {
     new_date_utc
 }
 
-pub fn parse_rss(
+pub async fn parse_rss(
     s_id: &i32,
     url: &String,
     feed_text: &String,
 ) -> Result<(Source, Vec<FullContent>), Box<dyn Error + Send + Sync>> {
     let channel_result = Channel::from_str(&feed_text);
 
-    if channel_result.is_err() {
+    if let Err(err) = channel_result {
         println!("Encountered error. Possibly invalid feed.");
-        let err = channel_result.unwrap_err();
         println!("{:?}", err);
         return Err(Box::new(err));
     }
@@ -51,27 +52,88 @@ pub fn parse_rss(
         data: vec![],
     };
 
-    let rss_contents: Vec<FullContent> = channel
+    let mut rss_contents: Vec<FullContent> = channel
         .items
         .into_iter()
-        .map(|fc| FullContent {
-            content: Content {
-                id: 0,
-                source_id: s_id | 0,
-                title: fc.title.unwrap_or_default(),
-                author: fc.author.unwrap_or_default(),
-                url: fc.link.unwrap_or_default(),
-                date_published: parse_rss_date(&fc.pub_date.unwrap_or(String::new())),
-                date_retrieved: get_datetime_now(),
-            },
-            content_body: ContentBody {
-                id: 0,
-                content_id: 0,
-                body_text: fc.content.unwrap_or(fc.description.unwrap_or_default()),
-            },
-            content_media: vec![],
+        .map(|fc| {
+            let mut content_media: Vec<ContentMedia> = vec![];
+
+            if let Some(enclosure) = fc.enclosure {
+                content_media.push(ContentMedia {
+                    id: 0,
+                    content_id: 0,
+                    src: enclosure.url,
+                    // there probably won't ever be a video here based on parser, so optimize op
+                    kind: match enclosure.mime_type.as_str() {
+                        "image/jpeg" => MediaKind::IMAGE,
+                        "image/png" => MediaKind::IMAGE,
+                        "video" => MediaKind::VIDEO,
+                        _ => MediaKind::IMAGE,
+                    },
+                })
+            }
+
+            if let Some(atom) = fc.atom_ext {
+                // atom features (the other "feed_atom.rs" is for pure atom)
+                for atom_link in atom.links() {
+                    let mimetype = atom_link.mime_type().unwrap();
+                    println!("atom LINK ! ! ! {:1} {:2}", mimetype, &atom_link.href);
+                }
+            }
+
+            if let Some(_dublin) = fc.dublin_core_ext {
+                // data for Dublin, academia
+            }
+
+            for (_ext_a_name, ext_a_extensions) in fc.extensions {
+                // println!("Found extension");
+                // println!("{:?}", &ext_a_name);
+                for (_ext_b_name, ext_b_extensions) in ext_a_extensions {
+                    // println!("ext ([a]:b) {:1} {:2}", &ext_a_name, ext_b_name);
+                    for ext in ext_b_extensions {
+                        for (att_name, att_value) in ext.attrs {
+                            // println!("att {:1} {:2}", &att_name, &att_value);
+                            if &ext.name == "media:thumbnail" && att_name == "url" {
+                                // media:thumbnail is defined by MediaRSS
+                                content_media.push(ContentMedia {
+                                    id: 0,
+                                    content_id: 0,
+                                    src: att_value,
+                                    kind: MediaKind::IMAGE,
+                                });
+                            }
+                        }
+
+                        // ...for child in ext.children
+                    }
+                }
+            }
+
+            for media in &content_media {
+                println!("Image in RSS feed {:?}", &media.src);
+            }
+
+            return FullContent {
+                content: Content {
+                    id: 0,
+                    source_id: s_id | 0,
+                    title: fc.title.unwrap_or_default(),
+                    author: fc.author.unwrap_or_default(),
+                    url: fc.link.unwrap_or_default(),
+                    date_published: parse_rss_date(&fc.pub_date.unwrap_or(String::new())),
+                    date_retrieved: get_datetime_now(),
+                },
+                content_body: ContentBody {
+                    id: 0,
+                    content_id: 0,
+                    body_text: fc.content.unwrap_or(fc.description.unwrap_or_default()),
+                },
+                content_media,
+            };
         })
         .collect();
+
+    rss_contents = enrich_content_further(rss_contents).await;
 
     return Ok((rss_source, rss_contents));
 }

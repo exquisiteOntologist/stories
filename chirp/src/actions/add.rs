@@ -1,8 +1,11 @@
-use std::error::Error;
-use rusqlite::Result;
-use crate::db::{db_source_add, db_content_add, db_source_get_id, db_source_retrievals_add, db_source_retrievals_update_success, db_source_add_data, db_source_get};
+use crate::db::{
+    db_content_add, db_source_add, db_source_add_data, db_source_get, db_source_get_id,
+    db_source_retrievals_add, db_source_retrievals_update_success,
+};
 use crate::entities::{FullContent, Source};
-use crate::feed::feed_fetch;
+use crate::feed::feed_fetch::feed_fetch_from_url;
+use rusqlite::Result;
+use std::error::Error;
 
 pub async fn source_add_cli(args: Vec<String>) -> Result<(), Box<dyn Error>> {
     if args.len() < 3 {
@@ -22,10 +25,14 @@ pub async fn source_add_cli(args: Vec<String>) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-pub async fn source_add(url: &String, other_param: &String, collection_id: &i32) -> Result<Source, Box<dyn Error>> {
+pub async fn source_add(
+    url: &String,
+    other_param: &String,
+    collection_id: &i32,
+) -> Result<Source, Box<dyn Error>> {
     println!("Adding source \"{}\"", url);
 
-    let feed_result = feed_fetch(0, url.to_owned(), &other_param).await;
+    let feed_result = feed_fetch_from_url(0, url.to_owned(), &other_param).await;
 
     if let Err(err) = feed_result {
         // _ = db_log_add(err.to_string().as_str()); // already logged in feed_fetch
@@ -58,7 +65,7 @@ pub async fn source_add(url: &String, other_param: &String, collection_id: &i32)
         let dc_item = FullContent {
             content: c,
             content_body: fc_item.content_body,
-            content_media: fc_item.content_media
+            content_media: fc_item.content_media,
         };
 
         dc_items.push(dc_item);

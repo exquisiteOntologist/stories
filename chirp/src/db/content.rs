@@ -123,7 +123,7 @@ pub fn db_map_content_media_query<P: Params>(
 pub fn db_map_content_urls<P: Params>(
     s: &mut Statement,
     p: P,
-) -> Result<Vec<String>, Box<dyn Error>> {
+) -> Result<Vec<String>, Box<dyn Error + Send + Sync>> {
     // assumes used a "SELECT * FROM content"
     let content_urls_map = s.query_map(p, |row| Ok(row.get(0)?))?;
 
@@ -338,7 +338,7 @@ pub fn db_contents_retrieve(content_ids: &Vec<i32>) -> Result<Vec<Content>, Box<
 
 pub fn db_check_content_existing_urls(
     content_urls: &Vec<String>,
-) -> Result<Vec<String>, Box<dyn Error>> {
+) -> Result<Vec<String>, Box<dyn Error + Send + Sync>> {
     let conn: Connection = db_connect()?;
     load_rarray_table(&conn)?;
 
@@ -349,9 +349,8 @@ pub fn db_check_content_existing_urls(
         conn.prepare("SELECT url FROM content WHERE url IN (SELECT * FROM rarray(?1))")?;
     let existing_urls_res = db_map_content_urls(&mut content_url_query, params.clone());
 
-    if existing_urls_res.is_err() {
+    if let Err(err) = existing_urls_res {
         println!("Error retrieving existing content URLs ");
-        let err = existing_urls_res.unwrap_err();
         println!("{:?}", err);
         return Err(err);
     }

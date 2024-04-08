@@ -55,7 +55,7 @@ pub fn parse_rss(
         .items
         .into_iter()
         .map(|fc| {
-            let mut content_media = vec![];
+            let mut content_media: Vec<ContentMedia> = vec![];
 
             if let Some(enclosure) = fc.enclosure {
                 content_media.push(ContentMedia {
@@ -84,42 +84,25 @@ pub fn parse_rss(
                 // data for Dublin, academia
             }
 
-            for extension in fc.extensions {
-                println!("Found extension");
-                println!("{:?}", &extension.0);
-                for (es, ev) in extension.1 {
-                    println!("ext ([a]:b) {:1} {:2}", &extension.0, es);
-
-                    for ext in ev {
-                        println!(
-                            "ext (a:[b]) {:1} {:2} {:3} {:4} {:5}",
-                            &extension.0,
-                            &ext.name,
-                            &ext.value.clone().unwrap_or_default(),
-                            &ext.attrs.len(),
-                            &ext.children.len()
-                        );
-
-                        for att in ext.attrs {
-                            println!("att {:1} {:2}", &att.0, &att.1);
-
-                            if &ext.name == "media:thumbnail" && att.0 == "url" {
+            for (_ext_a_name, ext_a_extensions) in fc.extensions {
+                // println!("Found extension");
+                // println!("{:?}", &ext_a_name);
+                for (_ext_b_name, ext_b_extensions) in ext_a_extensions {
+                    // println!("ext ([a]:b) {:1} {:2}", &ext_a_name, ext_b_name);
+                    for ext in ext_b_extensions {
+                        for (att_name, att_value) in ext.attrs {
+                            // println!("att {:1} {:2}", &att_name, &att_value);
+                            if &ext.name == "media:thumbnail" && att_name == "url" {
                                 content_media.push(ContentMedia {
                                     id: 0,
                                     content_id: 0,
-                                    src: att.1,
+                                    src: att_value,
                                     kind: MediaKind::IMAGE,
                                 });
                             }
                         }
 
-                        // for child in ext.children {
-                        //     // println!("child {:1}", &child.0);
-
-                        //     for child_ext in child.1 {
-                        //         // println!("child ext {:1}", &child_ext.name())
-                        //     }
-                        // }
+                        // ...for child in ext.children
                     }
                 }
             }

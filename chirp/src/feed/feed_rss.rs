@@ -1,6 +1,7 @@
 use chrono::{DateTime, Utc};
+use futures::future::join_all;
 use rss::Channel;
-use std::{borrow::Borrow, error::Error, str::FromStr};
+use std::{error::Error, str::FromStr};
 
 use crate::{
     entities::{Content, ContentBody, ContentMedia, FullContent, MediaKind, Source, SourceKind},
@@ -34,9 +35,8 @@ pub async fn parse_rss(
 ) -> Result<(Source, Vec<FullContent>), Box<dyn Error + Send + Sync>> {
     let channel_result = Channel::from_str(&feed_text);
 
-    if channel_result.is_err() {
+    if let Err(err) = channel_result {
         println!("Encountered error. Possibly invalid feed.");
-        let err = channel_result.unwrap_err();
         println!("{:?}", err);
         return Err(Box::new(err));
     }
@@ -133,18 +133,31 @@ pub async fn parse_rss(
         })
         .collect();
 
-    for fc in &mut rss_contents {
-        let missing_media = fc.content_media.is_empty();
-        let incomplete = missing_media && !fc.content.url.is_empty();
-        if !incomplete {
-            continue;
-        }
-        if let Ok(page) = contents_from_page(fc.content.url.clone()).await {
-            for media in page.content_media {
-                fc.content_media.push(media);
-            }
-        }
-    }
+    let update_futures = rss_contents
+        .into_iter()
+        .map(|fc| enrich_rss_article_from_page(fc));
+
+    rss_contents = join_all(update_futures)
+        .await
+        .into_iter()
+        .map(|r_fc| r_fc.unwrap())
+        .collect();
 
     return Ok((rss_source, rss_contents));
+}
+
+async fn enrich_rss_article_from_page<'a>(
+    mut fc: FullContent,
+) -> Result<FullContent, Box<dyn Error + Send + Sync>> {
+    let missing_media = fc.content_media.is_empty();
+    let incomplete = missing_media && !fc.content.url.is_empty();
+    if !incomplete {
+        return Ok(fc);
+    }
+    if let Ok(page) = contents_from_page(fc.content.url.clone()).await {
+        for media in page.content_media {
+            fc.content_media.push(media);
+        }
+    }
+    return Ok(fc);
 }

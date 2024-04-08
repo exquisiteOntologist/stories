@@ -91,10 +91,6 @@ pub async fn parse_web_articles(
 
     println!("Urls to crawl {:?}", urls_to_crawl.len());
 
-    // let articles_being_retrieved = urls_to_crawl
-    //     .into_iter()
-    //     .map(|p_url| contents_from_page(p_url.to_string()));
-
     let articles_being_retrieved = urls_to_crawl
         .into_iter()
         .map(|p_url| contents_from_article(p_url.to_string()));

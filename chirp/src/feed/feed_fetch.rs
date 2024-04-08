@@ -20,6 +20,7 @@ pub async fn feed_fetch(
     }
     let feed_text = feed_text_res.unwrap();
 
+    // Note that even if a feed mentions "atom" it's more likely to be RSS if it doesn't begin with "<feed"
     let is_atom = feed_text.contains(&"<feed");
     let is_rss = !is_atom && feed_text.contains(&"<rss")
         || feed_text.contains(&"http://purl.org/rss/1.0/")

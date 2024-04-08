@@ -154,11 +154,13 @@ pub struct ContentBody {
 #[derive(Serialize)]
 pub enum MediaKind {
     IMAGE,
+    VIDEO,
 }
 
 pub fn select_media_kind(i: i32) -> MediaKind {
     match i {
         0 => MediaKind::IMAGE,
+        1 => MediaKind::VIDEO,
         _ => MediaKind::IMAGE,
     }
 }
@@ -166,6 +168,7 @@ pub fn select_media_kind(i: i32) -> MediaKind {
 pub fn get_media_kind_index(mk: MediaKind) -> i32 {
     match mk {
         MediaKind::IMAGE => 0,
+        MediaKind::VIDEO => 1,
     }
 }
 

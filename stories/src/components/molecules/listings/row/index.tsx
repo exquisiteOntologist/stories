@@ -20,36 +20,34 @@ export const ListingRow: React.FC<ListingRowProps> = ({ title, linkUrl, action, 
     );
 
     const titleInner = linkUrl ? (
-        <a href={linkUrl} target="_blank">
+        <a className="block" href={linkUrl} target="_blank">
             {actionInner}
         </a>
     ) : (
         action && (
-            <span className="cursor-pointer" onClick={action}>
+            <span className="block cursor-pointer" onClick={action}>
                 {actionInner}
             </span>
         )
+    );
+
+    const nodeRecency = content?.date_published && (
+        <span className="ml-2 text-sm text-gray-300">
+            <RelativeDate date={content?.date_published} />
+        </span>
     );
 
     const nodeTitleLink = (
         <span className="truncate">
             {titleInner}
             <SourceLink source={source} isBlock={false} />
-        </span>
-    );
-
-    const nodeRecency = content?.date_published && (
-        <span className="ml-2 text-gray-300">
-            <RelativeDate date={content?.date_published} />
+            {nodeRecency}
         </span>
     );
 
     return (
-        <motion.article {...motionProps} className="group relative select-none border-b border-gray-100 dark:border-slate-800">
-            <h1 className={`flex text-base ${bold ? "font-bold" : ""} mx-0 my-2 whitespace-nowrap dark:text-slate-300`}>
-                {nodeTitleLink}
-                {nodeRecency}
-            </h1>
+        <motion.article {...motionProps} className="group relative select-none border-gray-100 dark:border-slate-800">
+            <h1 className={`flex text-base ${bold ? "font-bold" : ""} mx-0 ${source ? "my-4" : "my-2"} whitespace-nowrap dark:text-slate-300`}>{nodeTitleLink}</h1>
         </motion.article>
     );
 };

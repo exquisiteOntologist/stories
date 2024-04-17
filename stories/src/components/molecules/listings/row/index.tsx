@@ -22,9 +22,10 @@ export const ListingRow: React.FC<ListingRowProps> = ({ title, linkUrl, action, 
     );
 
     // top-1/2 -translate-y-1/2
+    // transition-all duration-75
     const actionBookmark = (
-        <button className="absolute -left-6 mr-2">
-            <IconBookmark />
+        <button className="absolute -left-6 right-full pr-2 bg-transparent text-rose-500 opacity-0 group-hover:opacity-100">
+            <IconBookmark active={Math.random() > 0.5} />
         </button>
     );
 
@@ -55,9 +56,9 @@ export const ListingRow: React.FC<ListingRowProps> = ({ title, linkUrl, action, 
     );
 
     return (
-        <motion.article {...motionProps} className="group relative select-none border-gray-100 dark:border-slate-800">
+        <motion.article {...motionProps} className="group relative bg-transparent border-gray-100 dark:border-slate-800">
             {linkUrl && actionBookmark}
-            <h1 className={`flex text-base ${bold ? "font-bold" : ""} mx-0 ${source ? "my-4" : "my-2"} whitespace-nowrap dark:text-slate-300`}>{nodeTitleLink}</h1>
+            <h1 className={`flex text-base ${bold ? "font-bold" : ""} mx-0 ${source ? "my-4" : "my-2"} whitespace-nowrap dark:text-slate-300 select-none`}>{nodeTitleLink}</h1>
         </motion.article>
     );
 };

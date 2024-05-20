@@ -225,7 +225,7 @@ pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
     conn.execute(
         "CREATE TABLE IF NOT EXISTS phrase (
             id           INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
-            phrase       TEXT NOT NULL
+            phrase       TEXT NOT NULL UNIQUE
         )",
         (),
     )?;

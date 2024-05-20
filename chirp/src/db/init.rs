@@ -243,6 +243,12 @@ pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
     )?;
 
     conn.execute(
+        "ALTER TABLE phrase
+            ADD UNIQUE (phrase);",
+        (),
+    )?;
+
+    conn.execute(
         "CREATE TABLE IF NOT EXISTS content_phrase (
             id              INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
             phrase_id       INTEGER NOT NULL,

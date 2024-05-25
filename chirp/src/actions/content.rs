@@ -1,7 +1,9 @@
 use std::error::Error;
 
 use crate::{
-    db::{db_content_bodies, db_list_content, db_list_content_of_sources, db_list_content_full},
+    db::content::{
+        db_content_bodies, db_list_content, db_list_content_full, db_list_content_of_sources,
+    },
     entities::{self},
 };
 

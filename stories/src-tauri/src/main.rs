@@ -9,7 +9,7 @@ pub use commands::*;
 
 #[tokio::main]
 async fn main() {
-    _ = chirp::db::db_init();
+    _ = chirp::db::init::db_init();
     println!("finished db init");
 
     tauri::Builder::default()

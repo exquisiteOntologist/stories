@@ -12,7 +12,7 @@ pub fn list_content(source_ids: Vec<i32>) -> Result<Vec<ContentDto>, String> {
     let fc = fc_results.unwrap();
     let c_dto = fc
         .into_iter()
-        .map(chirp::entities::full_content_to_content_dto)
+        .map(chirp::entities::dto_maps::full_content_to_content_dto)
         .collect();
 
     Ok(c_dto)

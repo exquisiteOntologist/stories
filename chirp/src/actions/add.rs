@@ -1,6 +1,7 @@
 use crate::db::{
-    db_content_add, db_source_add, db_source_add_data, db_source_get, db_source_get_id,
-    db_source_retrievals_add, db_source_retrievals_update_success,
+    content::db_content_add,
+    retrievals::{db_source_retrievals_add, db_source_retrievals_update_success},
+    source::{db_source_add, db_source_add_data, db_source_get, db_source_get_id},
 };
 use crate::entities::{FullContent, Source};
 use crate::feed::feed_fetch::feed_fetch_from_url;

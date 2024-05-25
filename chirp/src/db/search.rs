@@ -1,7 +1,18 @@
-use crate::{entities::{Content, Source, ContentBody, SearchResultsDto, SourceDto, ContentDto, source_to_dto, content_to_dto, Collection}, db::{db_query_as_like, db_map_sources_query, db_query_as_like_exact, db_map_content_query, db_map_content_body_query}};
-use std::{error::Error};
+use super::{
+    collection::db_map_collection_query, content::db_contents_retrieve, utils::db_connect,
+};
+use crate::{
+    db::{
+        content::db_map_content_body_query, content::db_map_content_query,
+        source::db_map_sources_query, utils::db_query_as_like, utils::db_query_as_like_exact,
+    },
+    entities::{
+        dto_maps::content_to_dto, dto_maps::source_to_dto, Collection, Content, ContentBody,
+        ContentDto, SearchResultsDto, Source, SourceDto,
+    },
+};
 use rusqlite::Connection;
-use super::{db_connect, db_map_collection_query, db_contents_retrieve};
+use std::error::Error;
 
 pub fn db_search(user_query: &String) -> Result<SearchResultsDto, Box<dyn Error>> {
     let conn = db_connect()?;
@@ -10,12 +21,16 @@ pub fn db_search(user_query: &String) -> Result<SearchResultsDto, Box<dyn Error>
     let sources: Vec<Source> = db_search_sources(&conn, user_query)?;
     let sources_dtos: Vec<SourceDto> = sources.into_iter().map(source_to_dto).collect();
     let contents: Vec<Content> = db_search_content(&conn, user_query)?;
-    let contents_match_titles_dtos: Vec<ContentDto> = contents.into_iter().map(content_to_dto).collect();
+    let contents_match_titles_dtos: Vec<ContentDto> =
+        contents.into_iter().map(content_to_dto).collect();
     let bodies: Vec<ContentBody> = db_search_content_body(&conn, user_query)?;
     let body_content_ids: Vec<i32> = bodies.into_iter().map(|b| b.content_id).collect();
     let contents_of_body_matches: Vec<Content> = db_contents_retrieve(&body_content_ids)?;
-    let contents_of_bodies_dtos: Vec<ContentDto> = contents_of_body_matches.into_iter().map(content_to_dto).collect();
-    
+    let contents_of_bodies_dtos: Vec<ContentDto> = contents_of_body_matches
+        .into_iter()
+        .map(content_to_dto)
+        .collect();
+
     let mut contents_all_dtos: Vec<ContentDto> = vec![];
     contents_all_dtos.append(&mut contents_match_titles_dtos.clone());
     contents_all_dtos.append(&mut contents_of_bodies_dtos.clone());
@@ -39,108 +54,120 @@ pub fn db_search(user_query: &String) -> Result<SearchResultsDto, Box<dyn Error>
         entity_chemicals: vec![],
         entity_materials: vec![],
         entity_concepts: vec![],
-        mean_temperament: 1
+        mean_temperament: 1,
     };
 
     Ok(results)
 }
 
-pub fn db_search_collections(conn: &Connection, user_query: &String) -> Result<Vec<Collection>, Box<dyn Error>> {
+pub fn db_search_collections(
+    conn: &Connection,
+    user_query: &String,
+) -> Result<Vec<Collection>, Box<dyn Error>> {
     // Search based on like, but give higher sort order to exact sequence
     let mut collections_query = conn.prepare(
         "
             SELECT *
-            FROM collection 
-            WHERE name LIKE :Q 
-            ORDER BY CASE 
-                WHEN name LIKE :EQ THEN 0 
-                WHEN name LIKE :Q THEN 1 
-                ELSE 2 
-            END 
-            LIMIT 1000 
-        "
+            FROM collection
+            WHERE name LIKE :Q
+            ORDER BY CASE
+                WHEN name LIKE :EQ THEN 0
+                WHEN name LIKE :Q THEN 1
+                ELSE 2
+            END
+            LIMIT 1000
+        ",
     )?;
     let search_for_likely = db_query_as_like(user_query);
     let search_for_like_exact = db_query_as_like_exact(user_query);
     let named_params = [
         (":Q", search_for_likely.as_str()),
-        (":EQ", search_for_like_exact.as_str())
+        (":EQ", search_for_like_exact.as_str()),
     ];
     let collections = db_map_collection_query(&mut collections_query, &named_params)?;
 
     Ok(collections)
 }
 
-pub fn db_search_sources(conn: &Connection, user_query: &String) -> Result<Vec<Source>, Box<dyn Error>> {
+pub fn db_search_sources(
+    conn: &Connection,
+    user_query: &String,
+) -> Result<Vec<Source>, Box<dyn Error>> {
     // Search based on like, but give higher sort order to exact sequence
     let mut sources_query = conn.prepare(
         "
             SELECT *
-            FROM source 
-            WHERE name LIKE :Q OR url LIKE :Q OR site_url LIKE :Q 
-            ORDER BY CASE 
-                WHEN name LIKE :EQ OR url LIKE :EQ OR site_url LIKE :EQ THEN 0 
-                WHEN name LIKE :Q OR url LIKE :Q OR site_url LIKE :Q THEN 1 
-                ELSE 2 
-            END 
-            LIMIT 1000 
-        "
+            FROM source
+            WHERE name LIKE :Q OR url LIKE :Q OR site_url LIKE :Q
+            ORDER BY CASE
+                WHEN name LIKE :EQ OR url LIKE :EQ OR site_url LIKE :EQ THEN 0
+                WHEN name LIKE :Q OR url LIKE :Q OR site_url LIKE :Q THEN 1
+                ELSE 2
+            END
+            LIMIT 1000
+        ",
     )?;
     let search_for_likely = db_query_as_like(user_query);
     let search_for_like_exact = db_query_as_like_exact(user_query);
     let named_params = [
         (":Q", search_for_likely.as_str()),
-        (":EQ", search_for_like_exact.as_str())
+        (":EQ", search_for_like_exact.as_str()),
     ];
     let sources = db_map_sources_query(&mut sources_query, &named_params)?;
 
     Ok(sources)
 }
 
-pub fn db_search_content(conn: &Connection, user_query: &String) -> Result<Vec<Content>, Box<dyn Error>> {
+pub fn db_search_content(
+    conn: &Connection,
+    user_query: &String,
+) -> Result<Vec<Content>, Box<dyn Error>> {
     // Search based on like, but give higher sort order to exact sequence
     let mut content_query = conn.prepare(
         "
-            SELECT * 
-            FROM content 
-            WHERE title LIKE :Q OR url LIKE :Q 
-            ORDER BY CASE 
-                WHEN title LIKE :EQ OR url LIKE :EQ THEN 0 
-                WHEN title LIKE :Q OR url LIKE :Q THEN 1 
-                ELSE 2 
-            END 
-            LIMIT 1000"
+            SELECT *
+            FROM content
+            WHERE title LIKE :Q OR url LIKE :Q
+            ORDER BY CASE
+                WHEN title LIKE :EQ OR url LIKE :EQ THEN 0
+                WHEN title LIKE :Q OR url LIKE :Q THEN 1
+                ELSE 2
+            END
+            LIMIT 1000",
     )?;
     let search_for_likely = db_query_as_like(user_query);
     let search_for_like_exact = db_query_as_like_exact(user_query);
     let named_params = [
         (":Q", search_for_likely.as_str()),
-        (":EQ", search_for_like_exact.as_str())
+        (":EQ", search_for_like_exact.as_str()),
     ];
     let content = db_map_content_query(&mut content_query, &named_params)?;
 
     Ok(content)
 }
 
-pub fn db_search_content_body(conn: &Connection, user_query: &String) -> Result<Vec<ContentBody>, Box<dyn Error>> {
+pub fn db_search_content_body(
+    conn: &Connection,
+    user_query: &String,
+) -> Result<Vec<ContentBody>, Box<dyn Error>> {
     // Search based on like, but give higher sort order to exact sequence
     let mut content_query = conn.prepare(
         "
-            SELECT * 
-            FROM content_body 
-            WHERE body_text LIKE :Q 
-            ORDER BY CASE 
-                WHEN body_text LIKE :EQ THEN 0 
-                WHEN body_text LIKE :Q THEN 1 
-                ELSE 2 
-            END 
-            LIMIT 1000"
+            SELECT *
+            FROM content_body
+            WHERE body_text LIKE :Q
+            ORDER BY CASE
+                WHEN body_text LIKE :EQ THEN 0
+                WHEN body_text LIKE :Q THEN 1
+                ELSE 2
+            END
+            LIMIT 1000",
     )?;
     let search_for_likely = db_query_as_like(user_query);
     let search_for_like_exact = db_query_as_like_exact(user_query);
     let named_params = [
         (":Q", search_for_likely.as_str()),
-        (":EQ", search_for_like_exact.as_str())
+        (":EQ", search_for_like_exact.as_str()),
     ];
     let bodies = db_map_content_body_query(&mut content_query, &named_params)?;
 

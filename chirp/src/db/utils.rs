@@ -4,19 +4,22 @@ use directories::ProjectDirs;
 use rusqlite::{types::Value, Connection};
 
 pub fn db_connect() -> Result<Connection, rusqlite::Error> {
-    let p = db_path_get().unwrap();
+    let path = db_path_get().unwrap();
 
     // https://github.com/rusqlite/rusqlite#usage
-    let conn = Connection::open(p);
-    if conn.is_err() {
-        println!("DB connection failed {:?}", &conn.as_ref().err());
+    let conn = Connection::open(path);
+    // if let Err(ref e) = conn {
+    if let Err(e) = conn {
+        eprint!("DB connection failed: {:?}\n", e);
+        // return Err("DB connection failed");
+        return Err(e);
     }
-    conn
+    Ok(conn.unwrap())
 }
 
 pub fn db_path_get() -> Result<String, Box<()>> {
     // "com.stories.dev" same as "CFBundleIdentifier"
-    let project_dirs = ProjectDirs::from("com", "stories",  "dev").unwrap();
+    let project_dirs = ProjectDirs::from("com", "stories", "dev").unwrap();
 
     // a lot of lifetime problems make the code inelegant
     let dirs = project_dirs;

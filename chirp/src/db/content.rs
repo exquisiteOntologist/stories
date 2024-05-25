@@ -1,5 +1,4 @@
-use super::{create_rarray_values, db_connect, load_rarray_table};
-use crate::db::db_log_add;
+use crate::db::logging::db_log_add;
 use crate::entities::{Content, ContentBody, ContentMedia, FullContent, MediaKind};
 use crate::scraping::articles::strip_html_tags_from_string;
 use chrono::DateTime;
@@ -8,6 +7,8 @@ use chrono::Utc;
 use labels::actions::collect_word_tallies_with_intersections;
 use rusqlite::{params, Connection, Params, Statement};
 use std::error::Error;
+
+use super::utils::{create_rarray_values, db_connect, load_rarray_table};
 //                              2023-10-07 13:46:54.605157 UTC
 const DATE_FROM_FORMAT: &str = "%Y-%m-%d %H:%M:%S%.f %Z";
 
@@ -20,7 +21,7 @@ pub fn content_title_clean(mut title: String) -> String {
 pub fn db_map_content_query<P: Params>(
     s: &mut Statement,
     p: P,
-) -> Result<Vec<Content>, Box<dyn Error>> {
+) -> Result<Vec<Content>, Box<dyn Error + 'static>> {
     // assumes used a "SELECT * FROM content"
     let content_rows_res = s.query_map(p, |row| {
         let title: String = row.get(2)?;
@@ -47,9 +48,8 @@ pub fn db_map_content_query<P: Params>(
         })
     });
 
-    if content_rows_res.is_err() {
-        let e = content_rows_res.err().unwrap();
-        println!("Error adding collection {:?}", e);
+    if let Err(e) = content_rows_res {
+        eprint!("Error adding collection: {:?}\n", e);
         return Err(e.into());
     }
 
@@ -63,7 +63,7 @@ pub fn db_map_content_query<P: Params>(
 pub fn db_map_content_body_query<P: Params>(
     s: &mut Statement,
     p: P,
-) -> Result<Vec<ContentBody>, Box<dyn Error>> {
+) -> Result<Vec<ContentBody>, Box<dyn Error + 'static>> {
     // assumes used a SELECT * from content_body
     let mapped_bodies = s.query_map(p, |row| {
         Ok(ContentBody {
@@ -90,7 +90,7 @@ const SQL_DELETE_OLD_CONTENT: &str =
 // const SQL_DELETE_OLD_BODIES: &str =
 //     "DELETE FROM content_body WHERE id < (SELECT MAX(id) FROM content_body) - 1000";
 
-pub fn db_content_save_space() -> Result<(), Box<dyn Error>> {
+pub fn db_content_save_space() -> Result<(), Box<dyn Error + 'static>> {
     let conn = db_connect()?;
     if let Err(_e) = conn.execute(&SQL_DELETE_OLD_CONTENT, []) {
         println!("Error deleting old bodies from content_body");
@@ -102,7 +102,7 @@ pub fn db_content_save_space() -> Result<(), Box<dyn Error>> {
 pub fn db_map_content_media_query<P: Params>(
     s: &mut Statement,
     p: P,
-) -> Result<Vec<ContentMedia>, Box<dyn Error>> {
+) -> Result<Vec<ContentMedia>, Box<dyn Error + 'static>> {
     // assumes used a SELECT *
     let mapped_media = s.query_map(p, |row| {
         Ok(ContentMedia {
@@ -123,7 +123,7 @@ pub fn db_map_content_media_query<P: Params>(
 pub fn db_map_content_urls<P: Params>(
     s: &mut Statement,
     p: P,
-) -> Result<Vec<String>, Box<dyn Error + Send + Sync>> {
+) -> Result<Vec<String>, Box<dyn Error + 'static + Send + Sync>> {
     // assumes used a "SELECT * FROM content"
     let content_urls_map = s.query_map(p, |row| Ok(row.get(0)?))?;
 
@@ -134,7 +134,9 @@ pub fn db_map_content_urls<P: Params>(
     Ok(content_urls)
 }
 
-pub fn db_content_add(contents: Vec<FullContent>) -> Result<(), Box<dyn Error + Send + Sync>> {
+pub fn db_content_add(
+    contents: Vec<FullContent>,
+) -> Result<(), Box<dyn Error + 'static + Send + Sync>> {
     let conn = db_connect()?;
 
     for c in contents {
@@ -170,9 +172,8 @@ pub fn db_content_add(contents: Vec<FullContent>) -> Result<(), Box<dyn Error + 
             |row| row.get(0),
         );
 
-        if cc_id_res.is_err() {
-            let e = cc_id_res.unwrap_err();
-            eprintln!("Inserted content not found {:?}", e);
+        if let Err(e) = cc_id_res {
+            eprint!("Inserted content not found: {:?}\n", e);
             continue;
         }
 
@@ -203,7 +204,7 @@ pub fn db_content_add(contents: Vec<FullContent>) -> Result<(), Box<dyn Error + 
 pub fn db_content_add_words_phrases(
     cc_id: i32,
     cb: ContentBody,
-) -> Result<(), Box<dyn Error + Send + Sync>> {
+) -> Result<(), Box<dyn Error + 'static + Send + Sync>> {
     let clean_text = strip_html_tags_from_string(&cb.body_text);
     let phrases_tallies = collect_word_tallies_with_intersections(&clean_text);
 
@@ -292,7 +293,7 @@ pub fn db_content_add_words_phrases(
 }
 
 // singular - see also db_contents_retrieve
-pub fn db_content_retrieve(id: i32) -> Result<Content, Box<dyn Error>> {
+pub fn db_content_retrieve(id: i32) -> Result<Content, Box<dyn Error + 'static>> {
     let conn = db_connect()?;
 
     let mut content_query = conn.prepare("SELECT * FROM content WHERE id = :ID LIMIT 1")?;
@@ -300,8 +301,8 @@ pub fn db_content_retrieve(id: i32) -> Result<Content, Box<dyn Error>> {
     let named_params = [(":ID", id_string.as_str())];
     let content_res = db_map_content_query(&mut content_query, &named_params);
 
-    if content_res.is_err() {
-        return Err(content_res.unwrap_err());
+    if let Err(e) = content_res {
+        return Err(e);
     }
 
     let content = content_res?;
@@ -315,7 +316,9 @@ pub fn db_content_retrieve(id: i32) -> Result<Content, Box<dyn Error>> {
     Ok(out)
 }
 
-pub fn db_contents_retrieve(content_ids: &Vec<i32>) -> Result<Vec<Content>, Box<dyn Error>> {
+pub fn db_contents_retrieve(
+    content_ids: &Vec<i32>,
+) -> Result<Vec<Content>, Box<dyn Error + 'static>> {
     let conn: Connection = db_connect()?;
     load_rarray_table(&conn)?;
 
@@ -338,7 +341,7 @@ pub fn db_contents_retrieve(content_ids: &Vec<i32>) -> Result<Vec<Content>, Box<
 
 pub fn db_check_content_existing_urls(
     content_urls: &Vec<String>,
-) -> Result<Vec<String>, Box<dyn Error + Send + Sync>> {
+) -> Result<Vec<String>, Box<dyn Error + 'static + Send + Sync>> {
     let conn: Connection = db_connect()?;
     load_rarray_table(&conn)?;
 
@@ -361,7 +364,7 @@ pub fn db_check_content_existing_urls(
     Ok(existing_urls)
 }
 
-pub fn db_list_content() -> Result<Vec<Content>, Box<dyn Error>> {
+pub fn db_list_content() -> Result<Vec<Content>, Box<dyn Error + 'static>> {
     let conn: Connection = db_connect()?;
 
     let mut content_list_query: Statement =
@@ -369,8 +372,8 @@ pub fn db_list_content() -> Result<Vec<Content>, Box<dyn Error>> {
 
     let content_list_res = db_map_content_query(&mut content_list_query, []);
 
-    if content_list_res.is_err() {
-        return Err(content_list_res.unwrap_err());
+    if let Err(e) = content_list_res {
+        return Err(e);
     }
 
     let content_list = content_list_res?;
@@ -381,7 +384,7 @@ pub fn db_list_content() -> Result<Vec<Content>, Box<dyn Error>> {
 pub const SQL_CONTENT_OF_SOURCE: &str =
     "SELECT * FROM content WHERE source_id = :ID ORDER BY id DESC LIMIT 150";
 
-pub fn db_list_content_of_source(source_id: i32) -> Result<Vec<Content>, Box<dyn Error>> {
+pub fn db_list_content_of_source(source_id: i32) -> Result<Vec<Content>, Box<dyn Error + 'static>> {
     let conn: Connection = db_connect()?;
 
     let mut content_list_query: Statement = conn.prepare(SQL_CONTENT_OF_SOURCE)?;
@@ -389,8 +392,8 @@ pub fn db_list_content_of_source(source_id: i32) -> Result<Vec<Content>, Box<dyn
     let named_params = [(":ID", id_string.as_str())];
     let content_list_res = db_map_content_query(&mut content_list_query, &named_params);
 
-    if content_list_res.is_err() {
-        return Err(content_list_res.unwrap_err());
+    if let Err(e) = content_list_res {
+        return Err(e);
     }
 
     let content_list = content_list_res?;
@@ -405,7 +408,9 @@ pub const SQL_CONTENT_OF_SOURCES: &str = "
     LIMIT 150;
 ";
 
-pub fn db_list_content_of_sources(source_ids: &Vec<i32>) -> Result<Vec<Content>, Box<dyn Error>> {
+pub fn db_list_content_of_sources(
+    source_ids: &Vec<i32>,
+) -> Result<Vec<Content>, Box<dyn Error + 'static>> {
     let conn: Connection = db_connect()?;
     load_rarray_table(&conn)?;
 
@@ -418,7 +423,9 @@ pub fn db_list_content_of_sources(source_ids: &Vec<i32>) -> Result<Vec<Content>,
     Ok(content_list)
 }
 
-pub fn db_list_content_full(source_ids: &Vec<i32>) -> Result<Vec<FullContent>, Box<dyn Error>> {
+pub fn db_list_content_full(
+    source_ids: &Vec<i32>,
+) -> Result<Vec<FullContent>, Box<dyn Error + 'static>> {
     let conn: Connection = db_connect()?;
     load_rarray_table(&conn)?;
 
@@ -476,7 +483,9 @@ pub fn db_list_content_full(source_ids: &Vec<i32>) -> Result<Vec<FullContent>, B
     Ok(full_content)
 }
 
-pub fn db_content_bodies(content_ids: Vec<String>) -> Result<Vec<ContentBody>, Box<dyn Error>> {
+pub fn db_content_bodies(
+    content_ids: Vec<String>,
+) -> Result<Vec<ContentBody>, Box<dyn Error + 'static>> {
     let conn: Connection = db_connect()?;
     load_rarray_table(&conn)?;
 
@@ -487,11 +496,9 @@ pub fn db_content_bodies(content_ids: Vec<String>) -> Result<Vec<ContentBody>, B
         conn.prepare("SELECT * FROM content WHERE content_id IN (SELECT * FROM rarray(?1))")?;
     let bodies_res = db_map_content_body_query(&mut bodies_query, params.clone());
 
-    if bodies_res.is_err() {
-        println!("Error retrieving content bodies");
-        let err = bodies_res.unwrap_err();
-        println!("{:?}", err);
-        return Err(err);
+    if let Err(e) = bodies_res {
+        eprint!("Error retrieving content bodies: {:?}", e);
+        return Err(e);
     }
 
     let bodies: Vec<ContentBody> = bodies_res.unwrap();

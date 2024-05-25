@@ -1,6 +1,6 @@
-use std::{error::Error};
-use rusqlite::{Result};
-use crate::db::{db_sources_remove};
+use crate::db::source::db_sources_remove;
+use rusqlite::Result;
+use std::error::Error;
 
 pub fn source_remove_action(args: Vec<String>) -> Result<(), Box<dyn Error>> {
     // This is the original source remove for CLI that completely deletes the source

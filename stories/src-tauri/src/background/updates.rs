@@ -7,7 +7,7 @@ pub async fn continual_updates() {
     let mut interval = tokio::time::interval(dur);
     loop {
         println!("Before updates");
-        _ = chirp::actions::update().await;
+        _ = chirp::actions::update::update().await;
         println!("After updates");
         interval.tick().await;
         println!("after sleep");

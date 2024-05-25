@@ -58,7 +58,7 @@ pub fn source_to_dto(s: chirp::entities::Source) -> SourceDto {
 
 #[tauri::command]
 pub fn remove_sources(collection_id: i32, source_ids: Vec<i32>) -> Result<(), String> {
-    let rm_res = chirp::actions::sources_remove(&collection_id, &source_ids);
+    let rm_res = chirp::actions::remove::sources_remove(&collection_id, &source_ids);
     if rm_res.is_err() {
         return Err("Unable to remove some sources".into());
     }

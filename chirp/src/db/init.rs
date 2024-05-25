@@ -2,7 +2,7 @@ use std::error::Error;
 
 use rusqlite::Connection;
 
-use super::db_connect;
+use super::utils::db_connect;
 
 pub fn db_init() -> Result<(), Box<dyn Error>> {
     let conn = db_connect()?;
@@ -293,6 +293,8 @@ pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
     // TODO: Add "group_to_person" (id, group_id, person_id)
     // TODO: Add "density" table long shot (id, content_id, avg_words_per_concept, conformity_index, answer_confidence)
     // TODO: Add "source_meta" table (id, content_id, )
+
+    cuter.conn.close();
 
     Ok(())
 }

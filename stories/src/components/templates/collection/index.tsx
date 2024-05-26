@@ -53,6 +53,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
 
     useEffect(() => {
         dispatch(fetchNestedCollections([collectionId]));
+        dispatch(retrieveMarks(sourceIds));
     }, [collection, collectionSettings]);
 
     useEffect(() => {

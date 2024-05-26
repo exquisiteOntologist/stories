@@ -6,5 +6,4 @@ export interface ListingsContainerProps {
     className?: string;
     children: ReactNode;
     view?: SettingsLayout;
-    onMouseOver?: (e: SyntheticEvent) => void;
 }

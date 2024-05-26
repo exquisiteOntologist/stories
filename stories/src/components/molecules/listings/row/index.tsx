@@ -5,6 +5,7 @@ import { SourceLink } from "../source-link/source-link";
 import { ListingRowProps } from "./interfaces";
 import { RelativeDate } from "../../../atoms/relative-date";
 import { Bookmark } from "../../bookmark";
+import { SettingsLayout } from "../../../../data/chirp-types";
 
 export const ListingRow: React.FC<ListingRowProps> = ({ title, linkUrl, action, content, source, bold }) => {
     // const description = content && (
@@ -22,7 +23,7 @@ export const ListingRow: React.FC<ListingRowProps> = ({ title, linkUrl, action, 
 
     // top-1/2 -translate-y-1/2
     // transition-all duration-75
-    const actionBookmark = content && linkUrl && <Bookmark content={content} />;
+    const actionBookmark = content && linkUrl && <Bookmark content={content} layout={SettingsLayout.ROWS} />;
 
     const titleInner = linkUrl ? (
         <a className="block" href={linkUrl} target="_blank">

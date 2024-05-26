@@ -4,13 +4,13 @@ use chirp::entities::{self, ContentDto};
 
 #[tauri::command]
 pub async fn mark_add(content_id: i32) -> Result<(), String> {
-    chirp::actions::mark::mark_add(&content_id);
+    _ = chirp::actions::mark::mark_add(&content_id);
     Ok(())
 }
 
 #[tauri::command]
 pub async fn mark_remove(content_id: i32) -> Result<(), String> {
-    chirp::actions::mark::mark_remove(&content_id);
+    _ = chirp::actions::mark::mark_remove(&content_id);
     Ok(())
 }
 

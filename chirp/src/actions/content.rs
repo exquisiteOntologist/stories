@@ -4,7 +4,7 @@ use crate::{
     db::content::{
         db_content_bodies, db_list_content, db_list_content_full, db_list_content_of_sources,
     },
-    entities::{self},
+    entities::{self, Content, ContentBody, FullContent},
 };
 
 pub fn list_content_action() -> Result<(), Box<dyn Error>> {
@@ -24,32 +24,26 @@ pub fn list_content_action() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-pub fn list_content() -> Result<Vec<entities::Content>, Box<dyn Error>> {
+pub fn list_content() -> Result<Vec<Content>, Box<dyn Error>> {
     let content_list = db_list_content()?;
 
     Ok(content_list)
 }
 
-pub fn list_content_of_sources(
-    source_ids: &Vec<i32>,
-) -> Result<Vec<entities::Content>, Box<dyn Error>> {
+pub fn list_content_of_sources(source_ids: &Vec<i32>) -> Result<Vec<Content>, Box<dyn Error>> {
     let content_list = db_list_content_of_sources(source_ids)?;
 
     Ok(content_list)
 }
 
-pub fn list_content_full(
-    source_ids: &Vec<i32>,
-) -> Result<Vec<entities::FullContent>, Box<dyn Error>> {
+pub fn list_content_full(source_ids: &Vec<i32>) -> Result<Vec<FullContent>, Box<dyn Error>> {
     let content_list_full = db_list_content_full(source_ids)?;
 
     Ok(content_list_full)
 }
 
-pub fn content_bodies(
-    content_ids: Vec<String>,
-) -> Result<Vec<entities::ContentBody>, Box<dyn Error>> {
-    let bodies: Vec<entities::ContentBody> = db_content_bodies(content_ids)?;
+pub fn content_bodies(content_ids: Vec<String>) -> Result<Vec<ContentBody>, Box<dyn Error>> {
+    let bodies: Vec<ContentBody> = db_content_bodies(content_ids)?;
 
     Ok(bodies)
 }

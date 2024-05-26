@@ -27,7 +27,7 @@ pub fn db_path_get() -> Result<String, Box<()>> {
     let buf = dir.join("stories.db");
     let p = buf.to_str().unwrap();
 
-    println!("DB Path: {:?}", p);
+    // println!("DB Path: {:?}", p);
 
     Ok(p.into())
 }

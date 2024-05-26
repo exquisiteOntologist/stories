@@ -1,11 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-pub mod background;
-pub use background::*;
-
-pub mod commands;
-pub use commands::*;
+use stories::{background::updates::continual_updates, commands};
 
 #[tokio::main]
 async fn main() {
@@ -17,7 +13,7 @@ async fn main() {
         .plugin(tauri_plugin_window_state::Builder::default().build())
         .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![
-            greet,
+            commands::greet::greet,
             commands::collections::add_collection,
             commands::collections::remove_collection,
             commands::collections::rename_collection,
@@ -27,6 +23,9 @@ async fn main() {
             commands::collections::get_collection_to_collection,
             commands::collections::get_collection_to_source,
             commands::content::list_content,
+            commands::mark::mark_add,
+            commands::mark::mark_remove,
+            commands::mark::list_marks_of_sources,
             commands::sources::add_source,
             commands::sources::list_sources,
             commands::sources::list_source_of_collections,

@@ -1,22 +1,11 @@
 use std::error::Error;
 
-use crate::entities::{self};
+use crate::db::mark::{db_mark_add, db_mark_remove};
 
-pub async fn mark_add(content_id: &i32) -> Result<(), Box<dyn Error>> {
-    println!("Adding mark {:?}", content_id);
-
-    todo!("Add mark");
-
-    Ok(())
+pub fn mark_add(content_id: &i32) -> Result<(), Box<dyn Error>> {
+    db_mark_add(content_id)
 }
 
-pub fn list_marks_of_sources(
-    source_ids: &Vec<i32>,
-) -> Result<Vec<entities::Content>, Box<dyn Error>> {
-    todo!("Fetch a list of marks");
-
-    // let marks = db_list_content_of_sources(source_ids)?;
-    let marks = Vec::new();
-
-    Ok(marks)
+pub fn mark_remove(content_id: &i32) -> Result<(), Box<dyn Error>> {
+    db_mark_remove(content_id)
 }

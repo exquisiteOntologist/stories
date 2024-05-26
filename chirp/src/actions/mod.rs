@@ -39,22 +39,12 @@ pub async fn take_command() -> Result<(), Box<dyn Error>> {
 }
 
 pub mod add;
-// pub use add::*;
 pub mod collections;
-// pub use collections::*;
 pub mod content;
-// pub use content::*;
 pub mod intro;
-// pub use intro::*;
 pub mod mark;
-// pub use mark::*;
 pub mod remove;
-// pub use remove::*;
 pub mod search;
-// pub use search::*;
 pub mod sources;
-// pub use sources::*;
 pub mod update;
-// pub use update::*;
 pub mod view;
-// pub use view::*;

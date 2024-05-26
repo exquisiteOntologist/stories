@@ -53,13 +53,16 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
 
     useEffect(() => {
         dispatch(fetchNestedCollections([collectionId]));
-        dispatch(retrieveMarks(sourceIds));
     }, [collection, collectionSettings]);
 
     useEffect(() => {
         dispatch(fetchContentOfSources(sourceIds));
         dispatch(retrieveMarks(sourceIds));
     }, [collectionId, sources]);
+
+    // useEffect(() => {
+    // dispatch(retrieveMarks(sourceIds));
+    // }, [sourceIds]);
 
     useEffect(() => {
         updateTimeout && clearTimeout(updateTimeout);

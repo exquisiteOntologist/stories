@@ -11,7 +11,6 @@ export const addMark = createAsyncThunk("mark/add", async (content: ContentDto, 
             contentId: content.id,
         });
 
-        // console.log("mark added", content);
         dispatch(retrieveMarks());
         return true;
     } catch (e) {
@@ -26,7 +25,6 @@ export const removeMark = createAsyncThunk("mark/remove", async (content: Conten
             contentId: content.id,
         });
 
-        // console.log("mark removed", content);
         dispatch(retrieveMarks());
         return true;
     } catch (e) {
@@ -48,14 +46,9 @@ export const retrieveMarks = createAsyncThunk("mark/fetch", async (sourceIds: nu
             sourceIds: sourcesToCheck,
         })) as ContentDto[];
 
-        if (!!sourceIds) {
-            dispatch(upsertMarks(contents.map((c) => c.id)));
-        } else {
-            dispatch(setAllMarks(contents.map((c) => c.id)));
-        }
+        dispatch(setAllMarks(contents.map((c) => c.id)));
         dispatch(addContents(contents as ContentDto[]));
 
-        // console.log("marks retrieved", contents);
         return true;
     } catch (e) {
         console.error("failed to fetch marks for given sources", e, sourceIds);

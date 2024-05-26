@@ -7,7 +7,7 @@ import { RelativeDate } from "../../../atoms/relative-date";
 import { IconBookmark } from "../../../atoms/icons/bookmark";
 import { Button } from "../../../atoms/button";
 import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
-import { addMark, marksSelectors } from "../../../../redux/features/marksSlice";
+import { addMark, marksSelectors, removeMark } from "../../../../redux/features/marksSlice";
 import { ContentDto } from "../../../../data/chirp-types";
 
 export interface ActionBookmarkProps {
@@ -17,10 +17,10 @@ export interface ActionBookmarkProps {
 export const ActionBookmark: React.FC<ActionBookmarkProps> = ({ content }) => {
     const dispatch = useAppDispatch();
     const isBookmarked: boolean = !!useAppSelector((s) => marksSelectors.selectById(s, content.id));
+    const actionToggleMark = () => dispatch(isBookmarked ? removeMark(content.id) : addMark(content.id));
 
-    // TODO: Add remove mark
     return (
-        <button className="absolute -left-6 right-full pr-2 bg-transparent text-rose-500 opacity-0 group-hover:opacity-100" onClick={() => dispatch(addMark(content?.id))}>
+        <button className="absolute -left-6 right-full pr-2 bg-transparent text-rose-500 opacity-0 group-hover:opacity-100" onClick={actionToggleMark}>
             <IconBookmark active={isBookmarked} />
         </button>
     );

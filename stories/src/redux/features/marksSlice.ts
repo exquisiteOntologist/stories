@@ -13,7 +13,21 @@ export const addMark = createAsyncThunk("mark/add", async (contentId: number, { 
         // dispatch(upsertSources(sources as SourceDto[]))
         return true;
     } catch (e) {
-        console.error("failed to add items to marks", e);
+        console.error("failed to add item to marks", e);
+        return false;
+    }
+});
+
+export const removeMark = createAsyncThunk("mark/remove", async (contentId: number, { dispatch }) => {
+    try {
+        await invoke("mark_remove", {
+            contentId,
+        });
+
+        // dispatch(upsertSources(sources as SourceDto[]))
+        return true;
+    } catch (e) {
+        console.error("failed to remove item from marks", e);
         return false;
     }
 });

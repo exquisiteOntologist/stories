@@ -16,11 +16,11 @@ export interface ActionBookmarkProps {
 
 export const ActionBookmark: React.FC<ActionBookmarkProps> = ({ content }) => {
     const dispatch = useAppDispatch();
-    const isBookmarked: boolean = !!useAppSelector((s) => marksSelectors.selectById(s, content.id));
+    const isBookmarked: boolean = typeof useAppSelector((s) => marksSelectors.selectById(s, content.id)) === "number";
     const actionToggleMark = () => dispatch(isBookmarked ? removeMark(content) : addMark(content));
 
     return (
-        <button className="absolute -left-6 right-full pr-2 bg-transparent text-rose-500 opacity-0 group-hover:opacity-100" onClick={actionToggleMark}>
+        <button className={`absolute -left-6 right-full pr-2 bg-transparent text-rose-500 ${isBookmarked ? "opacity-1" : "opacity-0"} group-hover:opacity-100`} onClick={actionToggleMark}>
             <IconBookmark active={isBookmarked} />
         </button>
     );

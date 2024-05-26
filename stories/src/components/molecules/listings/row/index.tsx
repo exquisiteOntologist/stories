@@ -4,27 +4,7 @@ import { motionProps } from "../../../../utilities/animate";
 import { SourceLink } from "../source-link/source-link";
 import { ListingRowProps } from "./interfaces";
 import { RelativeDate } from "../../../atoms/relative-date";
-import { IconBookmark } from "../../../atoms/icons/bookmark";
-import { Button } from "../../../atoms/button";
-import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
-import { addMark, marksSelectors, removeMark } from "../../../../redux/features/marksSlice";
-import { ContentDto } from "../../../../data/chirp-types";
-
-export interface ActionBookmarkProps {
-    content: ContentDto;
-}
-
-export const ActionBookmark: React.FC<ActionBookmarkProps> = ({ content }) => {
-    const dispatch = useAppDispatch();
-    const isBookmarked: boolean = typeof useAppSelector((s) => marksSelectors.selectById(s, content.id)) === "number";
-    const actionToggleMark = () => dispatch(isBookmarked ? removeMark(content) : addMark(content));
-
-    return (
-        <button className={`absolute -left-6 right-full pr-2 bg-transparent text-rose-500 ${isBookmarked ? "opacity-1" : "opacity-0"} group-hover:opacity-100`} onClick={actionToggleMark}>
-            <IconBookmark active={isBookmarked} />
-        </button>
-    );
-};
+import { Bookmark } from "../../bookmark";
 
 export const ListingRow: React.FC<ListingRowProps> = ({ title, linkUrl, action, content, source, bold }) => {
     // const description = content && (
@@ -42,7 +22,7 @@ export const ListingRow: React.FC<ListingRowProps> = ({ title, linkUrl, action, 
 
     // top-1/2 -translate-y-1/2
     // transition-all duration-75
-    const actionBookmark = content && linkUrl && <ActionBookmark content={content} />;
+    const actionBookmark = content && linkUrl && <Bookmark content={content} />;
 
     const titleInner = linkUrl ? (
         <a className="block" href={linkUrl} target="_blank">

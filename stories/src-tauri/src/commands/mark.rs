@@ -1,6 +1,6 @@
 use std::error::Error;
 
-use chirp::entities::{self, ContentDto};
+use chirp::entities::{ContentDto};
 
 #[tauri::command]
 pub async fn mark_add(content_id: i32) -> Result<(), String> {

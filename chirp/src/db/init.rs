@@ -5,8 +5,7 @@ use rusqlite::Connection;
 use super::utils::db_connect;
 
 pub fn db_init() -> Result<(), Box<dyn Error>> {
-    let conn = db_connect()?;
-    db_seed_tables(conn)?;
+    db_seed_tables()?;
     Ok(())
 }
 
@@ -33,7 +32,7 @@ impl Executor {
     }
 }
 
-pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
+pub fn db_seed_tables() -> Result<(), Box<dyn Error>> {
     let cuter = Executor::new();
 
     cuter.execute("VACUUM;PRAGMA auto_vacuum = FULL;");
@@ -294,7 +293,7 @@ pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
     // TODO: Add "density" table long shot (id, content_id, avg_words_per_concept, conformity_index, answer_confidence)
     // TODO: Add "source_meta" table (id, content_id, )
 
-    cuter.conn.close();
+    _ = cuter.conn.close();
 
     Ok(())
 }

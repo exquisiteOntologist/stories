@@ -2,11 +2,10 @@ use std::error::Error;
 
 use rusqlite::{params, Connection, Statement};
 
-use crate::entities::{dto_maps::content_to_dto, ContentDto, ContentMedia, Source};
+use crate::entities::{dto_maps::content_to_dto, ContentDto, ContentMedia};
 
 use super::{
     content::{db_map_content_media_query, db_map_content_query},
-    source::db_map_sources_query,
     utils::{create_rarray_values, db_connect, load_rarray_table},
 };
 

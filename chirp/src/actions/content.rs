@@ -4,7 +4,7 @@ use crate::{
     db::content::{
         db_content_bodies, db_list_content, db_list_content_full, db_list_content_of_sources,
     },
-    entities::{self, Content, ContentBody, FullContent},
+    entities::{Content, ContentBody, FullContent},
 };
 
 pub fn list_content_action() -> Result<(), Box<dyn Error>> {

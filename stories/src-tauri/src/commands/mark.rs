@@ -1,5 +1,3 @@
-use std::error::Error;
-
 use chirp::entities::{ContentDto};
 
 #[tauri::command]

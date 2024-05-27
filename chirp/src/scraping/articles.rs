@@ -2,7 +2,6 @@ use std::error::Error;
 
 use article_scraper::ArticleScraper;
 use chrono::{DateTime, Utc};
-use reqwest::Client;
 use url::Url;
 
 use crate::{
@@ -65,7 +64,7 @@ pub async fn article_scraper(
 ) -> Result<ScrapedArticle, Box<dyn Error + Send + Sync>> {
     let scraper = ArticleScraper::new(None).await;
     let url = Url::parse(article_url).unwrap();
-    let client = Client::new();
+    let client = reqwest::Client::new();
     let scraped = match scraper.parse(&url, false, &client, None).await {
         Ok(v) => v,
         Err(e) => {

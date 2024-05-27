@@ -2,7 +2,7 @@ use futures::future::join_all;
 use std::{borrow::Borrow, error::Error, vec};
 
 use crate::{
-    db::db_check_content_existing_urls,
+    db::content::db_check_content_existing_urls,
     entities::{FullContent, Source, SourceKind},
     scraping::{
         articles::contents_from_article,
@@ -41,8 +41,11 @@ pub async fn parse_website(
     let website_contents_res: Result<Vec<FullContent>, Box<dyn Error + Send + Sync>> =
         parse_web_articles(url, &doc_text, article_url_segment).await;
 
-    if website_contents_res.is_err() {
-        println!("Could not find or retrieve articles for provided URL and path pattern");
+    if let Err(e) = website_contents_res {
+        eprint!(
+            "Could not find or retrieve articles for provided URL and path pattern.\n{:?}\n",
+            e
+        );
         return Err("Could not find or retrieve articles".into());
     }
 

@@ -1,6 +1,6 @@
 use std::error::Error;
 
-use crate::db::{
+use crate::db::collection::{
     db_collection_add, db_collection_remove, db_collection_rename, db_get_collection,
     db_get_collection_settings, db_get_collection_to_collection, db_get_collection_to_source,
     db_set_collection_settings,

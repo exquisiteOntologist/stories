@@ -2,8 +2,7 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use typeshare::typeshare;
 
-mod dto_maps;
-pub use dto_maps::*;
+pub mod dto_maps;
 
 #[derive(Debug, Clone)]
 #[typeshare]

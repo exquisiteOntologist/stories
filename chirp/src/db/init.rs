@@ -1,18 +1,43 @@
-use rusqlite::Connection;
 use std::error::Error;
 
-use super::db_connect;
+use rusqlite::Connection;
+
+use super::utils::db_connect;
 
 pub fn db_init() -> Result<(), Box<dyn Error>> {
-    let conn = db_connect()?;
-    db_seed_tables(conn)?;
+    db_seed_tables()?;
     Ok(())
 }
 
-pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
-    conn.execute("VACUUM;PRAGMA auto_vacuum = FULL;", ())?;
+struct Executor {
+    conn: Connection,
+}
 
-    conn.execute(
+/// Executor executes queries and prints errors with details
+impl Executor {
+    pub fn new() -> Self {
+        let conn = db_connect().unwrap();
+
+        Self { conn }
+    }
+
+    pub fn execute(&self, sql: &str) {
+        if let Err(e) = self.conn.execute(sql, ()) {
+            eprintln!("Error executing SQL query");
+            eprintln!("Query:");
+            eprint!("{:?}\n", sql);
+            eprintln!("Error:");
+            eprint!("{:?}\n", e);
+        };
+    }
+}
+
+pub fn db_seed_tables() -> Result<(), Box<dyn Error>> {
+    let cuter = Executor::new();
+
+    cuter.execute("VACUUM;PRAGMA auto_vacuum = FULL;");
+
+    cuter.execute(
         "CREATE TABLE IF NOT EXISTS source (
             id          INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
             name        TEXT NOT NULL,
@@ -20,46 +45,40 @@ pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
             site_url    TEXT NOT NULL,
             kind        INTEGER NOT NULL
         )",
-        (),
-    )?;
+    );
 
-    conn.execute(
+    cuter.execute(
         "CREATE INDEX IF NOT EXISTS source_id_index on
             source (id)",
-        (),
-    )?;
+    );
 
-    conn.execute(
+    cuter.execute(
         "CREATE INDEX IF NOT EXISTS source_name_index on
             source (name)",
-        (),
-    )?;
+    );
 
-    conn.execute(
+    cuter.execute(
         "CREATE INDEX IF NOT EXISTS source_url_index on
             source (url)",
-        (),
-    )?;
+    );
 
-    conn.execute(
+    cuter.execute(
         "CREATE TABLE IF NOT EXISTS source_data_web (
             source_id               INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
             article_url_segment     TEXT NOT NULL,
             FOREIGN KEY (source_id) REFERENCES source(id) ON DELETE CASCADE
         )",
-        (),
-    )?;
+    );
 
-    conn.execute(
+    cuter.execute(
         "CREATE TABLE IF NOT EXISTS log (
             id                      INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
             date_of_failure         TEXT,
             message                 TEXT
         )",
-        (),
-    )?;
+    );
 
-    conn.execute(
+    cuter.execute(
         "CREATE TABLE IF NOT EXISTS retrieval (
             source_id               INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
             date_last_success       TEXT,
@@ -69,74 +88,64 @@ pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
             successes_all_time      INTEGER NOT NULL,
             FOREIGN KEY (source_id) REFERENCES source(id) ON DELETE CASCADE
         )",
-        (),
-    )?;
+    );
 
-    conn.execute(
+    cuter.execute(
         "CREATE INDEX IF NOT EXISTS retrieval_date_last_attempt_index on
             retrieval (date_last_attempt)",
-        (),
-    )?;
+    );
 
-    conn.execute(
+    cuter.execute(
         "CREATE INDEX IF NOT EXISTS retrieval_fails_since_success_index on
             retrieval (fails_since_success)",
-        (),
-    )?;
+    );
 
-    conn.execute(
+    cuter.execute(
         "CREATE TABLE IF NOT EXISTS collection (
             id          INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
             name        TEXT NOT NULL
         )",
-        (),
-    )?;
+    );
 
-    conn.execute(
+    cuter.execute(
         "INSERT INTO collection (id, name) VALUES (0, 'Home')
             ON CONFLICT DO NOTHING",
-        (),
-    )?;
+    );
 
-    conn.execute(
+    cuter.execute(
         "CREATE INDEX IF NOT EXISTS collection_id_index on
             collection (id)",
-        (),
-    )?;
+    );
 
-    conn.execute(
+    cuter.execute(
         "CREATE INDEX IF NOT EXISTS collection_name_index on
             collection (name)",
-        (),
-    )?;
+    );
 
-    conn.execute(
+    cuter.execute(
         "CREATE TABLE IF NOT EXISTS collection_settings (
             id              INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
             collection_id   INTEGER NOT NULL UNIQUE,
             layout          TEXT,
             FOREIGN KEY (collection_id) REFERENCES collection(id) ON DELETE CASCADE
         )",
-        (),
-    )?;
+    );
 
-    conn.execute(
+    cuter.execute(
         "INSERT INTO collection_settings (id, collection_id, layout) VALUES (0, 0, 'ROWS')
             ON CONFLICT DO NOTHING",
-        (),
-    )?;
+    );
 
-    conn.execute(
+    cuter.execute(
         "CREATE TABLE IF NOT EXISTS collection_widget (
             id              INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
             collection_id   INTEGER NOT NULL UNIQUE,
             widget          TEXT NOT NULL,
             FOREIGN KEY (collection_id) REFERENCES collection(id) ON DELETE CASCADE
         )",
-        (),
-    )?;
+    );
 
-    conn.execute(
+    cuter.execute(
         "CREATE TABLE IF NOT EXISTS collection_to_source (
             collection_id                       INTEGER NOT NULL,
             source_id                           INTEGER NOT NULL,
@@ -144,16 +153,14 @@ pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
             FOREIGN KEY (collection_id) REFERENCES collection(id)   ON DELETE CASCADE,
             FOREIGN KEY (source_id)     REFERENCES source(id)       ON DELETE CASCADE
         )",
-        (),
-    )?;
+    );
 
-    conn.execute(
+    cuter.execute(
         "CREATE INDEX IF NOT EXISTS collection_to_source_index on
             collection_to_source (collection_id, source_id)",
-        (),
-    )?;
+    );
 
-    conn.execute(
+    cuter.execute(
         "CREATE TABLE IF NOT EXISTS collection_to_collection (
             collection_parent_id                INTEGER NOT NULL,
             collection_inside_id                INTEGER NOT NULL,
@@ -161,10 +168,9 @@ pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
             FOREIGN KEY (collection_parent_id) REFERENCES collection(id) ON DELETE CASCADE,
             FOREIGN KEY (collection_inside_id) REFERENCES collection(id) ON DELETE CASCADE
         )",
-        (),
-    )?;
+    );
 
-    conn.execute(
+    cuter.execute(
         "CREATE TABLE IF NOT EXISTS content (
             id               INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
             source_id        INTEGER NOT NULL,
@@ -174,44 +180,38 @@ pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
             date_retrieved   TEXT NOT NULL,
             FOREIGN KEY (source_id) REFERENCES source(id) ON DELETE CASCADE
         )",
-        (),
-    )?;
+    );
 
-    conn.execute(
+    cuter.execute(
         "CREATE INDEX IF NOT EXISTS content_id_index on
             content (id)",
-        (),
-    )?;
+    );
 
-    conn.execute(
+    cuter.execute(
         "CREATE INDEX IF NOT EXISTS content_url_index on
             content (url)",
-        (),
-    )?;
+    );
 
-    conn.execute(
+    cuter.execute(
         "CREATE INDEX IF NOT EXISTS content_date_published on
             content (date_published)",
-        (),
-    )?;
+    );
 
-    conn.execute(
+    cuter.execute(
         "CREATE TABLE IF NOT EXISTS content_body (
             id           INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
             content_id   INTEGER NOT NULL UNIQUE,
             body_text    TEXT,
             FOREIGN KEY (content_id) REFERENCES content(id) ON DELETE CASCADE
         )",
-        (),
-    )?;
+    );
 
-    conn.execute(
+    cuter.execute(
         "CREATE INDEX IF NOT EXISTS content_body_id_index on
             content_body (id)",
-        (),
-    )?;
+    );
 
-    conn.execute(
+    cuter.execute(
         "CREATE TABLE IF NOT EXISTS content_media (
             id           INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
             content_id   INTEGER NOT NULL UNIQUE,
@@ -219,30 +219,26 @@ pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
             kind         INTEGER NOT NULL,
             FOREIGN KEY (content_id) REFERENCES content(id) ON DELETE CASCADE
         )",
-        (),
-    )?;
+    );
 
-    conn.execute(
+    cuter.execute(
         "CREATE TABLE IF NOT EXISTS phrase (
             id           INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
-            phrase       TEXT NOT NULL
+            phrase       TEXT NOT NULL UNIQUE
         )",
-        (),
-    )?;
+    );
 
-    conn.execute(
+    cuter.execute(
         "CREATE INDEX IF NOT EXISTS phrase_id_index on
             phrase (id)",
-        (),
-    )?;
+    );
 
-    conn.execute(
+    cuter.execute(
         "CREATE INDEX IF NOT EXISTS phrase_index on
             phrase (phrase)",
-        (),
-    )?;
+    );
 
-    conn.execute(
+    cuter.execute(
         "CREATE TABLE IF NOT EXISTS content_phrase (
             id              INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
             phrase_id       INTEGER NOT NULL,
@@ -251,20 +247,24 @@ pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
             FOREIGN KEY (phrase_id) REFERENCES phrase(id) ON DELETE CASCADE,
             FOREIGN KEY (content_id) REFERENCES content(id) ON DELETE CASCADE
         )",
-        (),
-    )?;
+    );
 
-    conn.execute(
+    cuter.execute(
         "CREATE UNIQUE INDEX IF NOT EXISTS phrase_to_content_index on
             content_phrase (phrase_id, content_id)",
-        (),
-    )?;
+    );
 
-    conn.execute(
+    cuter.execute(
         "CREATE UNIQUE INDEX IF NOT EXISTS content_to_phrase_index on
             content_phrase (content_id, phrase_id)",
-        (),
-    )?;
+    );
+
+    cuter.execute(
+        "CREATE TABLE IF NOT EXISTS mark (
+            content_id      INTEGER PRIMARY KEY NOT NULL UNIQUE,
+            FOREIGN KEY (content_id) REFERENCES content(id) ON DELETE CASCADE
+        )",
+    );
 
     // TODO: Add "entity" table (id, text, date_added)
     // TODO: Add "dictionary" table (id, lang, word, description)
@@ -292,6 +292,8 @@ pub fn db_seed_tables(conn: Connection) -> Result<(), Box<dyn Error>> {
     // TODO: Add "group_to_person" (id, group_id, person_id)
     // TODO: Add "density" table long shot (id, content_id, avg_words_per_concept, conformity_index, answer_confidence)
     // TODO: Add "source_meta" table (id, content_id, )
+
+    _ = cuter.conn.close();
 
     Ok(())
 }

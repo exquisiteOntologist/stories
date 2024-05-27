@@ -1,7 +1,6 @@
 use std::error::Error;
 
-use crate::{db::db_content_retrieve, entities::Content};
-
+use crate::{db::content::db_content_retrieve, entities::Content};
 
 pub async fn view_content(args: Vec<String>) -> Result<(), Box<dyn Error>> {
     if args.len() < 3 {
@@ -23,11 +22,13 @@ pub async fn view_content(args: Vec<String>) -> Result<(), Box<dyn Error>> {
     let title = c.title;
     let url = c.url;
 
-    print!("
+    print!(
+        "
         Content for ID:
         \"{title}\"
         {url}
-");
+"
+    );
 
     Ok(())
 }

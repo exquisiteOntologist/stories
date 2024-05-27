@@ -4,9 +4,10 @@ use rusqlite::Result;
 use std::error::Error;
 
 use crate::db::{
-    db_content_add, db_content_save_space, db_log_add, db_source_get_data_web_url_segment,
-    db_source_retrievals_update_failures, db_source_retrievals_update_success,
-    db_sources_retrieve_outdated,
+    content::db_content_add, content::db_content_save_space, logging::db_log_add,
+    retrievals::db_source_retrievals_update_failures,
+    retrievals::db_source_retrievals_update_success, source::db_source_get_data_web_url_segment,
+    source::db_sources_retrieve_outdated,
 };
 use crate::entities::{Source, SourceKind};
 use crate::feed::feed_fetch::feed_fetch_from_url;

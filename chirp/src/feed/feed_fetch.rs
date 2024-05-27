@@ -1,5 +1,5 @@
 use crate::{
-    db::db_log_add,
+    db::logging::db_log_add,
     entities::{FullContent, Source},
     feed::{feed_atom::parse_atom, feed_rss::parse_rss, feed_website::parse_website},
     utils::fetch_url_to_string,

@@ -14,7 +14,8 @@ pub fn remove_collection(
     parent_collection_id: i32,
     collection_ids: Vec<i32>,
 ) -> Result<(), String> {
-    let rm_res = chirp::actions::collection_remove(&parent_collection_id, &collection_ids);
+    let rm_res =
+        chirp::actions::collections::collection_remove(&parent_collection_id, &collection_ids);
     if rm_res.is_err() {
         return Err("Unable to remove some collections".into());
     }

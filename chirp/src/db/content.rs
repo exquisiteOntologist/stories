@@ -84,8 +84,11 @@ pub fn db_map_content_body_query<P: Params>(
 // Note that this will need to be updated in relation to the sources
 // & that will be a much slower query
 /// Delete old content. Where tables cascade, associated rows also get deleted.
-const SQL_DELETE_OLD_CONTENT: &str =
-    "DELETE FROM content WHERE id < (SELECT MAX(id) FROM content) - 30000";
+const SQL_DELETE_OLD_CONTENT: &str = "DELETE FROM content
+        WHERE id < (SELECT MAX(id) FROM content) - 30000
+        AND id NOT IN (
+            SELECT content_id as id FROM mark ORDER BY content_id DESC LIMIT 30000
+        )";
 
 // const SQL_DELETE_OLD_BODIES: &str =
 //     "DELETE FROM content_body WHERE id < (SELECT MAX(id) FROM content_body) - 1000";

@@ -4,6 +4,15 @@
 
 Make sense of the outer world that affects **your narrative**.
 
+---
+
+**Note:** *The current content retrieval mechanism stops on sleep until the application is restarted.*
+
+This issue will be addressed at some stage; In the meantime simply restart the application to receive updates.
+
+---
+
+
 ![Thumbnail view](./materials/screenshots/screenshot-a.png)
 ![Article in Arc browser over thumbnail view](./materials/screenshots/screenshot-b.png)
 
@@ -52,4 +61,3 @@ Make sense of the outer world that affects **your narrative**.
     - **A)** Not yet. App signing is required.
 - **Q)** How come Windows doesn't get tested on GitHub?
     - **A)** The libraries are not compatible with GitHub's Windows build environment. It does build on Windows Server in my testing.
-

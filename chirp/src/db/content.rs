@@ -7,6 +7,8 @@ use chrono::Utc;
 use labels::actions::collect_word_tallies_with_intersections;
 use rusqlite::{params, Connection, Params, Statement};
 use std::error::Error;
+use titles::entities::Title;
+use titles::strip::strip_titles;
 
 use super::utils::{create_rarray_values, db_connect, load_rarray_table};
 //                              2023-10-07 13:46:54.605157 UTC
@@ -22,9 +24,10 @@ pub fn db_map_content_query<P: Params>(
     s: &mut Statement,
     p: P,
 ) -> Result<Vec<Content>, Box<dyn Error + 'static>> {
+    let mut content_titles: Vec<(i32, i32, String)> = Vec::new();
+
     // assumes used a "SELECT * FROM content"
     let content_rows_res = s.query_map(p, |row| {
-        let title: String = row.get(2)?;
         let date_published: String = row.get(4)?;
         let date_retrieved: String = row.get(5)?;
 
@@ -37,15 +40,19 @@ pub fn db_map_content_query<P: Params>(
                 .unwrap_or_default()
                 .and_utc();
 
-        Ok(Content {
+        let content = Content {
             id: row.get(0)?,
             source_id: row.get(1)?,
-            title: content_title_clean(title), // row.get(2),
+            title: row.get(2)?,
             author: String::new(),
             url: row.get(3)?,
             date_published: date_published_date,
             date_retrieved: date_retrieved_date,
-        })
+        };
+
+        content_titles.push((content.source_id, content.id, content.title.clone()));
+
+        Ok(content)
     });
 
     if let Err(e) = content_rows_res {
@@ -54,10 +61,47 @@ pub fn db_map_content_query<P: Params>(
     }
 
     let content_rows = content_rows_res?;
+    let mut content = content_rows
+        .map(|x| x.unwrap())
+        .into_iter()
+        .collect::<Vec<Content>>();
 
-    let content = content_rows.map(|x| x.unwrap()).collect::<Vec<Content>>();
+    let source_c_chunks = content_titles
+        .chunk_by(|(a_s_id, _, _), (b_s_id, _, _)| a_s_id == b_s_id)
+        .map(|c| c);
+
+    let mut all_titles_clean: Vec<Title> = Vec::new();
+    for s_c in source_c_chunks {
+        let titles_dirty = content_get_titles(s_c);
+        let mut titles_clean = strip_titles(titles_dirty);
+        all_titles_clean.append(&mut titles_clean);
+    }
+
+    content_update_titles(&mut content, all_titles_clean);
 
     Ok(content)
+}
+
+fn content_get_titles<'a>(content_titles: &'a [(i32, i32, String)]) -> Vec<Title<'a>> {
+    let mut titles_dirty: Vec<Title<'a>> = Vec::new();
+    for (_sid, id, title) in content_titles {
+        let t_d = Title {
+            id: &id,
+            title: &title,
+        };
+        titles_dirty.push(t_d);
+    }
+    titles_dirty
+}
+
+/// mutably update content titles from a list of given cleaned titles with matching Ids
+fn content_update_titles(content: &mut Vec<Content>, titles_clean: Vec<Title>) {
+    let mut t_c_iter = titles_clean.into_iter();
+    for c in content {
+        if let Some(t_c) = t_c_iter.find(|t_c| t_c.id == &c.id) {
+            c.title = t_c.title.into();
+        };
+    }
 }
 
 pub fn db_map_content_body_query<P: Params>(

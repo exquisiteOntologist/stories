@@ -130,7 +130,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
             <RefreshBar refreshAction={() => setDoRefresh(true)} refreshPossible={isFilteredCollection && !isShowingMostCurrent} />
             <CollectionEmptyMessage />
             <ListingsContainerCollections className="mb-12" view={collectionSettings?.layout as SettingsLayout} collections={nestedCollections} selectAction={(c) => dispatch(chooseCollection(c.id))} />
-            <ArticleCount collectionId={collectionId} />
+            <ArticleCount collectionId={collectionId} key={contents?.[0]?.id ?? "article-count"} />
             <ListingsContainerContent view={collectionSettings?.layout as SettingsLayout} contents={isFilteredCollection ? contentsVisible : contents} sources={sources} />
         </motion.div>
     );

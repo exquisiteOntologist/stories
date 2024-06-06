@@ -15,10 +15,10 @@ export const ArticleCount: React.FC<ArticleCountProps> = ({ collectionId }) => {
     }, [collectionId]);
 
     return (
-        <hgroup>
-            <h2>Today</h2>
-            <h2>{count}</h2>
-            <h3>Articles</h3>
+        <hgroup className="my-8">
+            <h2 className="text-3xl">Today</h2>
+            <h2 className="text-6xl">{count}</h2>
+            <h3 className="text-lg">Articles</h3>
         </hgroup>
     );
 };

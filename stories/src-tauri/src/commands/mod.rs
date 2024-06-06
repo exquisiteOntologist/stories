@@ -4,3 +4,4 @@ pub mod greet;
 pub mod mark;
 pub mod search;
 pub mod sources;
+pub mod statistics;

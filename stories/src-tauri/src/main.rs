@@ -30,6 +30,7 @@ async fn main() {
             commands::sources::list_sources,
             commands::sources::list_source_of_collections,
             commands::sources::remove_sources,
+            commands::statistics::today_content_count,
             commands::search::search
         ])
         .setup(|_app| {

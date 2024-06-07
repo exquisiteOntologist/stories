@@ -39,6 +39,22 @@ pub const SQL_STATISTICS_TODAY_CONTENT_IN_COLLECTION: &str = "
     FROM hierarchy));
 ";
 
+pub const SQL_STATISTICS_YESTERDAY_CONTENT_IN_COLLECTION: &str = "
+    SELECT COUNT() FROM content WHERE strftime('%Y-%m-%d', substr(date_published, 1, 10)) = strftime('%Y-%m-%d', 'now', '-1 days') AND source_id IN (SELECT source_id AS id FROM collection_to_source WHERE collection_id IN (WITH RECURSIVE hierarchy AS (
+        SELECT id AS entity_id
+        FROM collection
+        WHERE id = ?1
+
+        UNION ALL
+
+        SELECT cc.collection_inside_id
+        FROM collection_to_collection cc
+        INNER JOIN hierarchy h ON cc.collection_parent_id = h.entity_id
+    )
+    SELECT entity_id
+    FROM hierarchy));
+";
+
 pub fn today_content_count(collection_id: &i32) -> Result<i32, Box<dyn Error>> {
     let conn: Connection = db_connect()?;
     let mut query: Statement = conn.prepare(SQL_STATISTICS_TODAY_CONTENT_IN_COLLECTION)?;

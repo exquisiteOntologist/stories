@@ -2,12 +2,9 @@ use std::error::Error;
 
 use rusqlite::{params, Connection, Statement};
 
-use super::{
-    collection::{
-        SQL_COLLECTION_NESTED_COLLECTION_IDS_RECURSIVE, SQL_COLLECTION_NESTED_SOURCE_IDS_RECURSIVE,
-    },
-    utils::db_connect,
-};
+use crate::entities::TodayCount;
+
+use super::utils::db_connect;
 
 /// Count the number of content items from the current day
 pub const SQL_STATISTICS_TODAY_CONTENT: &str = "
@@ -55,21 +52,31 @@ pub const SQL_STATISTICS_YESTERDAY_CONTENT_IN_COLLECTION: &str = "
     FROM hierarchy));
 ";
 
-pub fn today_content_count(collection_id: &i32) -> Result<i32, Box<dyn Error>> {
+pub fn today_content_count(collection_id: &i32) -> Result<TodayCount, Box<dyn Error>> {
     let conn: Connection = db_connect()?;
-    let mut query: Statement = conn.prepare(SQL_STATISTICS_TODAY_CONTENT_IN_COLLECTION)?;
-    let count_res: Result<i32, rusqlite::Error> =
-        query.query_row(params![collection_id], |r| r.get(0));
-    if let Err(e) = count_res {
-        eprint!("Failed to count today's content in the given collection");
-        return Err(e.into());
+
+    let mut query_today: Statement = conn.prepare(SQL_STATISTICS_TODAY_CONTENT_IN_COLLECTION)?;
+    let count_res_today: Result<i32, rusqlite::Error> =
+        query_today.query_row(params![collection_id], |r| r.get(0));
+
+    let mut query_yesterday: Statement =
+        conn.prepare(SQL_STATISTICS_YESTERDAY_CONTENT_IN_COLLECTION)?;
+    let count_res_yesterday: Result<i32, rusqlite::Error> =
+        query_yesterday.query_row(params![collection_id], |r| r.get(0));
+
+    if count_res_today.is_err() || count_res_yesterday.is_err() {
+        return Err("Failed to count today's content in the given collection".into());
     }
-    let count = count_res.unwrap();
+
+    let counts = TodayCount {
+        today: count_res_today.unwrap(),
+        yesterday: count_res_yesterday.unwrap(),
+    };
 
     println!(
-        "Number of today's articles in collection {:1}: {:2}",
-        collection_id, count
+        "Number of today's articles in collection {:1}: {:2} VS. {:3} yesterday",
+        collection_id, counts.today, counts.yesterday
     );
 
-    Ok(count)
+    Ok(counts)
 }

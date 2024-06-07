@@ -49,6 +49,7 @@ export interface SourceDto {
 
 export enum MediaKind {
 	IMAGE = "IMAGE",
+	VIDEO = "VIDEO",
 }
 
 export interface ContentMedia {
@@ -102,6 +103,11 @@ export interface SearchResultsDto {
 	entity_materials: number[];
 	entity_concepts: number[];
 	mean_temperament: number;
+}
+
+export interface TodayCount {
+	today: number;
+	yesterday: number;
 }
 
 export enum SettingsLayout {

@@ -1,62 +1,14 @@
 use std::error::Error;
 
-use rusqlite::{Connection, Params};
-
-use super::utils::db_connect;
+use super::utils::cuter::Cuter;
 
 pub fn db_init() -> Result<(), Box<dyn Error>> {
     db_seed_tables()?;
     Ok(())
 }
 
-struct Executor {
-    conn: Connection,
-}
-
-/// Executor executes queries and prints errors with details
-impl Executor {
-    pub fn new() -> Self {
-        let conn = db_connect().unwrap();
-
-        Self { conn }
-    }
-
-    pub fn execute(&self, sql: &str) -> Result<(), Box<dyn Error>> {
-        match self.conn.execute(sql, ()) {
-            Ok(_v) => Ok(()),
-            Err(e) => {
-                eprintln!("Error executing SQL query");
-                eprintln!("Query:");
-                eprint!("{:?}\n", sql);
-                eprintln!("Error:");
-                eprint!("{:?}\n", e);
-
-                Err(e.to_string().into())
-            }
-        }
-    }
-
-    pub fn execute_params<P>(&self, sql: &str, params: P) -> Result<(), Box<dyn Error>>
-    where
-        P: Params,
-    {
-        match self.conn.execute::<P>(sql, params) {
-            Ok(_v) => Ok(()),
-            Err(e) => {
-                eprintln!("Error executing SQL query");
-                eprintln!("Query:");
-                eprint!("{:?}\n", sql);
-                eprintln!("Error:");
-                eprint!("{:?}\n", e);
-
-                Err(e.to_string().into())
-            }
-        }
-    }
-}
-
 pub fn db_seed_tables() -> Result<(), Box<dyn Error>> {
-    let cuter = Executor::new();
+    let cuter = Cuter::new();
 
     cuter.execute("VACUUM;PRAGMA auto_vacuum = FULL;")?;
 

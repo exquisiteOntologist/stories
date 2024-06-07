@@ -3,6 +3,8 @@ use std::rc::Rc;
 use directories::ProjectDirs;
 use rusqlite::{types::Value, Connection};
 
+pub mod cuter;
+
 pub fn db_connect() -> Result<Connection, rusqlite::Error> {
     let path = db_path_get().unwrap();
 

@@ -229,3 +229,11 @@ pub struct SearchResultsDto {
     pub entity_concepts: Vec<i32>,
     pub mean_temperament: i32,
 }
+
+#[derive(Debug, Clone)]
+#[typeshare]
+#[derive(Serialize)]
+pub struct TodayCount {
+    pub today: i32,
+    pub yesterday: i32,
+}

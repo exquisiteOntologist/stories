@@ -99,7 +99,15 @@ fn content_update_titles(content: &mut Vec<Content>, titles_clean: Vec<Title>) {
     let mut t_c_iter = titles_clean.into_iter();
     for c in content {
         if let Some(t_c) = t_c_iter.find(|t_c| t_c.id == &c.id) {
-            c.title = t_c.title.into();
+            c.title = if t_c.title.is_empty() {
+                println!(
+                    "Cannot get title for {:1} {:2} {:3}",
+                    t_c.id, c.title, t_c.title
+                );
+                "((no title))".into()
+            } else {
+                t_c.title.into()
+            };
         };
     }
 }

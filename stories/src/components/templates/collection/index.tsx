@@ -19,6 +19,7 @@ import { CollectionEmptyMessage } from "../../organisms/collection-empty-message
 import { selectNestedSourceIds } from "../../../redux/features/collectionToSourceSlice";
 import { RefreshBar } from "../../molecules/listings/refresh-bar";
 import { retrieveMarks } from "../../../redux/features/marksSlice";
+import { ArticleCount } from "../../organisms/statistics/article_count";
 
 const clientItemsLimit: number = 100;
 const time = (s: string): number => new Date(s).getTime();
@@ -129,6 +130,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
             <RefreshBar refreshAction={() => setDoRefresh(true)} refreshPossible={isFilteredCollection && !isShowingMostCurrent} />
             <CollectionEmptyMessage />
             <ListingsContainerCollections className="mb-12" view={collectionSettings?.layout as SettingsLayout} collections={nestedCollections} selectAction={(c) => dispatch(chooseCollection(c.id))} />
+            <ArticleCount collectionId={collectionId} key={contents?.[0]?.id ?? "article-count"} />
             <ListingsContainerContent view={collectionSettings?.layout as SettingsLayout} contents={isFilteredCollection ? contentsVisible : contents} sources={sources} />
         </motion.div>
     );

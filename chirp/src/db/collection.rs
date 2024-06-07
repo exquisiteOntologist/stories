@@ -258,3 +258,28 @@ pub fn db_get_collection_to_source(
 
     Ok(c_to_s)
 }
+
+/// This query will recursively return all collection ids from a starting collection id
+pub const SQL_COLLECTION_NESTED_COLLECTION_IDS_RECURSIVE: &str = "
+    WITH RECURSIVE hierarchy AS (
+        SELECT id AS entity_id
+        FROM collection
+        WHERE id = ?1
+
+        UNION ALL
+
+        SELECT cc.collection_inside_id
+        FROM collection_to_collection cc
+        INNER JOIN hierarchy h ON cc.collection_parent_id = h.entity_id
+    )
+    SELECT entity_id
+    FROM hierarchy
+";
+
+/// Recursively return all nested source Ids within nested collections.
+/// To use, use with the `format!()` macro to pass the collections
+pub const SQL_COLLECTION_NESTED_SOURCE_IDS_RECURSIVE: &str = "
+    SELECT source_id AS id FROM collection_to_source WHERE collection_id IN (
+        {}
+    )
+";

@@ -46,5 +46,6 @@ pub mod mark;
 pub mod remove;
 pub mod search;
 pub mod sources;
+pub mod statistics;
 pub mod update;
 pub mod view;

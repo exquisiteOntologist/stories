@@ -6,20 +6,6 @@ use crate::entities::TodayCount;
 
 use super::utils::db_connect;
 
-/// Count the number of content items from the current day
-// pub const SQL_STATISTICS_TODAY_CONTENT: &str = "
-//     SELECT COUNT() FROM content
-//         WHERE strftime('%Y-%m-%d', substr(date_published, 1, 10)) = strftime('%Y-%m-%d', 'now')
-// ";
-
-/// Count the number of content items from the current day that are in a set of sources (ids).
-/// Use the `format!()` macro to combine with a query that retrieves Source IDs
-// pub const SQL_STATISTICS_TODAY_CONTENT_IN_SOURCES: &str = "
-//     SELECT COUNT() FROM content
-//         WHERE strftime('%Y-%m-%d', substr(date_published, 1, 10)) = strftime('%Y-%m-%d', 'now')
-//         AND source_id IN ({});
-// ";
-
 pub const SQL_STATISTICS_TODAY_YESTERDAY_CONTENT_IN_COLLECTION: &str = "
     -- Today's articles count within collection and nested collections, but rewritten by OpenAI for performance
     -- BEGIN

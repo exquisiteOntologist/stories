@@ -23,7 +23,7 @@ export const ArticleCount: React.FC<ArticleCountProps> = ({ collectionId }) => {
     const percent = `${pos ? "+" : ""}${change}%`;
 
     return (
-        <motion.hgroup {...motionProps} className="my-8 cursor-default">
+        <motion.hgroup {...motionProps} className="my-8 mr-6 cursor-default">
             <h2 className="text-3xl">Today</h2>
             <h2 className="text-6xl">{count?.today ?? <>&nbsp;</>}</h2>
             <h3 className="text-lg cursor-help" title={percent}>

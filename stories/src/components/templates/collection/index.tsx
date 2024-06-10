@@ -7,7 +7,7 @@ import { fetchSourcesOfCollection, sourcesSelectors } from "../../../redux/featu
 import { resetThemeColours } from "../../../redux/features/themeSlice";
 import { collectionsSelectors, fetchCollection, fetchNestedCollections, selectNestedCollections } from "../../../redux/features/collectionsSlice";
 import { collectionSettingsSelectors } from "../../../redux/features/collectionSettingsSlice";
-import { ContentDto, SettingsLayout } from "../../../data/chirp-types";
+import { ContentDto, PhraseResult, SettingsLayout } from "../../../data/chirp-types";
 import { chooseCollection, selectCollectionId, selectIsCustomizing } from "../../../redux/features/navSlice";
 import { ListingsContainerContent } from "../../molecules/listings/listings-container-content";
 import { TitleCrumbs } from "../../organisms/title-crumbs";
@@ -21,6 +21,8 @@ import { RefreshBar } from "../../molecules/listings/refresh-bar";
 import { retrieveMarks } from "../../../redux/features/marksSlice";
 import { ArticleCount } from "../../organisms/statistics/article_count";
 import { invoke } from "@tauri-apps/api/core";
+import { PhraseCount } from "../../organisms/statistics/phrase_count";
+import { ListingsContainerPhrase } from "../../molecules/listings/listings-container-phrase";
 
 const clientItemsLimit: number = 100;
 const time = (s: string): number => new Date(s).getTime();
@@ -44,6 +46,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     const [doRefresh, setDoRefresh] = useState<boolean>(true);
     const [contentsVisible, setContentsVisible] = useState<ContentDto[]>([]);
     const [filteringCollectionId, setFilteringCollectionId] = useState<number | null>(null);
+    const [phrases, setPhrases] = useState<PhraseResult[]>([]);
 
     const title = isCustomizing ? "edit" : "hi";
     let updateTimeout: NodeJS.Timeout | undefined;
@@ -106,6 +109,9 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
         setContentsVisible(contents);
         setDoRefresh(true);
         setFilteringCollectionId(collectionId);
+        invoke("collection_phrases_today", {
+            collectionId,
+        }).then((phrases) => setPhrases(phrases as PhraseResult[]));
         console.log("set update to true again");
     }, [collectionId]);
 
@@ -114,13 +120,6 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
             setContentsVisible(contents);
         }
     }, [doRefresh]);
-
-    // temporary
-    invoke("collection_phrases_today", {
-        collectionId,
-    }).then((phrases) => console.log("phrases today", phrases));
-
-    // console.log('contents', contents.map(c => [c.title, c.date_published]))
 
     // know whether to just show content of collection or to show recency-based filtered list (cycles & speed)
     const isFilteredCollection = filteringCollectionId === collectionId;
@@ -136,7 +135,11 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
             <RefreshBar refreshAction={() => setDoRefresh(true)} refreshPossible={isFilteredCollection && !isShowingMostCurrent} />
             <CollectionEmptyMessage />
             <ListingsContainerCollections className="mb-12" view={collectionSettings?.layout as SettingsLayout} collections={nestedCollections} selectAction={(c) => dispatch(chooseCollection(c.id))} />
-            <ArticleCount collectionId={collectionId} key={contents?.[0]?.id ?? "article-count"} />
+            <div className="flex items-end">
+                <ArticleCount collectionId={collectionId} key={contents?.[0]?.id ?? "article-count"} />
+                <PhraseCount collectionId={collectionId} key={"phrase-count" + contents?.[0]?.id ?? "article-count"} />
+            </div>
+            <ListingsContainerPhrase view={collectionSettings?.layout as SettingsLayout} phrases={phrases.slice(0, 15)} />
             <ListingsContainerContent view={collectionSettings?.layout as SettingsLayout} contents={isFilteredCollection ? contentsVisible : contents} sources={sources} />
         </motion.div>
     );

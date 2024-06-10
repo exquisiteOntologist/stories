@@ -110,6 +110,12 @@ export interface TodayCount {
 	yesterday: number;
 }
 
+export interface PhraseResult {
+	id: number;
+	phrase: string;
+	total: number;
+}
+
 export enum SettingsLayout {
 	ROWS = "ROWS",
 	CARDS = "CARDS",

@@ -1,4 +1,12 @@
-pub const TODAY_PHRASES: &str = "
+use std::error::Error;
+
+use rusqlite::{params, Connection, Statement};
+
+use crate::entities::PhraseResult;
+
+use super::utils::db_connect;
+
+pub const PHRASES_COLLECTION_TODAY: &str = "
     -- today's phrases from the collection, recursive
     WITH today_content AS (
         SELECT id
@@ -31,3 +39,34 @@ pub const TODAY_PHRASES: &str = "
     ORDER BY fp.total DESC
     LIMIT 300;
 ";
+
+pub fn today_phrases(collection_id: &i32) -> Result<Vec<PhraseResult>, Box<dyn Error>> {
+    let conn: Connection = db_connect()?;
+
+    let mut query: Statement = conn.prepare(PHRASES_COLLECTION_TODAY)?;
+    let results = query.query_map(
+        params![collection_id],
+        |r| -> Result<PhraseResult, rusqlite::Error> {
+            Ok(PhraseResult {
+                id: r.get::<_, i32>(0).unwrap(),
+                phrase: r.get::<_, String>(1).unwrap(),
+                total: r.get::<_, i32>(0).unwrap(),
+            })
+        },
+    );
+
+    match results {
+        Ok(v) => {
+            // println!(
+            //     "Phrase from today in collection {:1}: {:2} {:3} {:4}",
+            //     collection_id, v.id, v.phrase, v.total
+            // );
+            let phrases: Vec<PhraseResult> = v.map(|pr| pr.unwrap()).collect::<Vec<PhraseResult>>();
+            Ok(phrases)
+        }
+        Err(e) => {
+            eprintln!("Failed to count today's content in the given collection");
+            Err(e.to_string().into())
+        }
+    }
+}

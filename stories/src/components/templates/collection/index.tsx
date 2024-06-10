@@ -20,6 +20,7 @@ import { selectNestedSourceIds } from "../../../redux/features/collectionToSourc
 import { RefreshBar } from "../../molecules/listings/refresh-bar";
 import { retrieveMarks } from "../../../redux/features/marksSlice";
 import { ArticleCount } from "../../organisms/statistics/article_count";
+import { invoke } from "@tauri-apps/api/core";
 
 const clientItemsLimit: number = 100;
 const time = (s: string): number => new Date(s).getTime();
@@ -113,6 +114,11 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
             setContentsVisible(contents);
         }
     }, [doRefresh]);
+
+    // temporary
+    invoke("collection_phrases_today", {
+        collectionId,
+    }).then((phrases) => console.log("phrases today", phrases));
 
     // console.log('contents', contents.map(c => [c.title, c.date_published]))
 

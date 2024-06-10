@@ -43,6 +43,7 @@ pub mod collections;
 pub mod content;
 pub mod intro;
 pub mod mark;
+pub mod phrases;
 pub mod remove;
 pub mod search;
 pub mod sources;

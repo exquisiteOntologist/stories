@@ -26,6 +26,8 @@ pub async fn feed_fetch_from_url(
         || feed_text.contains(&"http://purl.org/rss/1.0/")
         || url.contains(".rss");
 
+    // print!("\n\nFeed test\n{:?}\n\n", feed_text);
+
     let parse_result: Result<(Source, Vec<FullContent>), Box<dyn Error + Send + Sync>> = if is_atom
     {
         println!("Parsing atom {:?}", &url);

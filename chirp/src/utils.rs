@@ -17,6 +17,7 @@ pub async fn fetch_url_to_string(url: &String) -> Result<String, Box<dyn Error +
     let mut headers = reqwest::header::HeaderMap::new();
 
     headers.insert("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36".parse().unwrap());
+    headers.insert("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7".parse().unwrap());
 
     match client.get(url.to_owned()).headers(headers).send().await {
         Ok(res) => {

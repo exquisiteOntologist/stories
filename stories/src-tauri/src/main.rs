@@ -26,6 +26,7 @@ async fn main() {
             commands::mark::mark_add,
             commands::mark::mark_remove,
             commands::mark::list_marks_of_sources,
+            commands::phrases::collection_phrases_today,
             commands::sources::add_source,
             commands::sources::list_sources,
             commands::sources::list_source_of_collections,

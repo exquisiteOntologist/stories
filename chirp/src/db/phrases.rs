@@ -40,6 +40,38 @@ pub const PHRASES_COLLECTION_TODAY: &str = "
     LIMIT 300;
 ";
 
+pub const PHRASES_COLLECTION_TODAY_COUNT: &str = "
+    -- today's phrases from the collection, as a count
+    WITH today_content AS (
+        SELECT id
+        FROM CONTENT
+        WHERE strftime('%Y-%m-%d', substr(date_published, 1, 10)) = strftime('%Y-%m-%d', 'now')
+        AND source_id IN (SELECT source_id AS id FROM collection_to_source WHERE collection_id IN (WITH RECURSIVE hierarchy AS (
+            SELECT id AS entity_id
+            FROM collection
+            WHERE id = ?1
+
+            UNION ALL
+
+            SELECT cc.collection_inside_id
+            FROM collection_to_collection cc
+            INNER JOIN hierarchy h ON cc.collection_parent_id = h.entity_id
+        )
+        SELECT entity_id
+        FROM hierarchy))
+    ),
+    frequent_phrases AS (
+        SELECT phrase_id
+        FROM content_phrase
+        WHERE content_id IN (SELECT id FROM today_content)
+        GROUP BY phrase_id
+    )
+    SELECT COUNT(*) as today
+    FROM phrase p
+    WHERE p.id IN (SELECT phrase_id FROM frequent_phrases)
+    ORDER BY p.id DESC;
+";
+
 pub fn today_phrases(collection_id: &i32) -> Result<Vec<PhraseResult>, Box<dyn Error>> {
     let conn: Connection = db_connect()?;
 

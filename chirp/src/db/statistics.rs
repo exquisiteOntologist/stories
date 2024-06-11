@@ -2,9 +2,9 @@ use std::error::Error;
 
 use rusqlite::{params, Connection, Statement};
 
-use crate::entities::TodayCount;
+use crate::entities::{GenericCount, TodayCount};
 
-use super::utils::db_connect;
+use super::{phrases::PHRASES_COLLECTION_TODAY_COUNT, utils::db_connect};
 
 pub const SQL_STATISTICS_TODAY_YESTERDAY_CONTENT_IN_COLLECTION: &str = "
     -- Today's articles count within collection and nested collections, but rewritten by OpenAI for performance
@@ -76,6 +76,39 @@ pub fn today_content_count(collection_id: &i32) -> Result<TodayCount, Box<dyn Er
         }
         Err(e) => {
             eprintln!("Failed to count today's content in the given collection");
+            Err(e.to_string().into())
+        }
+    }
+}
+
+pub fn today_phrases_count(collection_id: &i32) -> Result<GenericCount, Box<dyn Error>> {
+    let conn: Connection = db_connect()?;
+
+    let mut query_today: Statement = conn.prepare(PHRASES_COLLECTION_TODAY_COUNT)?;
+    match query_today.query_row(
+        params![collection_id],
+        |r| -> Result<GenericCount, rusqlite::Error> {
+            let today = r.get::<_, i32>(0);
+
+            if let Err(e) = today {
+                return Err(e);
+            }
+
+            Ok(GenericCount {
+                today: r.get::<_, i32>(0).unwrap(),
+                yesterday: 0,
+            })
+        },
+    ) {
+        Ok(v) => {
+            println!(
+                "Number of today's phrases in the content of collection {:1}: {:2} VS. {:3} yesterday",
+                collection_id, v.today, v.yesterday
+            );
+            Ok(v)
+        }
+        Err(e) => {
+            eprintln!("Failed to count today's phrases in the given collection");
             Err(e.to_string().into())
         }
     }

@@ -241,6 +241,14 @@ pub struct TodayCount {
 #[derive(Debug, Clone)]
 #[typeshare]
 #[derive(Serialize)]
+pub struct GenericCount {
+    pub today: i32,
+    pub yesterday: i32,
+}
+
+#[derive(Debug, Clone)]
+#[typeshare]
+#[derive(Serialize)]
 pub struct PhraseResult {
     pub id: i32,
     pub phrase: String,

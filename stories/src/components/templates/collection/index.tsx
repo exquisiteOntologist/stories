@@ -24,6 +24,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { PhraseCount } from "../../organisms/statistics/phrase_count";
 import { ListingsContainerPhrase } from "../../molecules/listings/listings-container-phrase";
 import { fetchPhrasesOfCollection, selectPhrasesOfCollection } from "../../../redux/features/phrasesSlice";
+import { fetchPhrasesToCollection } from "../../../redux/features/collectionToPhraseSlice";
 
 const clientItemsLimit: number = 100;
 const time = (s: string): number => new Date(s).getTime();
@@ -110,7 +111,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
         setContentsVisible(contents);
         setDoRefresh(true);
         setFilteringCollectionId(collectionId);
-        dispatch(fetchPhrasesOfCollection(collectionId));
+        dispatch(fetchPhrasesToCollection(collectionId));
         // invoke("collection_phrases_today", {
         //     collectionId,
         // }).then((phrases) => setPhrases(phrases as PhraseResult[]));

@@ -121,6 +121,11 @@ export interface PhraseResult {
 	total: number;
 }
 
+export interface CollectionToPhrase {
+	collection_id: number;
+	phrase_id: number;
+}
+
 export enum SettingsLayout {
 	ROWS = "ROWS",
 	CARDS = "CARDS",

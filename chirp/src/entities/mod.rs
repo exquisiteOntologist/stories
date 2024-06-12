@@ -254,3 +254,11 @@ pub struct PhraseResult {
     pub phrase: String,
     pub total: i32,
 }
+
+#[derive(Debug, Clone)]
+#[typeshare]
+#[derive(Serialize)]
+pub struct CollectionToPhrase {
+    pub collection_id: i32,
+    pub phrase_id: i32,
+}

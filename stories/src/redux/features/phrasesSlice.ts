@@ -4,6 +4,7 @@ import { PhraseResult } from "../../data/chirp-types";
 import { RootState } from "../store";
 import { collectionToSourceSelectors } from "./collectionToSourceSlice";
 import { selectCollectionId, selectNav } from "./navSlice";
+import { selectNestedPhraseIds } from "./collectionToPhraseSlice";
 
 export const fetchPhrasesOfCollection = createAsyncThunk("phrases/fetchPhrasesOfCollection", async (collectionId: number, { dispatch }) => {
     const phrase = await invoke("collection_phrases_today", {
@@ -22,13 +23,13 @@ const phrasesSlice = createSlice({
     initialState: phrasesAdapter.getInitialState(),
     reducers: {
         setAllPhrases: phrasesAdapter.setAll,
-        addPhrasess: phrasesAdapter.addMany,
+        addPhrases: phrasesAdapter.addMany,
         upsertPhrases: phrasesAdapter.upsertMany,
     },
     extraReducers: {},
 });
 
-export const { setAllPhrases, addPhrasess, upsertPhrases } = phrasesSlice.actions;
+export const { setAllPhrases, addPhrases, upsertPhrases } = phrasesSlice.actions;
 export const phrasesSelectors = phrasesAdapter.getSelectors<RootState>((state) => state.phrases);
 
 /**
@@ -42,13 +43,10 @@ export const selectPhrasesOfCollection = createSelector(
     // Then, an "output selector" that receives all the input results as arguments
     // and returns a final result value
     (phrases, s) => {
-        // const collectionId = selectCollectionId(s);
-        // const collectionToSource = collectionToSourceSelectors.selectAll(s).filter((c_to_s) => collectionId === c_to_s.collection_id);
-        // const sourceIds = collectionToSource.map((c_to_s) => c_to_s.source_id);
-        // const collectionPhrasess = phrases.filter((c) => sourceIds.includes(c.source_id));
+        const phraseIds = selectNestedPhraseIds(s);
+        const collectionPhrases = phrases.filter((p) => phraseIds.includes(p.id));
 
-        // return collectionPhrasess;
-        return phrases;
+        return collectionPhrases;
     },
 );
 

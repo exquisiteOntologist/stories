@@ -11,10 +11,12 @@ import { searchReducer } from "./features/searchSlice";
 import { sourcesReducer } from "./features/sourcesSlice";
 import { themeReducer } from "./features/themeSlice";
 import { phrasesReducer } from "./features/phrasesSlice";
+import { collectionToPhraseReducer } from "./features/collectionToPhraseSlice";
 
 export default combineReducers({
     collectionSettings: collectionSettingsReducer,
     collectionToCollection: collectionToCollectionReducer,
+    collectionToPhrase: collectionToPhraseReducer,
     collectionToSource: collectionToSourceReducer,
     collections: collectionsReducer,
     contentBodies: contentBodiesReducer,

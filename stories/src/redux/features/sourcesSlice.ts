@@ -3,6 +3,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { SourceDto } from "../../data/chirp-types";
 import { RootState } from "../store";
 import { fetchCollectionToSource, removeCollectionToSource, selectNestedSourceIds } from "./collectionToSourceSlice";
+import { forwardFilterOrdered } from "../../utilities/arrays";
 
 // /**
 //  * Fetch sources.
@@ -18,91 +19,82 @@ import { fetchCollectionToSource, removeCollectionToSource, selectNestedSourceId
 //     }
 // )
 
-export const fetchSourcesOfCollection = createAsyncThunk(
-    'sources/fetchSourcesOfCollection',
-    async (collectionIds: number[], { dispatch }) => {
-        try {
-            const sources = await invoke('list_source_of_collections', {
-                collectionIds: collectionIds
-            })
+export const fetchSourcesOfCollection = createAsyncThunk("sources/fetchSourcesOfCollection", async (collectionIds: number[], { dispatch }) => {
+    try {
+        const sources = await invoke("list_source_of_collections", {
+            collectionIds: collectionIds,
+        });
 
-            dispatch(upsertSources(sources as SourceDto[]))
-            return true
-        } catch (e) {
-            console.error('failed to fetch sources of collection', e)
-            return false
-        }
+        dispatch(upsertSources(sources as SourceDto[]));
+        return true;
+    } catch (e) {
+        console.error("failed to fetch sources of collection", e);
+        return false;
     }
-)
+});
 
 export interface SourceForCollection {
-    collectionId: number,
-    sourceUrl: string,
-    otherParam: string
+    collectionId: number;
+    sourceUrl: string;
+    otherParam: string;
 }
 
-export const addSourceToCollection: AsyncThunk<boolean, SourceForCollection, {}> = createAsyncThunk(
-    'sources/addSourceToCollection',
-    async (sourceForCollection: SourceForCollection, { dispatch }) => {
-        const { collectionId, sourceUrl, otherParam } = sourceForCollection
-        
-        try {
-            const source = await invoke('add_source', {
-                collectionId,
-                sourceUrl,
-                additionalParam: otherParam,
-            });
+export const addSourceToCollection: AsyncThunk<boolean, SourceForCollection, {}> = createAsyncThunk("sources/addSourceToCollection", async (sourceForCollection: SourceForCollection, { dispatch }) => {
+    const { collectionId, sourceUrl, otherParam } = sourceForCollection;
 
-            if (!source) {
-                throw new Error("failed to add source!");
-            }
-    
-            await dispatch(fetchCollectionToSource([sourceForCollection.collectionId]))
-            return true
-        } catch (e) {
-            console.error('failed to add source', e)
+    try {
+        const source = await invoke("add_source", {
+            collectionId,
+            sourceUrl,
+            additionalParam: otherParam,
+        });
 
-            return false
+        if (!source) {
+            throw new Error("failed to add source!");
         }
+
+        await dispatch(fetchCollectionToSource([sourceForCollection.collectionId]));
+        return true;
+    } catch (e) {
+        console.error("failed to add source", e);
+
+        return false;
     }
-)
+});
 
 export interface RemoveSources {
-    collectionId: number,
-    sourceIds: number[]
+    collectionId: number;
+    sourceIds: number[];
 }
 
-export const removeSources: AsyncThunk<boolean, RemoveSources, {}> = createAsyncThunk(
-    'sources/removeSources',
-    async (rmSources: RemoveSources, { dispatch }) => {
-        try {
-            await invoke('remove_sources', {...rmSources})
-            await dispatch(removeCollectionToSource(rmSources.sourceIds))
-            await dispatch(fetchCollectionToSource([rmSources.collectionId]))
-            return true
-        } catch (e) {
-            console.error('failed to remove sources', e)
-            return false
-        }
+export const removeSources: AsyncThunk<boolean, RemoveSources, {}> = createAsyncThunk("sources/removeSources", async (rmSources: RemoveSources, { dispatch }) => {
+    try {
+        await invoke("remove_sources", { ...rmSources });
+        await dispatch(removeCollectionToSource(rmSources.sourceIds));
+        await dispatch(fetchCollectionToSource([rmSources.collectionId]));
+        return true;
+    } catch (e) {
+        console.error("failed to remove sources", e);
+        return false;
     }
-)
+});
 
 const sourcesAdapter = createEntityAdapter<SourceDto>({
-    selectId: (source) => source.id
-})
+    selectId: (source) => source.id,
+});
 
 const sourcesSlice = createSlice({
-    name: 'sources',
+    name: "sources",
     initialState: sourcesAdapter.getInitialState(),
     reducers: {
         setAllSources: sourcesAdapter.setAll,
-        upsertSources: sourcesAdapter.upsertMany
+        upsertSources: sourcesAdapter.upsertMany,
     },
-    extraReducers: {}
-})
+    extraReducers: {},
+});
 
-export const { setAllSources, upsertSources } = sourcesSlice.actions
-export const sourcesSelectors = sourcesAdapter.getSelectors<RootState>((state) => state.sources)
+export const { setAllSources, upsertSources } = sourcesSlice.actions;
+export const sourcesSelectors = sourcesAdapter.getSelectors<RootState>((state) => state.sources);
 
 /**
  * Select the nested sources within the current collection
@@ -115,11 +107,11 @@ export const selectNestedSources = createSelector(
     // Then, an "output selector" that receives all the input results as arguments
     // and returns a final result value
     (sources, s) => {
-        const nestedSourceIds: number[] = selectNestedSourceIds(s)
-        const nestedSources: SourceDto[] = sources.filter(c => nestedSourceIds.includes(c.id))
+        const nestedSourceIds: number[] = selectNestedSourceIds(s);
+        const nestedSources: SourceDto[] = forwardFilterOrdered(sources, nestedSourceIds, (c) => c.id);
 
-        return nestedSources
-    }
-)
+        return nestedSources;
+    },
+);
 
-export const sourcesReducer = sourcesSlice.reducer
+export const sourcesReducer = sourcesSlice.reducer;

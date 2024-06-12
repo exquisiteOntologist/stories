@@ -42,28 +42,27 @@ const _testForwardFilter = () => {
 /**
     Forward Filter.
     Filters an array of items by a series of matching unique indexes.
-    Once an index or item has been used it isn't used again.
+    It moves forwards, so it doesn't double-check an index or item afterwards.
     The items' indexes and the selection indexes must be in the same order.
 */
 export const forwardFilterOrdered = <T extends Array<any>>(items: T, selection: number[], selector: (i: T[0]) => number): T => {
     const results: Array<T[0]> = [];
     let iS: number = 0;
 
-    // Assumes selection is smaller than the total number of input items
     for (const item of items) {
         const itemIndex = selector(item);
         // even though it's while, we only check 1 selectionIndex at a time
-        while (iS < selection.length) {
-            const selectionIndex = selection[iS];
-            const match = itemIndex === selectionIndex;
-            // we're assuming selection does exist, but it's not this item
-            // so don't increment, but stop checking this item
-            if (!match) break;
-            results.push(item);
-            // there was a match, so increment to next selection
-            iS++;
-            break;
-        }
+        const continueChecking = iS < selection.length;
+        if (!continueChecking) break;
+        const selectionIndex = selection[iS];
+        const match = itemIndex === selectionIndex;
+        // we're assuming selection does exist, but it's not this item
+        // so don't increment as we still want this selection,
+        // but stop checking this item as it is not the selection
+        if (!match) continue;
+        results.push(item);
+        // there was a match, so increment to next selection
+        iS++;
     }
 
     return results as T;

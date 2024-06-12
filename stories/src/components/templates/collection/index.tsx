@@ -112,9 +112,6 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
         setDoRefresh(true);
         setFilteringCollectionId(collectionId);
         dispatch(fetchPhrasesToCollection(collectionId));
-        // invoke("collection_phrases_today", {
-        //     collectionId,
-        // }).then((phrases) => setPhrases(phrases as PhraseResult[]));
         console.log("set update to true again");
     }, [collectionId]);
 

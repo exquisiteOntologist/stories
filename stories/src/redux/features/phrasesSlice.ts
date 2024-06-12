@@ -5,6 +5,7 @@ import { RootState } from "../store";
 import { collectionToSourceSelectors } from "./collectionToSourceSlice";
 import { selectCollectionId, selectNav } from "./navSlice";
 import { selectNestedPhraseIds } from "./collectionToPhraseSlice";
+import { forwardFilter } from "../../utilities/arrays";
 
 export const fetchPhrasesOfCollection = createAsyncThunk("phrases/fetchPhrasesOfCollection", async (collectionId: number, { dispatch }) => {
     const phrase = await invoke("collection_phrases_today", {
@@ -44,7 +45,7 @@ export const selectPhrasesOfCollection = createSelector(
     // and returns a final result value
     (phrases, s) => {
         const phraseIds = selectNestedPhraseIds(s);
-        const collectionPhrases = phrases.filter((p) => phraseIds.includes(p.id));
+        const collectionPhrases = forwardFilter(phrases, phraseIds, (p) => p.id);
 
         return collectionPhrases;
     },

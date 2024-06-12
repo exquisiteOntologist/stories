@@ -23,6 +23,7 @@ import { ArticleCount } from "../../organisms/statistics/article_count";
 import { invoke } from "@tauri-apps/api/core";
 import { PhraseCount } from "../../organisms/statistics/phrase_count";
 import { ListingsContainerPhrase } from "../../molecules/listings/listings-container-phrase";
+import { fetchPhrasesOfCollection, selectPhrasesOfCollection } from "../../../redux/features/phrasesSlice";
 
 const clientItemsLimit: number = 100;
 const time = (s: string): number => new Date(s).getTime();
@@ -46,7 +47,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     const [doRefresh, setDoRefresh] = useState<boolean>(true);
     const [contentsVisible, setContentsVisible] = useState<ContentDto[]>([]);
     const [filteringCollectionId, setFilteringCollectionId] = useState<number | null>(null);
-    const [phrases, setPhrases] = useState<PhraseResult[]>([]);
+    const phrases = useAppSelector(selectPhrasesOfCollection);
 
     const title = isCustomizing ? "edit" : "hi";
     let updateTimeout: NodeJS.Timeout | undefined;
@@ -109,9 +110,10 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
         setContentsVisible(contents);
         setDoRefresh(true);
         setFilteringCollectionId(collectionId);
-        invoke("collection_phrases_today", {
-            collectionId,
-        }).then((phrases) => setPhrases(phrases as PhraseResult[]));
+        dispatch(fetchPhrasesOfCollection(collectionId));
+        // invoke("collection_phrases_today", {
+        //     collectionId,
+        // }).then((phrases) => setPhrases(phrases as PhraseResult[]));
         console.log("set update to true again");
     }, [collectionId]);
 

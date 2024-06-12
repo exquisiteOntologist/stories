@@ -10,6 +10,7 @@ import { navReducer } from "./features/navSlice";
 import { searchReducer } from "./features/searchSlice";
 import { sourcesReducer } from "./features/sourcesSlice";
 import { themeReducer } from "./features/themeSlice";
+import { phrasesReducer } from "./features/phrasesSlice";
 
 export default combineReducers({
     collectionSettings: collectionSettingsReducer,
@@ -20,6 +21,7 @@ export default combineReducers({
     contents: contentsReducer,
     marks: marksReducer,
     nav: navReducer,
+    phrases: phrasesReducer,
     search: searchReducer,
     sources: sourcesReducer,
     theme: themeReducer,

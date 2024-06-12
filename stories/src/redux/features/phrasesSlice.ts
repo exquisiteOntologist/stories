@@ -1,11 +1,9 @@
-import { createAsyncThunk, createEntityAdapter, createSelector, createSlice, EntityId } from "@reduxjs/toolkit";
+import { createAsyncThunk, createEntityAdapter, createSelector, createSlice } from "@reduxjs/toolkit";
 import { invoke } from "@tauri-apps/api/core";
 import { PhraseResult } from "../../data/chirp-types";
 import { RootState } from "../store";
-import { collectionToSourceSelectors } from "./collectionToSourceSlice";
-import { selectCollectionId, selectNav } from "./navSlice";
 import { selectNestedPhraseIds } from "./collectionToPhraseSlice";
-import { _testForwardFilterX, forwardFilter, forwardFilterOrdered } from "../../utilities/arrays";
+import { _testForwardFilterOrderedContiguous, forwardFilterOrdered } from "../../utilities/arrays";
 
 export const fetchPhrasesOfCollection = createAsyncThunk("phrases/fetchPhrasesOfCollection", async (collectionId: number, { dispatch }) => {
     const phrase = await invoke("collection_phrases_today", {

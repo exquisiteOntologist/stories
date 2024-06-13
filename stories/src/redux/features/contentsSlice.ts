@@ -13,7 +13,7 @@ export const fetchContentOfSources = createAsyncThunk("contents/fetchContentOfSo
     dispatch(addContents(content as ContentDto[]));
 });
 
-export const fetchContent = createAsyncThunk("contents/fetchContent", async (contentIds: number[] | null | undefined, { dispatch }) => {
+export const fetchContent = createAsyncThunk("contents/fetchContent", async (_, { dispatch }) => {
     const content = await invoke("list_content");
 
     dispatch(addContents(content as ContentDto[]));

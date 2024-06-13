@@ -1,8 +1,31 @@
 use std::error::Error;
 
+use rusqlite::{params, Row};
+
 use crate::entities::Source;
 
 use super::{source::db_map_sources_query, utils::db_connect};
+
+const SQL_CHECK_RECENT_RETRIEVALS: &str = "SELECT COUNT(*) FROM retrieval WHERE substr(date_last_attempt, 1, 21) > strftime('%Y-%m-%d %H:%M:%S', 'now', '-2 minutes')";
+
+pub fn db_retrievals_is_content_upating() -> Result<bool, Box<dyn Error>> {
+    let conn = db_connect()?;
+    match conn.query_row(
+        SQL_CHECK_RECENT_RETRIEVALS,
+        params![],
+        |r: &Row| -> Result<bool, rusqlite::Error> {
+            let count: i32 = match r.get::<_, i32>(0) {
+                Ok(v) => v,
+                Err(e) => return Err(e),
+            };
+            let is_updating: bool = count > 0;
+            Ok(is_updating)
+        },
+    ) {
+        Ok(v) => Ok(v),
+        Err(e) => Err(e.to_string().into()),
+    }
+}
 
 // Adds a sources retrieval table row. Only should be done once (when source is created).
 pub fn db_source_retrievals_add(source_id: &i32) -> Result<(), Box<dyn Error>> {

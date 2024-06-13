@@ -25,6 +25,7 @@ import { PhraseCount } from "../../organisms/statistics/phrase_count";
 import { ListingsContainerPhrase } from "../../molecules/listings/listings-container-phrase";
 import { fetchPhrasesOfCollection, selectPhrasesOfCollection } from "../../../redux/features/phrasesSlice";
 import { fetchPhrasesToCollection } from "../../../redux/features/collectionToPhraseSlice";
+import { FailBanner } from "../../organisms/fail-banner";
 
 const clientItemsLimit: number = 100;
 const time = (s: string): number => new Date(s).getTime();
@@ -42,10 +43,12 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     // these source selectors assume that the sources store only has the current sources
     const sources = useAppSelector(sourcesSelectors.selectAll);
     const sourceIds = useAppSelector(selectNestedSourceIds);
-    console.log("source ids", sourceIds);
     const contents = useAppSelector(selectContentOfCollection).sort(sortContentPublished).slice(0, clientItemsLimit);
     const isCustomizing = useAppSelector(selectIsCustomizing);
     const [doRefresh, setDoRefresh] = useState<boolean>(true);
+    // "contentsVisible" is the displayed subset of the current contents
+    // when the user clicks "reveal/refresh" then all contents are made visible.
+    // Non-visible content is typically the content that comes in later.
     const [contentsVisible, setContentsVisible] = useState<ContentDto[]>([]);
     const [filteringCollectionId, setFilteringCollectionId] = useState<number | null>(null);
     const phrases = useAppSelector(selectPhrasesOfCollection);
@@ -67,17 +70,13 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
         dispatch(retrieveMarks(sourceIds));
     }, [collectionId, sources]);
 
-    // useEffect(() => {
-    // dispatch(retrieveMarks(sourceIds));
-    // }, [sourceIds]);
-
     useEffect(() => {
         updateTimeout && clearTimeout(updateTimeout);
 
-        /** fetch content from the DB, but don't display it until desired (see `doRefresh`) */
+        /** fetches - content from the DB */
         const fetchCurrentContent = () => {
             dispatch(fetchContentOfSources(sourceIds));
-            console.log("updated", collectionId, sourceIds);
+            console.log("updated", new Date(), collectionId, sourceIds);
             updateTimeout = setTimeout(() => requestAnimationFrame(fetchCurrentContent), 1000 * 10);
         };
 
@@ -112,7 +111,6 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
         setDoRefresh(true);
         setFilteringCollectionId(collectionId);
         dispatch(fetchPhrasesToCollection(collectionId));
-        console.log("set update to true again");
     }, [collectionId]);
 
     useEffect(() => {
@@ -132,6 +130,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
                 <TitleCrumbs collectionId={collectionId} title={title} />
                 <CollectionCustomizer collectionSettings={collectionSettings} isCustomizing={isCustomizing} />
             </div>
+            <FailBanner />
             <RefreshBar refreshAction={() => setDoRefresh(true)} refreshPossible={isFilteredCollection && !isShowingMostCurrent} />
             <CollectionEmptyMessage />
             <ListingsContainerCollections className="mb-12" view={collectionSettings?.layout as SettingsLayout} collections={nestedCollections} selectAction={(c) => dispatch(chooseCollection(c.id))} />

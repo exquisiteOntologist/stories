@@ -3,6 +3,7 @@ pub mod content;
 pub mod greet;
 pub mod mark;
 pub mod phrases;
+pub mod retrievals;
 pub mod search;
 pub mod sources;
 pub mod statistics;

@@ -26,8 +26,6 @@ const sessionSlice = createSlice({
 
 export const { setLaunchDate } = sessionSlice.actions;
 export const selectLaunchDate = (state: RootState) => state.session.launched;
-export const selectTimeSinceLaunch = (state: RootState) => {
-    return minutesSince(state.session.launched);
-};
+export const selectTimeSinceLaunch = (state: RootState) => minutesSince(state.session.launched);
 
 export const sessionReducer = sessionSlice.reducer;

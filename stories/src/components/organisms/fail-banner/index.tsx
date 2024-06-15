@@ -1,15 +1,24 @@
 import { invoke } from "@tauri-apps/api/core";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useAppSelector } from "../../../redux/hooks";
+import { selectLaunchDate } from "../../../redux/features/sessionSlice";
+import { minutesSince } from "../../../utilities/dates";
 
 export const FailBanner: React.FC = () => {
+    const launched = useAppSelector(selectLaunchDate);
     const [isUpdating, setIsUpdating] = useState<boolean>(true);
 
-    const checkIsUpdating = () => {
-        invoke("retrievals_is_updating").then((working) => setIsUpdating(working as boolean));
-        setTimeout(() => requestAnimationFrame(checkIsUpdating), 1000 * 60);
-    };
+    useEffect(() => {
+        const checkIsUpdating = () => {
+            const expectAnUpdate = minutesSince(launched) > 15;
+            if (expectAnUpdate) {
+                invoke("retrievals_is_updating").then((working) => setIsUpdating(working as boolean));
+            }
+            setTimeout(() => requestAnimationFrame(checkIsUpdating), 1000 * 60);
+        };
 
-    checkIsUpdating();
+        checkIsUpdating();
+    }, [setIsUpdating]);
 
     if (isUpdating) return null;
 

@@ -19,7 +19,6 @@ export const ArticleCount: React.FC<ArticleCountProps> = ({ collectionId }) => {
 
     const change = count?.yesterday ? Math.round(((count.today - count.yesterday) / count.yesterday) * 100) : 100;
     const pos: boolean = !!change && change >= 0;
-    // const percent = change && <span>({`${pos ? "+" : ""}${change}%`})</span>;
     const percent = `${pos ? "+" : ""}${change}%`;
 
     return (

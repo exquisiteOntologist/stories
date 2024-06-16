@@ -18,7 +18,7 @@ export const PhraseCount: React.FC<ArticleCountProps> = ({ collectionId }) => {
     }, [collectionId]);
 
     return (
-        <motion.hgroup {...motionProps} className="my-8 mr-6 cursor-default">
+        <motion.hgroup {...motionProps} className="my-8 mr-6 dark:text-slate-300 cursor-default">
             {/* <h2 className="text-4xl">Top</h2> */}
             <h2 className="text-5xl">{count?.today.toLocaleString() ?? <>&nbsp;</>}</h2>
             <h3 className="text-lg">Phrases</h3>

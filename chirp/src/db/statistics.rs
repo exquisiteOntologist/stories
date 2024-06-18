@@ -2,26 +2,15 @@ use std::error::Error;
 
 use rusqlite::{params, Connection, Statement};
 
-use crate::entities::TodayCount;
+use crate::entities::{GenericCount, TodayCount};
 
-use super::utils::db_connect;
+use super::{phrases::PHRASES_COLLECTION_TODAY_COUNT, utils::db_connect};
 
-/// Count the number of content items from the current day
-pub const SQL_STATISTICS_TODAY_CONTENT: &str = "
-    SELECT COUNT() FROM content
-        WHERE strftime('%Y-%m-%d', substr(date_published, 1, 10)) = strftime('%Y-%m-%d', 'now')
-";
-
-/// Count the number of content items from the current day that are in a set of sources (ids).
-/// Use the `format!()` macro to combine with a query that retrieves Source IDs
-pub const SQL_STATISTICS_TODAY_CONTENT_IN_SOURCES: &str = "
-    SELECT COUNT() FROM content
-        WHERE strftime('%Y-%m-%d', substr(date_published, 1, 10)) = strftime('%Y-%m-%d', 'now')
-        AND source_id IN ({});
-";
-
-pub const SQL_STATISTICS_TODAY_CONTENT_IN_COLLECTION: &str = "
-    SELECT COUNT() FROM content WHERE strftime('%Y-%m-%d', substr(date_published, 1, 10)) = strftime('%Y-%m-%d', 'now') AND source_id IN (SELECT source_id AS id FROM collection_to_source WHERE collection_id IN (WITH RECURSIVE hierarchy AS (
+pub const SQL_STATISTICS_TODAY_YESTERDAY_CONTENT_IN_COLLECTION: &str = "
+    -- Today's articles count within collection and nested collections, but rewritten by OpenAI for performance
+    -- BEGIN
+    -- Recursive CTE to get all entity IDs in the hierarchy
+    WITH RECURSIVE hierarchy AS (
         SELECT id AS entity_id
         FROM collection
         WHERE id = ?1
@@ -31,52 +20,96 @@ pub const SQL_STATISTICS_TODAY_CONTENT_IN_COLLECTION: &str = "
         SELECT cc.collection_inside_id
         FROM collection_to_collection cc
         INNER JOIN hierarchy h ON cc.collection_parent_id = h.entity_id
+    ),
+    -- CTE to get all source IDs from the collection hierarchy
+    collection_sources AS (
+        SELECT source_id
+        FROM collection_to_source
+        WHERE collection_id IN (SELECT entity_id FROM hierarchy)
     )
-    SELECT entity_id
-    FROM hierarchy));
-";
-
-pub const SQL_STATISTICS_YESTERDAY_CONTENT_IN_COLLECTION: &str = "
-    SELECT COUNT() FROM content WHERE strftime('%Y-%m-%d', substr(date_published, 1, 10)) = strftime('%Y-%m-%d', 'now', '-1 days') AND source_id IN (SELECT source_id AS id FROM collection_to_source WHERE collection_id IN (WITH RECURSIVE hierarchy AS (
-        SELECT id AS entity_id
-        FROM collection
-        WHERE id = ?1
-
-        UNION ALL
-
-        SELECT cc.collection_inside_id
-        FROM collection_to_collection cc
-        INNER JOIN hierarchy h ON cc.collection_parent_id = h.entity_id
-    )
-    SELECT entity_id
-    FROM hierarchy));
+    -- Main query to count content items from today and the specified source IDs
+    SELECT * FROM (
+    	(
+            SELECT COUNT(*) AS today
+            FROM content
+            WHERE strftime('%Y-%m-%d', substr(date_published, 1, 10)) = strftime('%Y-%m-%d', 'now')
+            AND source_id IN (SELECT source_id FROM collection_sources)), (
+           	    SELECT COUNT(*) AS yesterday
+                FROM content
+                WHERE strftime('%Y-%m-%d', substr(date_published, 1, 10)) = strftime('%Y-%m-%d', 'now', '-1 days')
+                AND source_id IN (SELECT source_id FROM collection_sources)
+        )
+    );
 ";
 
 pub fn today_content_count(collection_id: &i32) -> Result<TodayCount, Box<dyn Error>> {
     let conn: Connection = db_connect()?;
 
-    let mut query_today: Statement = conn.prepare(SQL_STATISTICS_TODAY_CONTENT_IN_COLLECTION)?;
-    let count_res_today: Result<i32, rusqlite::Error> =
-        query_today.query_row(params![collection_id], |r| r.get(0));
+    let mut query_today: Statement =
+        conn.prepare(SQL_STATISTICS_TODAY_YESTERDAY_CONTENT_IN_COLLECTION)?;
+    match query_today.query_row(
+        params![collection_id],
+        |r| -> Result<TodayCount, rusqlite::Error> {
+            let today = r.get::<_, i32>(0);
+            let yesterday = r.get::<_, i32>(1);
 
-    let mut query_yesterday: Statement =
-        conn.prepare(SQL_STATISTICS_YESTERDAY_CONTENT_IN_COLLECTION)?;
-    let count_res_yesterday: Result<i32, rusqlite::Error> =
-        query_yesterday.query_row(params![collection_id], |r| r.get(0));
+            if let Err(e) = today {
+                return Err(e);
+            }
 
-    if count_res_today.is_err() || count_res_yesterday.is_err() {
-        return Err("Failed to count today's content in the given collection".into());
+            if let Err(e) = yesterday {
+                return Err(e);
+            }
+
+            Ok(TodayCount {
+                today: r.get::<_, i32>(0).unwrap(),
+                yesterday: r.get::<_, i32>(1).unwrap(),
+            })
+        },
+    ) {
+        Ok(v) => {
+            println!(
+                "Number of today's articles in collection {:1}: {:2} VS. {:3} yesterday",
+                collection_id, v.today, v.yesterday
+            );
+            Ok(v)
+        }
+        Err(e) => {
+            eprintln!("Failed to count today's content in the given collection");
+            Err(e.to_string().into())
+        }
     }
+}
 
-    let counts = TodayCount {
-        today: count_res_today.unwrap(),
-        yesterday: count_res_yesterday.unwrap(),
-    };
+pub fn today_phrases_count(collection_id: &i32) -> Result<GenericCount, Box<dyn Error>> {
+    let conn: Connection = db_connect()?;
 
-    println!(
-        "Number of today's articles in collection {:1}: {:2} VS. {:3} yesterday",
-        collection_id, counts.today, counts.yesterday
-    );
+    let mut query_today: Statement = conn.prepare(PHRASES_COLLECTION_TODAY_COUNT)?;
+    match query_today.query_row(
+        params![collection_id],
+        |r| -> Result<GenericCount, rusqlite::Error> {
+            let today = r.get::<_, i32>(0);
 
-    Ok(counts)
+            if let Err(e) = today {
+                return Err(e);
+            }
+
+            Ok(GenericCount {
+                today: r.get::<_, i32>(0).unwrap(),
+                yesterday: 0,
+            })
+        },
+    ) {
+        Ok(v) => {
+            println!(
+                "Number of today's phrases in the content of collection {:1}: {:2} VS. {:3} yesterday",
+                collection_id, v.today, v.yesterday
+            );
+            Ok(v)
+        }
+        Err(e) => {
+            eprintln!("Failed to count today's phrases in the given collection");
+            Err(e.to_string().into())
+        }
+    }
 }

@@ -109,9 +109,9 @@ pub async fn parse_rss(
                 }
             }
 
-            for media in &content_media {
-                println!("Image in RSS feed {:?}", &media.src);
-            }
+            // for media in &content_media {
+            //     println!("Image in RSS feed {:?}", &media.src);
+            // }
 
             return FullContent {
                 content: Content {

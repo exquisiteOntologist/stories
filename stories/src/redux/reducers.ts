@@ -10,17 +10,23 @@ import { navReducer } from "./features/navSlice";
 import { searchReducer } from "./features/searchSlice";
 import { sourcesReducer } from "./features/sourcesSlice";
 import { themeReducer } from "./features/themeSlice";
+import { phrasesReducer } from "./features/phrasesSlice";
+import { collectionToPhraseReducer } from "./features/collectionToPhraseSlice";
+import { sessionReducer } from "./features/sessionSlice";
 
 export default combineReducers({
     collectionSettings: collectionSettingsReducer,
     collectionToCollection: collectionToCollectionReducer,
+    collectionToPhrase: collectionToPhraseReducer,
     collectionToSource: collectionToSourceReducer,
     collections: collectionsReducer,
     contentBodies: contentBodiesReducer,
     contents: contentsReducer,
     marks: marksReducer,
     nav: navReducer,
+    phrases: phrasesReducer,
     search: searchReducer,
+    session: sessionReducer,
     sources: sourcesReducer,
     theme: themeReducer,
 });

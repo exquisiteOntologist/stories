@@ -110,6 +110,22 @@ export interface TodayCount {
 	yesterday: number;
 }
 
+export interface GenericCount {
+	today: number;
+	yesterday: number;
+}
+
+export interface PhraseResult {
+	id: number;
+	phrase: string;
+	total: number;
+}
+
+export interface CollectionToPhrase {
+	collection_id: number;
+	phrase_id: number;
+}
+
 export enum SettingsLayout {
 	ROWS = "ROWS",
 	CARDS = "CARDS",

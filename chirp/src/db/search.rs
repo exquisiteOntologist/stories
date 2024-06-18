@@ -153,6 +153,7 @@ const SQL_SEARCH_CONTENT: &str = "
             SELECT id
             FROM phrase
             WHERE phrase COLLATE NOCASE IN (SELECT * FROM rarray(:Q))
+            COLLATE NOCASE
         )
         GROUP BY content_id
         HAVING COUNT(DISTINCT phrase_id) = :N
@@ -167,9 +168,9 @@ const SQL_SEARCH_CONTENT: &str = "
     -- Main query to select and order the content
     SELECT c.*
     FROM content c
-    LEFT JOIN content_with_phrases cwea ON c.id = cwea.content_id
+    LEFT JOIN content_with_phrases cwp ON c.id = cwp.content_id
     WHERE c.id IN (SELECT content_id FROM matching_content)
-    ORDER BY COALESCE(cwea.priority, 1);
+    ORDER BY COALESCE(cwp.priority, 1);
     -- End search query
 ";
 

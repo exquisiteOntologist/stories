@@ -103,6 +103,7 @@ pub fn db_search_collections(
     Ok(collections)
 }
 
+/// Sources search based on likes, giving higher sort order to exact sequence
 const SQL_SEARCH_SOURCES: &str = "
     SELECT *
     FROM source
@@ -119,7 +120,6 @@ pub fn db_search_sources(
     conn: &Connection,
     user_query: &String,
 ) -> Result<Vec<Source>, Box<dyn Error>> {
-    // Search based on like, but give higher sort order to exact sequence
     let mut sources_query = conn.prepare(SQL_SEARCH_SOURCES)?;
     let search_for_likely = db_query_as_like(user_query);
     let search_for_like_exact = db_query_as_like_exact(user_query);
@@ -178,7 +178,6 @@ pub fn db_search_content(
     user_query: &String,
 ) -> Result<Vec<Content>, Box<dyn Error>> {
     load_rarray_table(&conn)?;
-    println!("preparing to search content");
     let mut content_query = match conn.prepare(SQL_SEARCH_CONTENT) {
         Ok(v) => v,
         Err(e) => return Err(e.into()),
@@ -187,11 +186,6 @@ pub fn db_search_content(
     let phrases_array = super::utils::create_rarray_values(phrases);
     let search_phrase_count = phrases_array.len();
     let search_for_like_exact = db_query_as_like_exact(user_query);
-    print!("\n{:?}\n", &SQL_SEARCH_CONTENT);
-    println!("Search {:?}", &user_query);
-    // println!("Q {:?}", &phrases_array.join(' '));
-    println!("N {:?}", &search_phrase_count);
-    println!("EQ {:?}", &search_for_like_exact);
     let params = named_params! {
         ":Q": phrases_array,
         ":N": &search_phrase_count,

@@ -27,7 +27,8 @@ pub fn db_map_content_query<P: Params>(
     let mut content_titles: Vec<(i32, i32, String)> = Vec::new();
 
     // assumes used a "SELECT * FROM content"
-    let content_rows_res = s.query_map(p, |row| {
+    // (all the columns in the 'content' table are present)
+    let content_rows = match s.query_map(p, |row| {
         let date_published: String = row.get(4)?;
         let date_retrieved: String = row.get(5)?;
 
@@ -53,14 +54,14 @@ pub fn db_map_content_query<P: Params>(
         content_titles.push((content.source_id, content.id, content.title.clone()));
 
         Ok(content)
-    });
+    }) {
+        Ok(v) => v,
+        Err(e) => {
+            eprint!("Error adding collection: {:?}\n", e);
+            return Err(e.into());
+        }
+    };
 
-    if let Err(e) = content_rows_res {
-        eprint!("Error adding collection: {:?}\n", e);
-        return Err(e.into());
-    }
-
-    let content_rows = content_rows_res?;
     let mut content = content_rows
         .map(|x| x.unwrap())
         .into_iter()

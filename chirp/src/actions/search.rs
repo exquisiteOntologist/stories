@@ -12,7 +12,13 @@ pub fn search_cli(args: Vec<String>) -> Result<(), Box<dyn Error>> {
     let user_query = &args[2..].join(" ");
     print!("Searching for {:?}\n\n", user_query);
 
-    let results = db_search(user_query)?;
+    let results = match db_search(user_query) {
+        Ok(v) => v,
+        Err(e) => {
+            eprintln!("Failed to search for {:?}", &user_query);
+            return Err(e);
+        }
+    };
 
     println!("collections {:?}", &(results.collections).len());
     println!("sources {:?}", &(results.sources).len());

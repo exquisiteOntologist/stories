@@ -3,38 +3,35 @@ import { invoke } from "@tauri-apps/api/core";
 import { SearchResultsDto } from "../../data/chirp-types";
 import { RootState } from "../store";
 
-export const search = createAsyncThunk(
-    'search/search',
-    async (searchPhrase: string, { dispatch }) => {
-        try {
-            if (!searchPhrase) {
-                dispatch(setSearchResults(initialSearchState.searchResults))
+export const search = createAsyncThunk("search/search", async (searchPhrase: string, { dispatch }) => {
+    try {
+        if (!searchPhrase) {
+            dispatch(setSearchResults(initialSearchState.searchResults));
 
-                return true
-            }
-            
-            const results = await invoke('search', {
-                searchPhrase
-            })
-
-            dispatch(setSearchResults(results as SearchResultsDto))
-
-            return true
-        } catch (e) {
-            console.error('Failed to get search results')
-            return false
+            return true;
         }
+
+        const results = await invoke("search", {
+            searchPhrase,
+        });
+
+        dispatch(setSearchResults(results as SearchResultsDto));
+
+        return true;
+    } catch (e) {
+        console.error("Failed to get search results");
+        return false;
     }
-)
+});
 
 export interface SearchState {
-    searchResults: SearchResultsDto
+    searchResults: SearchResultsDto;
 }
 
 const initialSearchState: SearchState = {
     searchResults: {
         search_id: 0,
-        search_phrase: 'string',
+        search_phrase: "",
         collections: [],
         sources: [],
         contents: [],
@@ -47,25 +44,25 @@ const initialSearchState: SearchState = {
         entity_chemicals: [],
         entity_materials: [],
         entity_concepts: [],
-        mean_temperament: 1
-    }
-}
+        mean_temperament: 1,
+    },
+};
 
 /**
  * The Search for the app as a whole.
  */
 const searchSlice = createSlice({
-    name: 'search',
+    name: "search",
     initialState: initialSearchState,
     reducers: {
-        setSearchResults (state, action: PayloadAction<SearchResultsDto>) {
-            state.searchResults = action.payload
-        }
+        setSearchResults(state, action: PayloadAction<SearchResultsDto>) {
+            state.searchResults = action.payload;
+        },
     },
-    extraReducers: {}
-})
+    extraReducers: {},
+});
 
-export const { setSearchResults } = searchSlice.actions
-export const selectSearchResults = (state: RootState) => state.search.searchResults
+export const { setSearchResults } = searchSlice.actions;
+export const selectSearchResults = (state: RootState) => state.search.searchResults;
 
-export const searchReducer = searchSlice.reducer
+export const searchReducer = searchSlice.reducer;

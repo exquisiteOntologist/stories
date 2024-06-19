@@ -53,7 +53,7 @@ pub fn db_list_marks(source_ids: &Vec<i32>) -> Result<Vec<ContentDto>, Box<dyn E
     let s_id_values = create_rarray_values(source_ids.to_owned());
     let params = [s_id_values];
     let mut c_query: Statement = conn.prepare(SQL_MARKED_CONTENT_OF_SOURCES)?;
-    let content_list = db_map_content_query(&mut c_query, params)?;
+    let content_list = db_map_content_query(&mut c_query, params, Some(true))?;
 
     let ids: Vec<i32> = content_list
         .clone()

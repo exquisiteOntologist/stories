@@ -155,7 +155,7 @@ const SQL_SEARCH_CONTENT: &str = "
     FROM content c
     LEFT JOIN content_with_phrases cwp ON c.id = cwp.content_id
     JOIN matching_content mc ON c.id = mc.content_id
-    WHERE c.id IN (SELECT content_id FROM matching_content)
+    WHERE c.id IN (SELECT content_id FROM matching_content) OR c.title LIKE :EQ
     ORDER BY COALESCE(cwp.priority, 1);
     -- End search query
 ";

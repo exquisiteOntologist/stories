@@ -185,7 +185,7 @@ const SQL_SEARCH_CONTENT: &str = "
     ),
     -- CTE to mark content that has search text in body_text and is in matching_content
     content_with_phrases AS (
-        SELECT mc.content_id, 1 AS priority
+        SELECT mc.content_id AS id, 1 AS priority
         FROM content_body cb
         JOIN matching_content mc ON cb.content_id = mc.content_id
         WHERE cb.body_text LIKE :EQ
@@ -199,11 +199,12 @@ const SQL_SEARCH_CONTENT: &str = "
         COLLATE NOCASE
     )
     -- Main query to select and order the content
-    SELECT c.*
+    SELECT c.*, COALESCE(ct.priority, cp.priority, 2) AS priority
     FROM content c
     LEFT JOIN content_with_title_match ct ON c.id = ct.id
-    LEFT JOIN content_with_phrases cwp ON c.id = cwp.content_id
-    ORDER BY COALESCE(ct.priority, cwp.priority, 2) COLLATE NOCASE
+    LEFT JOIN content_with_phrases cp ON c.id = cp.id
+    JOIN matching_content mc ON c.id = mc.content_id
+    ORDER BY COALESCE(ct.priority, cp.priority, 2) COLLATE NOCASE
     LIMIT 300;
 ";
 

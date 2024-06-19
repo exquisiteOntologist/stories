@@ -122,7 +122,7 @@ const _SQL_SEARCH_CONTENT_OLD: &str = "
     LIMIT 1000";
 
 /// Perform a case-insensitive search on content phrases, and then on the matching contents' body text
-const SQL_SEARCH_CONTENT: &str = "
+const _SQL_SEARCH_CONTENT_V1: &str = "
     -- Select all content where all of the phrases are present and in sequence
     -- CTE to get content IDs with all phrases
     WITH matching_content AS (
@@ -163,6 +163,48 @@ const SQL_SEARCH_CONTENT: &str = "
     ORDER BY COALESCE(ct.priority, cwp.priority, 2)
     COLLATE NOCASE
     -- End search query
+";
+
+/// Perform a case-insensitive search on content phrases, and then on the matching contents' body text.
+/// This version only scans the content_body text for matching_content and not all content or content_with_title_match.
+const SQL_SEARCH_CONTENT: &str = "
+    -- Select all content where all of the phrases are present and in sequence
+    -- CTE to get content IDs with all phrases
+    WITH matching_content AS (
+        SELECT content_id
+        FROM content_phrase
+        WHERE phrase_id IN (
+            SELECT id
+            FROM phrase
+            WHERE phrase COLLATE NOCASE IN (SELECT * FROM rarray(:Q))
+        )
+        GROUP BY content_id
+        HAVING COUNT(DISTINCT phrase_id) >= :N
+        ORDER BY frequency DESC
+        LIMIT 100
+    ),
+    -- CTE to mark content that has search text in body_text and is in matching_content
+    content_with_phrases AS (
+        SELECT mc.content_id, 1 AS priority
+        FROM content_body cb
+        JOIN matching_content mc ON cb.content_id = mc.content_id
+        WHERE cb.body_text LIKE :EQ
+        COLLATE NOCASE
+    ),
+    -- CTE to mark content that has search text in title
+    content_with_title_match AS (
+        SELECT c.id, 0 AS priority
+        FROM content c
+        WHERE c.title LIKE :EQ
+        COLLATE NOCASE
+    )
+    -- Main query to select and order the content
+    SELECT c.*
+    FROM content c
+    LEFT JOIN content_with_title_match ct ON c.id = ct.id
+    LEFT JOIN content_with_phrases cwp ON c.id = cwp.content_id
+    ORDER BY COALESCE(ct.priority, cwp.priority, 2) COLLATE NOCASE
+    LIMIT 300;
 ";
 
 pub fn db_search_content(

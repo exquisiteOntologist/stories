@@ -31,14 +31,6 @@ pub fn search_cli(args: Vec<String>) -> Result<(), Box<dyn Error>> {
     _ = &(results.sources)
         .into_iter()
         .for_each(|s| println!("source {:1}:     \"{:2}\"\n", s.id, s.name));
-    _ = &(results.contents_match_titles)
-        .into_iter()
-        .for_each(|c| println!("title of {:1}:      \"{:2}\"\n", c.id, c.title));
-    _ = &(results.contents_match_bodies)
-        .into_iter()
-        .for_each(|c: crate::entities::ContentDto| {
-            println!("article of {:1}:      \"{:2}\"\n", c.id, c.title)
-        });
 
     print!("\n");
     println!("Use view {{Result ID}} to view ");

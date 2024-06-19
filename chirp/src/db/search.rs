@@ -147,7 +147,7 @@ const SQL_SEARCH_CONTENT: &str = "
     -- Select all content where all of the phrases are present and in sequence
     -- CTE to get content IDs with all phrases
     WITH matching_content AS (
-        SELECT content_id
+        SELECT *
         FROM content_phrase
         WHERE phrase_id IN (
             SELECT id
@@ -157,6 +157,8 @@ const SQL_SEARCH_CONTENT: &str = "
         )
         GROUP BY content_id
         HAVING COUNT(DISTINCT phrase_id) = :N
+        ORDER BY frequency DESC
+        LIMIT 30
     ),
     -- CTE to mark content that has search text in body_text
     content_with_phrases AS (
@@ -169,6 +171,7 @@ const SQL_SEARCH_CONTENT: &str = "
     SELECT c.*
     FROM content c
     LEFT JOIN content_with_phrases cwp ON c.id = cwp.content_id
+    JOIN matching_content mc ON c.id = mc.content_id
     WHERE c.id IN (SELECT content_id FROM matching_content)
     ORDER BY COALESCE(cwp.priority, 1);
     -- End search query

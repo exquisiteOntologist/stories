@@ -156,7 +156,7 @@ const SQL_SEARCH_CONTENT: &str = "
             COLLATE NOCASE
         )
         GROUP BY content_id
-        HAVING COUNT(DISTINCT phrase_id) = :N
+        HAVING COUNT(DISTINCT phrase_id) >= :N
         ORDER BY frequency DESC
         LIMIT 30
     ),

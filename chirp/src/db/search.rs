@@ -188,14 +188,14 @@ const SQL_SEARCH_CONTENT: &str = "
         SELECT mc.content_id AS id, 1 AS priority
         FROM content_body cb
         JOIN matching_content mc ON cb.content_id = mc.content_id
-        WHERE cb.body_text LIKE :EQ
+        WHERE cb.body_text LIKE :QLE
         COLLATE NOCASE
     ),
     -- CTE to mark content that has search text in title
     content_with_title_match AS (
         SELECT c.id, 0 AS priority
         FROM content c
-        WHERE c.title LIKE :EQ
+        WHERE c.title LIKE :QL
         COLLATE NOCASE
     )
     -- Main query to select and order the content
@@ -220,11 +220,13 @@ pub fn db_search_content(
     let phrases: Vec<String> = user_query.split(' ').map(|s| s.to_string()).collect();
     let phrases_array = super::utils::create_rarray_values(phrases);
     let search_phrase_count = phrases_array.len();
+    let search_for_like = db_query_as_like(user_query);
     let search_for_like_exact = db_query_as_like_exact(user_query);
     let params = named_params! {
         ":Q": phrases_array,
         ":N": &search_phrase_count,
-        ":EQ": search_for_like_exact.as_str(),
+        ":QL": search_for_like,
+        ":QLE": search_for_like_exact.as_str(),
     };
     db_map_content_query(&mut content_query, params, Some(false))
 }

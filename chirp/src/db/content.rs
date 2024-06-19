@@ -23,6 +23,7 @@ pub fn content_title_clean(mut title: String) -> String {
 pub fn db_map_content_query<P: Params>(
     s: &mut Statement,
     p: P,
+    clean_titles: Option<bool>,
 ) -> Result<Vec<Content>, Box<dyn Error + 'static>> {
     let mut content_titles: Vec<(i32, i32, String)> = Vec::new();
 
@@ -67,18 +68,20 @@ pub fn db_map_content_query<P: Params>(
         .into_iter()
         .collect::<Vec<Content>>();
 
-    let source_c_chunks = content_titles
-        .chunk_by(|(a_s_id, _, _), (b_s_id, _, _)| a_s_id == b_s_id)
-        .map(|c| c);
+    if let Some(true) = clean_titles {
+        let source_c_chunks = content_titles
+            .chunk_by(|(a_s_id, _, _), (b_s_id, _, _)| a_s_id == b_s_id)
+            .map(|c| c);
 
-    let mut all_titles_clean: Vec<Title> = Vec::new();
-    for s_c in source_c_chunks {
-        let titles_dirty = content_get_titles(s_c);
-        let mut titles_clean = strip_titles(titles_dirty);
-        all_titles_clean.append(&mut titles_clean);
+        let mut all_titles_clean: Vec<Title> = Vec::new();
+        for s_c in source_c_chunks {
+            let titles_dirty = content_get_titles(s_c);
+            let mut titles_clean = strip_titles(titles_dirty);
+            all_titles_clean.append(&mut titles_clean);
+        }
+
+        content_update_titles(&mut content, all_titles_clean);
     }
-
-    content_update_titles(&mut content, all_titles_clean);
 
     Ok(content)
 }
@@ -355,7 +358,7 @@ pub fn db_content_retrieve(id: i32) -> Result<Content, Box<dyn Error + 'static>>
     let mut content_query = conn.prepare("SELECT * FROM content WHERE id = :ID LIMIT 1")?;
     let id_string = id.to_string();
     let named_params = [(":ID", id_string.as_str())];
-    let content_res = db_map_content_query(&mut content_query, &named_params);
+    let content_res = db_map_content_query(&mut content_query, &named_params, Some(false));
 
     if let Err(e) = content_res {
         return Err(e);
@@ -382,7 +385,7 @@ pub fn db_contents_retrieve(
 
     let mut contents_query: Statement =
         conn.prepare("SELECT * FROM content WHERE id IN (SELECT * FROM rarray(?1)) LIMIT 150")?;
-    let contents_res = db_map_content_query(&mut contents_query, [content_id_values]);
+    let contents_res = db_map_content_query(&mut contents_query, [content_id_values], Some(false));
 
     if let Err(e) = contents_res {
         println!("Error retrieving contents ");
@@ -426,7 +429,7 @@ pub fn db_list_content() -> Result<Vec<Content>, Box<dyn Error + 'static>> {
     let mut content_list_query: Statement =
         conn.prepare("SELECT * FROM content ORDER BY id DESC LIMIT 150")?;
 
-    let content_list_res = db_map_content_query(&mut content_list_query, []);
+    let content_list_res = db_map_content_query(&mut content_list_query, [], Some(true));
 
     if let Err(e) = content_list_res {
         return Err(e);
@@ -446,7 +449,7 @@ pub fn db_list_content_of_source(source_id: i32) -> Result<Vec<Content>, Box<dyn
     let mut content_list_query: Statement = conn.prepare(SQL_CONTENT_OF_SOURCE)?;
     let id_string = source_id.to_string();
     let named_params = [(":ID", id_string.as_str())];
-    let content_list_res = db_map_content_query(&mut content_list_query, &named_params);
+    let content_list_res = db_map_content_query(&mut content_list_query, &named_params, Some(true));
 
     if let Err(e) = content_list_res {
         return Err(e);
@@ -474,7 +477,7 @@ pub fn db_list_content_of_sources(
     let params = [s_id_values];
     let mut c_query: Statement = conn.prepare(SQL_CONTENT_OF_SOURCES)?;
 
-    let content_list = db_map_content_query(&mut c_query, params)?;
+    let content_list = db_map_content_query(&mut c_query, params, Some(true))?;
 
     Ok(content_list)
 }
@@ -488,7 +491,7 @@ pub fn db_list_content_full(
     let s_id_values = create_rarray_values(source_ids.to_owned());
     let params = [s_id_values];
     let mut c_query: Statement = conn.prepare(SQL_CONTENT_OF_SOURCES)?;
-    let content_list = db_map_content_query(&mut c_query, params)?;
+    let content_list = db_map_content_query(&mut c_query, params, Some(true))?;
 
     let ids: Vec<i32> = content_list
         .clone()

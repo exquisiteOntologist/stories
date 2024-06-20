@@ -4,6 +4,7 @@ import { ContentDto } from "../../data/chirp-types";
 import { RootState } from "../store";
 import { collectionToSourceSelectors } from "./collectionToSourceSlice";
 import { selectCollectionId, selectNav } from "./navSlice";
+import { sortRecencyDescending } from "../../utilities/dates";
 
 export const fetchContentOfSources = createAsyncThunk("contents/fetchContentOfSources", async (sourceIds: EntityId[] | null, { dispatch, getState }) => {
     const content = await invoke("list_content", {
@@ -37,6 +38,10 @@ const contentsSlice = createSlice({
 export const { setAllContents, addContents } = contentsSlice.actions;
 export const contentsSelectors = contentsAdapter.getSelectors<RootState>((state) => state.contents);
 
+// in the event multiple items have same date, but not fetched together, you could append id to time string in comparison
+const sortContentId = (cA: ContentDto, cB: ContentDto) => cB.id - cA.id;
+const sortContentRecencyDescending = (cA: ContentDto, cB: ContentDto) => sortRecencyDescending(cA.date_published, cB.date_published);
+
 /**
  * Select the contents of the currently visible sources
  */
@@ -56,5 +61,11 @@ export const selectContentOfCollection = createSelector(
         return collectionContents;
     },
 );
+
+export const selectContentByRecency = (s: RootState, itemLimit?: number) => {
+    return selectContentOfCollection(s)
+        .sort(sortContentRecencyDescending)
+        .slice(0, itemLimit ?? 30);
+};
 
 export const contentsReducer = contentsSlice.reducer;

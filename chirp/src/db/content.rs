@@ -7,6 +7,7 @@ use chrono::Utc;
 use labels::actions::collect_word_tallies_with_intersections;
 use rusqlite::{params, Connection, Params, Statement};
 use std::error::Error;
+use std::vec::IntoIter;
 use titles::entities::Title;
 use titles::strip::strip_titles;
 
@@ -146,16 +147,15 @@ const SQL_DELETE_OLD_CONTENT: &str = "DELETE FROM content
             SELECT content_id as id FROM mark ORDER BY content_id DESC LIMIT 30000
         )";
 
-// const SQL_DELETE_OLD_BODIES: &str =
-//     "DELETE FROM content_body WHERE id < (SELECT MAX(id) FROM content_body) - 1000";
-
 pub fn db_content_save_space() -> Result<(), Box<dyn Error + 'static>> {
     let conn = db_connect()?;
-    if let Err(_e) = conn.execute(&SQL_DELETE_OLD_CONTENT, []) {
-        println!("Error deleting old bodies from content_body");
+    match conn.execute(&SQL_DELETE_OLD_CONTENT, []) {
+        Ok(_) => Ok(()),
+        Err(e) => {
+            eprintln!("Error deleting old bodies from content_body {:?}", e);
+            Err(e.into())
+        }
     }
-
-    Ok(())
 }
 
 pub fn db_map_content_media_query<P: Params>(
@@ -204,54 +204,55 @@ pub fn db_content_add(
             // wait
         }
 
-        // note the ID does not exist yet (not using GUIDs)
+        // note the ID does not exist yet (not using GUIDs so we don't know until after insertion)
         let cc = c.content;
         let cb = c.content_body;
         let cm = c.content_media;
 
-        let content_in_res = conn.execute(
+        if let Err(e) = conn.execute(
 			"INSERT INTO content (source_id, title, url, date_published, date_retrieved) VALUES (?1, ?2, ?3, ?4, ?5) ON CONFLICT DO NOTHING",
 			(&cc.source_id, &cc.title, &cc.url, &cc.date_published.to_string(), &cc.date_retrieved.to_string()),
-		);
-
-        if let Err(e) = content_in_res {
-            println!("Failed executing content insertion");
-            println!("{:1}, {:2} {:3}", &cc.source_id, &cc.title, &cc.url);
-            println!("${e}");
-            return Ok(());
-        }
+		) {
+            eprintln!("Failed executing content insertion");
+            eprintln!("{:1}, {:2} {:3}", &cc.source_id, &cc.title, &cc.url);
+            eprintln!("${e}");
+            continue;
+		};
 
         if cb.body_text.is_empty() && cm.is_empty() {
             continue;
         }
 
-        let cc_id_res = conn.query_row(
+        let cc_id: i32 = match conn.query_row(
             "SELECT id FROM content WHERE url=:URL",
             &[(":URL", cc.url.as_str())],
             |row| row.get(0),
-        );
-
-        if let Err(e) = cc_id_res {
-            eprint!("Inserted content not found: {:?}\n", e);
-            continue;
-        }
-
-        let cc_id: i32 = cc_id_res.unwrap();
+        ) {
+            Ok(v) => v,
+            Err(e) => {
+                eprint!("Inserted content not found: {:?}\n", e);
+                continue;
+            }
+        };
 
         if cb.body_text.is_empty() == false {
-            conn.execute(
+            if let Err(e) = conn.execute(
 				"INSERT INTO content_body (content_id, body_text) VALUES (?1, ?2) ON CONFLICT DO NOTHING",
 				(cc_id, &cb.body_text),
-			)?;
+			) {
+			    eprintln!("Error inserting content_body {:?}", e);
+			};
 
             _ = db_content_add_words_phrases(cc_id, cb);
         }
 
         for mi in cm.into_iter() {
-            conn.execute(
+            if let Err(e) = conn.execute(
 				"INSERT INTO content_media (content_id, src, kind) VALUES (?1, ?2, ?3) ON CONFLICT DO NOTHING",
 				(cc_id, &mi.src, 0 /* mi.kind */),
-			)?;
+			) {
+                eprintln!("Error inserting content_media {:?}", e);
+			};
         }
     }
 
@@ -281,29 +282,29 @@ pub fn db_content_add_words_phrases(
 
     let conn = db_connect()?;
     load_rarray_table(&conn)?;
-    let phrases_insert_res = conn.prepare(
+    let mut phrases_query: Statement = match conn.prepare(
         "
             INSERT OR IGNORE INTO phrase(phrase)
                 SELECT value AS phrase FROM rarray(?1);
         ",
-    );
+    ) {
+        Ok(v) => v,
+        Err(e) => {
+            eprintln!("Failed to add phrases {:?}", e);
+            _ = db_log_add(e.to_string().as_str());
+            return Err(e.into());
+        }
+    };
 
-    if let Err(err) = &phrases_insert_res {
-        eprintln!("Failed to add phrases {:?}", err);
-        _ = db_log_add(err.to_string().as_str());
-        return Err(phrases_insert_res.unwrap_err().into());
-    }
-
-    let mut phrases_query: Statement = phrases_insert_res.unwrap();
-    if let Err(err) = phrases_query.execute(params![&phrases_r]) {
-        eprintln!("Failed to execute add phrases {:?}", err);
-        _ = db_log_add(err.to_string().as_str());
-        return Err(err.into());
+    if let Err(e) = phrases_query.execute(params![&phrases_r]) {
+        eprintln!("Failed to execute add phrases {:?}", e);
+        _ = db_log_add(e.to_string().as_str());
+        return Err(e.into());
     };
 
     let conn = db_connect()?;
     load_rarray_table(&conn)?;
-    let content_phrase_res = conn.prepare(
+    let mut content_phrase: Statement = match conn.prepare(
         "
             INSERT OR IGNORE INTO content_phrase(phrase_id, content_id, frequency)
                 SELECT phrase_id, content_id, frequency FROM
@@ -327,25 +328,25 @@ pub fn db_content_add_words_phrases(
         ",
         // the ORDER BY is wrong and only works because there is just 1 unique content_id being used,
         // and the phrases are sorted by frequency
-    );
+    ) {
+        Ok(v) => v,
+        Err(e) => {
+            eprintln!("Failed to add phrases {:?}", e);
+            _ = db_log_add(e.to_string().as_str());
+            return Err(e.into());
+        }
+    };
 
-    if let Err(err) = &content_phrase_res {
-        eprintln!("Failed to add phrases {:?}", err);
-        _ = db_log_add(err.to_string().as_str());
-        return Err(content_phrase_res.unwrap_err().into());
-    }
-
-    let mut content_phrase: Statement = content_phrase_res.unwrap();
-    if let Err(err) = content_phrase.execute(params![&cc_id, &phrases_r, &tallies_r]) {
-        eprintln!("Failed to execute add content phrases {:?}", err);
+    if let Err(e) = content_phrase.execute(params![&cc_id, &phrases_r, &tallies_r]) {
+        eprintln!("Failed to execute add content phrases {:?}", e);
         eprintln!(
             "lengths {:1} {:2} {:3}",
             &cc_id,
             phrases_r.len(),
             tallies_r.len()
         );
-        _ = db_log_add(err.to_string().as_str());
-        return Err(err.into());
+        _ = db_log_add(e.to_string().as_str());
+        return Err(e.into());
     };
 
     Ok(())
@@ -358,21 +359,16 @@ pub fn db_content_retrieve(id: i32) -> Result<Content, Box<dyn Error + 'static>>
     let mut content_query = conn.prepare("SELECT * FROM content WHERE id = :ID LIMIT 1")?;
     let id_string = id.to_string();
     let named_params = [(":ID", id_string.as_str())];
-    let content_res = db_map_content_query(&mut content_query, &named_params, Some(false));
+    let content: Vec<Content> =
+        match db_map_content_query(&mut content_query, &named_params, Some(false)) {
+            Ok(v) => v,
+            Err(e) => return Err(e),
+        };
 
-    if let Err(e) = content_res {
-        return Err(e);
+    match content.get(0) {
+        Some(v) => Ok(v.to_owned()),
+        None => return Err("Content was not found ".into()),
     }
-
-    let content = content_res?;
-
-    if content.len() == 0 {
-        return Err("Content was not found ".into());
-    }
-
-    let out = content.get(0).unwrap().to_owned();
-
-    Ok(out)
 }
 
 pub fn db_contents_retrieve(
@@ -385,17 +381,14 @@ pub fn db_contents_retrieve(
 
     let mut contents_query: Statement =
         conn.prepare("SELECT * FROM content WHERE id IN (SELECT * FROM rarray(?1)) LIMIT 150")?;
-    let contents_res = db_map_content_query(&mut contents_query, [content_id_values], Some(false));
-
-    if let Err(e) = contents_res {
-        println!("Error retrieving contents ");
-        println!("{:?}", e);
-        return Err(e);
+    match db_map_content_query(&mut contents_query, [content_id_values], Some(false)) {
+        Ok(v) => Ok(v),
+        Err(e) => {
+            eprintln!("Error retrieving contents");
+            eprintln!("{:?}", e);
+            return Err(e);
+        }
     }
-
-    let contents: Vec<Content> = contents_res.unwrap();
-
-    Ok(contents)
 }
 
 pub fn db_check_content_existing_urls(
@@ -409,18 +402,14 @@ pub fn db_check_content_existing_urls(
 
     let mut content_url_query: Statement =
         conn.prepare("SELECT url FROM content WHERE url IN (SELECT * FROM rarray(?1))")?;
-    let existing_urls_res = db_map_content_urls(&mut content_url_query, params.clone());
-
-    if let Err(err) = existing_urls_res {
-        println!("Error retrieving existing content URLs ");
-        println!("{:?}", err);
-        return Err(err);
+    match db_map_content_urls(&mut content_url_query, params.clone()) {
+        Ok(v) => Ok(v),
+        Err(e) => {
+            eprintln!("Error retrieving existing content URLs");
+            eprintln!("{:?}", e);
+            return Err(e);
+        }
     }
-
-    let existing_urls: Vec<String> = existing_urls_res.unwrap();
-
-    // URLs that already exist (from provided URLs)
-    Ok(existing_urls)
 }
 
 pub fn db_list_content() -> Result<Vec<Content>, Box<dyn Error + 'static>> {
@@ -429,15 +418,7 @@ pub fn db_list_content() -> Result<Vec<Content>, Box<dyn Error + 'static>> {
     let mut content_list_query: Statement =
         conn.prepare("SELECT * FROM content ORDER BY id DESC LIMIT 150")?;
 
-    let content_list_res = db_map_content_query(&mut content_list_query, [], Some(true));
-
-    if let Err(e) = content_list_res {
-        return Err(e);
-    }
-
-    let content_list = content_list_res?;
-
-    Ok(content_list)
+    db_map_content_query(&mut content_list_query, [], Some(true))
 }
 
 pub const SQL_CONTENT_OF_SOURCE: &str =
@@ -449,15 +430,7 @@ pub fn db_list_content_of_source(source_id: i32) -> Result<Vec<Content>, Box<dyn
     let mut content_list_query: Statement = conn.prepare(SQL_CONTENT_OF_SOURCE)?;
     let id_string = source_id.to_string();
     let named_params = [(":ID", id_string.as_str())];
-    let content_list_res = db_map_content_query(&mut content_list_query, &named_params, Some(true));
-
-    if let Err(e) = content_list_res {
-        return Err(e);
-    }
-
-    let content_list = content_list_res?;
-
-    Ok(content_list)
+    db_map_content_query(&mut content_list_query, &named_params, Some(true))
 }
 
 pub const SQL_CONTENT_OF_SOURCES: &str = "
@@ -477,9 +450,7 @@ pub fn db_list_content_of_sources(
     let params = [s_id_values];
     let mut c_query: Statement = conn.prepare(SQL_CONTENT_OF_SOURCES)?;
 
-    let content_list = db_map_content_query(&mut c_query, params, Some(true))?;
-
-    Ok(content_list)
+    db_map_content_query(&mut c_query, params, Some(true))
 }
 
 pub fn db_list_content_full(
@@ -488,54 +459,55 @@ pub fn db_list_content_full(
     let conn: Connection = db_connect()?;
     load_rarray_table(&conn)?;
 
-    let s_id_values = create_rarray_values(source_ids.to_owned());
-    let params = [s_id_values];
+    let source_id_array = create_rarray_values(source_ids.to_owned());
     let mut c_query: Statement = conn.prepare(SQL_CONTENT_OF_SOURCES)?;
-    let content_list = db_map_content_query(&mut c_query, params, Some(true))?;
+    let content_list = match db_map_content_query(&mut c_query, [source_id_array], Some(true)) {
+        Ok(v) => v,
+        Err(e) => return Err(e),
+    };
 
     let ids: Vec<i32> = content_list
         .clone()
         .into_iter()
         .map(|c| c.id)
         .collect::<Vec<i32>>();
-    let id_values = create_rarray_values(ids);
-    let params = [id_values];
+    let content_id_array = create_rarray_values(ids);
+    let shared_params = [content_id_array];
 
     let mut bodies_query: Statement =
         conn.prepare("SELECT * FROM content_body WHERE content_id IN (SELECT * FROM rarray(?1))")?;
-    let bodies_res: Vec<ContentBody> =
-        db_map_content_body_query(&mut bodies_query, params.clone())?;
+    let mut bodies: IntoIter<ContentBody> =
+        match db_map_content_body_query(&mut bodies_query, shared_params.clone()) {
+            Ok(v) => v.into_iter(),
+            Err(e) => return Err(e),
+        };
 
     let mut medias_query: Statement =
         conn.prepare("SELECT * FROM content_media WHERE content_id IN (SELECT * FROM rarray(?1))")?;
-    let medias_res: Vec<ContentMedia> =
-        db_map_content_media_query(&mut medias_query, params.clone())?;
-
-    let mut bodies = bodies_res.into_iter();
-    let medias = medias_res.into_iter();
+    let medias: IntoIter<ContentMedia> =
+        match db_map_content_media_query(&mut medias_query, shared_params.clone()) {
+            Ok(v) => v.into_iter(),
+            Err(e) => return Err(e),
+        };
 
     let full_content: Vec<FullContent> = content_list
         .into_iter()
         .map(|c| {
-            let m = medias.clone().filter(|m| m.content_id == c.id);
-            let b = bodies.find(|b| b.content_id == c.id);
-            let cb = if b.is_some() {
-                b.unwrap()
-            } else {
-                ContentBody {
+            let m = medias.to_owned().filter(|m| m.content_id == c.id);
+            let cb = match bodies.find(|b| b.content_id == c.id) {
+                Some(v) => v,
+                None => ContentBody {
                     id: 0,
                     content_id: c.id,
                     body_text: String::new(),
-                }
+                },
             };
 
-            let fc = FullContent {
+            FullContent {
                 content: c.to_owned(),
                 content_body: cb,
                 content_media: m.collect(),
-            };
-
-            return fc;
+            }
         })
         .collect();
 
@@ -549,19 +521,14 @@ pub fn db_content_bodies(
     load_rarray_table(&conn)?;
 
     let content_id_values = create_rarray_values(content_ids.to_owned());
-    let params = [content_id_values];
 
     let mut bodies_query: Statement =
         conn.prepare("SELECT * FROM content WHERE content_id IN (SELECT * FROM rarray(?1))")?;
-    let bodies_res = db_map_content_body_query(&mut bodies_query, params.clone());
-
-    if let Err(e) = bodies_res {
-        eprint!("Error retrieving content bodies: {:?}", e);
-        return Err(e);
+    match db_map_content_body_query(&mut bodies_query, [content_id_values]) {
+        Ok(v) => Ok(v),
+        Err(e) => {
+            eprint!("Error retrieving content bodies: {:?}\n", e);
+            return Err(e);
+        }
     }
-
-    let bodies: Vec<ContentBody> = bodies_res.unwrap();
-
-    // URLs that already exist (from provided URLs)
-    Ok(bodies)
 }

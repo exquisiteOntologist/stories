@@ -23,7 +23,7 @@ export const CollectionCustomizer: React.FC<CollectionCustomizerProps> = ({ coll
     const otherLayoutOption = viewIsList ? SettingsLayout.CARDS : SettingsLayout.ROWS;
 
     return (
-        <div className={`transition-all duration-100 ${isCustomizing ? "opacity-1 translate-x-0 translate-y-0" : "opacity-0 translate-x-3 -translate-y-3"} mb-6`}>
+        <div className={`z-50 transition-all duration-100 ${isCustomizing ? "opacity-1 translate-x-0 translate-y-0" : "opacity-0 translate-x-3 -translate-y-3"} mb-6`}>
             <div className={`flex justify-start`}>
                 <Button label="Done" Icon={IconTickCircle} action={() => dispatch(setIsCustomizing(false))} />
                 <Button

@@ -1,17 +1,18 @@
 export interface ButtonProps {
-    className?: string
-    label?: string
-    Icon?: React.FC
-    PopoverIcon?: React.FC
+    className?: string;
+    children?: React.ReactNode;
+    label?: string;
+    Icon?: React.FC;
+    PopoverIcon?: React.FC;
     /** For internal links */
-    linkTo?: string
+    linkTo?: string;
     /** For external links */
-    href?: string
+    href?: string;
     /** For non-link actions */
-    action?: () => any
+    action?: () => any;
     /** Secondary action for link buttons */
-    sideAction?: () => any
+    sideAction?: () => any;
     /** Provide standard button padding */
-    usePadding?: boolean
-    disabled?: boolean
+    usePadding?: boolean;
+    disabled?: boolean;
 }

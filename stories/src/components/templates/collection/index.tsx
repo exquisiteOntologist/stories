@@ -24,6 +24,7 @@ import { ListingsContainerPhrase } from "../../molecules/listings/listings-conta
 import { selectPhrasesOfCollection } from "../../../redux/features/phrasesSlice";
 import { fetchPhrasesToCollection } from "../../../redux/features/collectionToPhraseSlice";
 import { FailBanner } from "../../organisms/fail-banner";
+import { CombinedCount } from "../../organisms/statistics/combined_counts";
 
 const clientItemsLimit: number = 100;
 
@@ -125,12 +126,9 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
             </div>
             <FailBanner />
             <RefreshBar refreshAction={() => setDoRefresh(true)} refreshPossible={isFilteredCollection && !isShowingMostCurrent} />
+            <CombinedCount collectionId={collectionId} key={contents?.[0]?.id ?? "article-count"} />
             <ListingsContainerCollections className="mb-12" view={collectionSettings?.layout as SettingsLayout} collections={nestedCollections} selectAction={(c) => dispatch(chooseCollection(c.id))} />
-            <div className="flex items-end">
-                <ArticleCount collectionId={collectionId} key={contents?.[0]?.id ?? "article-count"} />
-                <PhraseCount collectionId={collectionId} key={"phrase-count" + contents?.[0]?.id ?? "article-count"} />
-            </div>
-            <ListingsContainerPhrase view={collectionSettings?.layout as SettingsLayout} phrases={phrases.slice(0, 15)} />
+            {/* <ListingsContainerPhrase view={collectionSettings?.layout as SettingsLayout} phrases={phrases.slice(0, 15)} /> */}
             <ListingsContainerContent view={collectionSettings?.layout as SettingsLayout} contents={isFilteredCollection ? contentsVisible : contents} sources={sources} />
         </motion.div>
     );

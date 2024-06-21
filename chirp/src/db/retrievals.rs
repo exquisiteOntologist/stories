@@ -6,7 +6,7 @@ use crate::entities::Source;
 
 use super::{source::db_map_sources_query, utils::db_connect};
 
-const SQL_CHECK_RECENT_RETRIEVALS: &str = "SELECT COUNT(*) FROM retrieval WHERE substr(date_last_attempt, 1, 21) > strftime('%Y-%m-%d %H:%M:%S', 'now', '-31 minutes')";
+const SQL_CHECK_RECENT_RETRIEVALS: &str = "SELECT COUNT(*) FROM retrieval WHERE substr(date_last_attempt, 1, 21) > strftime('%Y-%m-%d %H:%M:%S', 'now', '-62 minutes')";
 
 pub fn db_retrievals_is_content_upating() -> Result<bool, Box<dyn Error>> {
     let conn = db_connect()?;

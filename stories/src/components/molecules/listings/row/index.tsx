@@ -13,10 +13,12 @@ export const ListingRow: React.FC<ListingRowProps> = ({ title, linkUrl, action, 
     //         {/* {content?.description?.slice(0, 100)} */}
     //     </span>
     // )
+    //
+    const aboutDeath = ["dead", "death", "died", "dies", "killed"].some((w) => title.toLowerCase().includes(w));
 
     const actionInner = (
         <>
-            {title}
+            {aboutDeath ? <s className="decoration-wavy hover:no-underline">{title}</s> : title}
             {/* {description} */}
         </>
     );

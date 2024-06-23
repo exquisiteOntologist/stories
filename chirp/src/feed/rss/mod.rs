@@ -1,56 +1,62 @@
-use quick_xml::events::{BytesStart, BytesText, Event};
-use quick_xml::Reader;
-use quick_xml::Writer;
-use std::error::Error;
-use std::fs::File;
-use std::io::{self, Write};
+use std::{
+    error::Error,
+    io::{Cursor, Read},
+    str,
+};
 
-/// From an RSS feed's XML strip the surrounding CDATA tags.
-pub fn remove_cdata_tags(mut content: String) -> Result<(), Box<dyn Error>> {
-    // Read the XML content from a file
-    // let mut file = File::open("feed.xml")?;
-    // let mut content = String::new();
-    // file.read_to_string(&mut content)?;
+use quick_xml::{
+    escape::unescape,
+    events::{BytesEnd, BytesStart, BytesText, Event},
+    Reader, Writer,
+};
 
+///From an RSS feed's XML strip the surrounding CDATA tags.
+pub fn remove_cdata_tags<'a>(mut content: &'a mut String) -> Result<&'a String, Box<dyn Error>> {
     let mut reader = Reader::from_str(&content);
-    reader.trim_text(true);
-    let mut writer = Writer::new(io::stdout());
+    reader.config_mut().trim_text(true);
+    let mut writer = Writer::new(Cursor::new(Vec::new()));
 
-    let mut buf = Vec::new();
     loop {
-        match reader.read_event(&mut buf) {
+        match reader.read_event() {
             Ok(Event::Start(ref e)) => {
                 // Write start element
-                writer.write_event(Event::Start(BytesStart::owned(
-                    e.name().to_vec(),
-                    e.name().len(),
-                )))?;
+                writer.write_event(Event::Start(BytesStart::new(str::from_utf8(e.name().0)?)))?;
             }
             Ok(Event::End(ref e)) => {
                 // Write end element
-                writer.write_event(Event::End(BytesStart::owned(
-                    e.name().to_vec(),
-                    e.name().len(),
-                )))?;
+                writer.write_event(Event::End(BytesEnd::new(str::from_utf8(e.name().0)?)))?;
             }
             Ok(Event::Text(e)) => {
-                // Write text content
-                writer.write_event(Event::Text(BytesText::from_plain_str(
-                    &e.unescape_and_decode(&reader)?,
-                )))?;
+                // Convert BytesText to u8 slice and then to string
+                match str::from_utf8(e.as_ref()) {
+                    Ok(text) => match unescape(text) {
+                        Ok(decoded) => writer.write_event(Event::Text(BytesText::new(&decoded)))?,
+                        Err(e) => eprintln!("Failed to unescape text: {:?}", e),
+                    },
+                    Err(e) => eprintln!("Failed to convert BytesText to str: {:?}", e),
+                }
             }
             Ok(Event::CData(e)) => {
-                // Convert CDATA to plain text
-                writer.write_event(Event::Text(BytesText::from_plain_str(
-                    &e.unescape_and_decode(&reader)?,
-                )))?;
+                // Convert BytesCData to u8 slice and then to string
+                match str::from_utf8(e.as_ref()) {
+                    Ok(cdata) => match unescape(cdata) {
+                        Ok(decoded) => writer.write_event(Event::Text(BytesText::new(&decoded)))?,
+                        Err(e) => eprintln!("Failed to unescape CDATA: {:?}", e),
+                    },
+                    Err(e) => eprintln!("Failed to convert BytesCData to str: {:?}", e),
+                }
             }
             Ok(Event::Eof) => break,
-            Err(e) => panic!("Error at position {}: {:?}", reader.buffer_position(), e),
+            Err(e) => eprintln!("Error at position {}: {:?}", reader.buffer_position(), e),
             _ => (),
         }
-        buf.clear();
     }
 
-    Ok(())
+    _ = writer.into_inner().read_to_string(&mut content);
+
+    // println!("new content");
+    // println!("{}", content);
+    // println!("end new content");
+
+    Ok(content)
 }

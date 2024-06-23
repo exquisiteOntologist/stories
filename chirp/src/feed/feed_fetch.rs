@@ -18,7 +18,7 @@ pub async fn feed_fetch_from_url(
         _ = db_log_add(e.to_string().as_str());
         return Err(e);
     }
-    let feed_text = feed_text_res.unwrap();
+    let mut feed_text = feed_text_res.unwrap();
 
     // Note that even if a feed mentions "atom" it's more likely to be RSS if it doesn't begin with "<feed"
     let is_atom = feed_text.contains(&"<feed");
@@ -34,7 +34,7 @@ pub async fn feed_fetch_from_url(
         parse_atom(&source_id, &url, &feed_text)
     } else if is_rss {
         println!("Parsing RSS {:?}", &url);
-        parse_rss(&source_id, &url, &feed_text).await
+        parse_rss(&source_id, &url, &mut feed_text).await
     } else {
         println!("Parsing website {:?}", &url);
         parse_website(&source_id, &url, &feed_text, &other_param).await

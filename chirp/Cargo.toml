@@ -11,7 +11,7 @@ atom_syndication = "0.12.3"
 chrono = "0.4.38"
 directories = "5"
 futures = "0.3.30"
-quick-xml = "0.22"
+quick-xml = "0.33"
 reqwest = "0.12.4"
 rss = { version = "2", features = ["atom", "builders"] }
 rusqlite = { version = "0.31.0", features = ["bundled", "vtab", "array"] }

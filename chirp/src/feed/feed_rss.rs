@@ -7,7 +7,7 @@ use crate::{
     utils::get_datetime_now,
 };
 
-use super::feed_enrichment::enrich_content_further;
+use super::{feed_enrichment::enrich_content_further, rss::remove_cdata_tags};
 
 // https://docs.rs/chrono/latest/chrono/format/strftime/index.html
 // "Thu, 13 Apr 2023 08:00:00 +0100"
@@ -31,9 +31,10 @@ pub fn parse_rss_date(date_str: &str) -> DateTime<Utc> {
 pub async fn parse_rss(
     s_id: &i32,
     url: &String,
-    feed_text: &String,
+    mut feed_text: &mut String,
 ) -> Result<(Source, Vec<FullContent>), Box<dyn Error + Send + Sync>> {
-    let channel_result = Channel::from_str(&feed_text);
+    let cleansed_text = remove_cdata_tags(&mut feed_text).unwrap();
+    let channel_result = Channel::from_str(&cleansed_text);
 
     if let Err(err) = channel_result {
         println!("Encountered error. Possibly invalid feed.");

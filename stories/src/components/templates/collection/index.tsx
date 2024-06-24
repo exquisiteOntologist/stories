@@ -25,6 +25,7 @@ import { selectPhrasesOfCollection } from "../../../redux/features/phrasesSlice"
 import { fetchPhrasesToCollection } from "../../../redux/features/collectionToPhraseSlice";
 import { FailBanner } from "../../organisms/fail-banner";
 import { CombinedCount } from "../../organisms/statistics/combined_counts";
+import { Hero } from "../../atoms/hero";
 
 const clientItemsLimit: number = 100;
 

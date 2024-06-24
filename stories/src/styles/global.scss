@@ -14,12 +14,12 @@ $system-font: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Appl
     font-size: 16px;
     line-height: 24px;
     font-weight: 400;
-    
+
     --primary: #0f0f0f;
     color: var(--primary);
-    background-color: #f6f6f6;  
+    background-color: #f6f6f6;
     background-color: #fffefe;
-    
+
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -37,11 +37,11 @@ $system-font: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Appl
         background-color: #101030;
         background-color: #0b0b1c;
     }
-    /*   
+    /*
     a:hover {
         color: #24c8db;
     }
-    
+
     input,
     button {
         color: #ffffff;
@@ -67,6 +67,7 @@ body {
 
 html {
     --titlebar-height: 28px;
+    --titlebar-height: 0;
     padding-top: var(--titlebar-height);
 }
 

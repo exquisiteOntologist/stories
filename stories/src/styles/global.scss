@@ -2,14 +2,14 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-$brand-light: #FFFCF7;
+$brand-light: #fffcf7;
 $brand-dark: #000;
 
 $system-font: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 
 :root {
     // font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
-    font-family: 'SF Pro Display';
+    font-family: "SF Pro Display";
     font-family: $system-font;
     font-size: 16px;
     line-height: 24px;
@@ -36,6 +36,7 @@ $system-font: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Appl
         color: var(--primary);
         background-color: #101030;
         background-color: #0b0b1c;
+        background-color: rgb(10, 10, 22);
     }
     /*
     a:hover {
@@ -81,7 +82,7 @@ html a {
 
 h1 {
     @media (prefers-color-scheme: dark) {
-        color: #fff
+        color: #fff;
     }
 }
 

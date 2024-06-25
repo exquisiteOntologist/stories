@@ -131,7 +131,7 @@ const headerStyles: React.CSSProperties = {
 
 export const AppHeader: React.FC<AppHeaderProps> = ({ location }) => (
     // <header className="app-header pointer-events-none sticky left-0 right-0 top-8 z-50 flex items-start justify-between px-4 py-0" style={headerStyles}>
-    <header className="app-header pointer-events-none absolute left-0 right-0 top-0 z-50 flex items-start justify-between px-4 py-0" style={headerStyles}>
+    <header className="app-header pointer-events-none fixed left-0 right-0 top-0 z-50 flex items-start justify-between px-4 py-0" style={headerStyles}>
         <AppHeaderShortcutHandlers />
         <div className="app-header--a flex items-center">
             <AppMenuNavigation location={location} />

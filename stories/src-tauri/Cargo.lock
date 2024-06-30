@@ -1517,6 +1517,11 @@ dependencies = [
 ]
 
 [[package]]
+name = "gather"
+version = "1.0.0"
+source = "git+https://github.com/exquisiteOntologist/gather#5585a1ac6b0ebea602c4b3224a111786728486f2"
+
+[[package]]
 name = "gdk"
 version = "0.18.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2343,8 +2348,11 @@ dependencies = [
 
 [[package]]
 name = "labels"
-version = "0.1.0"
-source = "git+https://github.com/exquisiteOntologist/labels.git#ed4daf9c6071e210d24a85ca1f95d8f6aaabb8f3"
+version = "0.1.1"
+source = "git+https://github.com/exquisiteOntologist/labels.git#120208fb416b86e00beafc741947e74e8ce53e6a"
+dependencies = [
+ "gather",
+]
 
 [[package]]
 name = "lazy_static"

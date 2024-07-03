@@ -64,9 +64,11 @@ export const selectContentOfCollection = createSelector(
 );
 
 export const selectContentByRecency = (s: RootState, itemLimit?: number) => {
-    return selectContentOfCollection(s)
-        .sort(sortContentRecencyDescending)
-        .slice(0, itemLimit ?? 30);
+    return (
+        selectContentOfCollection(s)
+            // .sort(sortContentRecencyDescending)
+            .slice(0, itemLimit ?? 30)
+    );
 };
 
 export const contentsReducer = contentsSlice.reducer;

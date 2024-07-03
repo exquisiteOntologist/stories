@@ -31,10 +31,10 @@ export const IconLoadingRing: React.FC = () => (
                 <stop stop-color="#F9DBA3" offset="0%" />
                 <stop stop-color="#F1B569" offset="100%" />
             </radialGradient>
-            <path d="M46 0c25.405 0 46 20.595 46 46S71.405 92 46 92 0 71.405 0 46 20.595 0 46 0Zm0 16.851c-16.098 0-29.149 13.05-29.149 29.149 0 16.098 13.05 29.149 29.149 29.149 16.098 0 29.149-13.05 29.149-29.149 0-16.098-13.05-29.149-29.149-29.149Z" id="ring-a" />
+            <path d="M46 0c25.405 0 46 20.595 46 46S71.405 92 46 92 0 71.405 0 46 20.595 0 46 0Zm0 4C22.804 4 4 22.804 4 46s18.804 42 42 42 42-18.804 42-42S69.196 4 46 4Z" id="ring-a" />
         </defs>
         <g fill="none" fill-rule="evenodd">
-            <g id="ring" opacity=".487" className="origin-center animate-spin">
+            <g id="ring" opacity=".487" className="origin-center animate-spin duration-200 blur-sm">
                 <mask id="ring-b" fill="#fff">
                     <use xlinkHref="#ring-a" />
                 </mask>

@@ -8,11 +8,13 @@ import { sortRecencyDescending } from "../../utilities/dates";
 import { checkRetrievalsIsUpdating } from "./sessionSlice";
 
 export const fetchContentOfSources = createAsyncThunk("contents/fetchContentOfSources", async (sourceIds: EntityId[] | null, { dispatch, getState }) => {
-    const content = await invoke("list_content", {
+    const content = await invoke<ContentDto[]>("list_content", {
         sourceIds,
     });
 
-    dispatch(addContents(content as ContentDto[]));
+    // console.log("fetching content", sourceIds, new Set(content.map((c) => c.source_id)));
+
+    dispatch(addContents(content));
     dispatch(checkRetrievalsIsUpdating());
 });
 

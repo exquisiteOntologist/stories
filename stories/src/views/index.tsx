@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { AnimatePresence } from "framer-motion";
 import { BrowserRouter, useLocation, useRoutes } from "react-router-dom";
 import { AppHeader } from "../components/organisms/app-header";

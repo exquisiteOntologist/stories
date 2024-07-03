@@ -67,7 +67,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
         /** fetches - content from the DB */
         const fetchCurrentContent = () => {
             dispatch(fetchContentOfSources(sourceIds));
-            console.log("updated", new Date(), collectionId, sourceIds);
+            // console.log("updated", new Date(), collectionId, sourceIds);
             updateTimeout = setTimeout(() => requestAnimationFrame(fetchCurrentContent), 1000 * 10);
         };
 

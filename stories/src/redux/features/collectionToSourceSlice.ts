@@ -15,7 +15,6 @@ export const fetchCollectionToSource = createAsyncThunk("collectionToSource/fetc
 
         dispatch(upsertCollectionToSource(collectionToSourceItems as CollectionToSource[]));
         await dispatch(fetchSourcesOfCollection(collectionIds));
-        console.log("c to s", collectionToSourceItems);
     } catch (e) {
         console.error("Unable to fetch Collection to Source mappings for", collectionIds, e);
         throw new Error("Unable to fetch Collection to Source");

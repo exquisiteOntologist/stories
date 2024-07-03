@@ -5,6 +5,7 @@ import { RootState } from "../store";
 import { collectionToSourceSelectors } from "./collectionToSourceSlice";
 import { selectCollectionId, selectNav } from "./navSlice";
 import { sortRecencyDescending } from "../../utilities/dates";
+import { checkRetrievalsIsUpdating } from "./sessionSlice";
 
 export const fetchContentOfSources = createAsyncThunk("contents/fetchContentOfSources", async (sourceIds: EntityId[] | null, { dispatch, getState }) => {
     const content = await invoke("list_content", {
@@ -12,6 +13,7 @@ export const fetchContentOfSources = createAsyncThunk("contents/fetchContentOfSo
     });
 
     dispatch(addContents(content as ContentDto[]));
+    dispatch(checkRetrievalsIsUpdating);
 });
 
 export const fetchContent = createAsyncThunk("contents/fetchContent", async (_, { dispatch }) => {

@@ -16,6 +16,8 @@ export const fetchContentOfSources = createAsyncThunk("contents/fetchContentOfSo
 
     dispatch(addContents(content));
     dispatch(checkRetrievalsIsUpdating());
+
+    return content;
 });
 
 const contentsAdapter = createEntityAdapter<ContentDto>({

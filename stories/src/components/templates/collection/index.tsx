@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
@@ -57,7 +57,10 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     }, [collection, collectionSettings]);
 
     useEffect(() => {
-        dispatch(fetchContentOfSources(sourceIds));
+        // if content is in another collection it tricks the refresh qeue mechanism
+        // so we here just set the contents visible straight away.
+        // Only because this dispatch's fetch is not synchronous
+        dispatch(fetchContentOfSources(sourceIds)).then(() => setContentsVisible(contents));
         dispatch(retrieveMarks(sourceIds));
     }, [collectionId, sources]);
 

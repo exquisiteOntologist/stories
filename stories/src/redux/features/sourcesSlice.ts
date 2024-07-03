@@ -70,7 +70,8 @@ export interface RemoveSources {
 export const removeSources: AsyncThunk<boolean, RemoveSources, {}> = createAsyncThunk("sources/removeSources", async (rmSources: RemoveSources, { dispatch }) => {
     try {
         await invoke("remove_sources", { ...rmSources });
-        await dispatch(removeCollectionToSource(rmSources.sourceIds));
+        // here we remove locally because upsert etc may not do it (fetch)
+        dispatch(removeCollectionToSource(rmSources.sourceIds));
         await dispatch(fetchCollectionToSource([rmSources.collectionId]));
         return true;
     } catch (e) {

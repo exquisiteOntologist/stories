@@ -45,7 +45,7 @@ const AppPageInner: React.FC = () => {
     const location = useLocation();
 
     useEffect(() => {
-        if (!ticking) dispatch(ticker);
+        if (!ticking) dispatch(ticker());
     }, [dispatch]);
 
     if (!element) return null;

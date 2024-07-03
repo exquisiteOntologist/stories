@@ -8,7 +8,7 @@ use super::{source::db_map_sources_query, utils::db_connect};
 
 const SQL_CHECK_RECENT_RETRIEVALS: &str = "SELECT COUNT(*) FROM retrieval WHERE substr(date_last_attempt, 1, 21) > strftime('%Y-%m-%d %H:%M:%S', 'now', '-62 minutes')";
 
-pub fn db_retrievals_is_content_upating() -> Result<bool, Box<dyn Error>> {
+pub fn db_retrievals_is_content_updating() -> Result<bool, Box<dyn Error>> {
     let conn = db_connect()?;
     match conn.query_row(
         SQL_CHECK_RECENT_RETRIEVALS,
@@ -18,7 +18,7 @@ pub fn db_retrievals_is_content_upating() -> Result<bool, Box<dyn Error>> {
                 Ok(v) => v,
                 Err(e) => return Err(e),
             };
-            let is_updating: bool = count > 0;
+            let is_updating: bool = count != 0;
             Ok(is_updating)
         },
     ) {

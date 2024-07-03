@@ -30,14 +30,15 @@ export const ticker = createAsyncThunk("session/ticker", async (_, { getState, d
     const tick = () => {
         const s: RootState = getState() as RootState;
         if (t % 6 || t < 12) {
-            dispatch(checkRetrievalsIsUpdating);
+            dispatch(checkRetrievalsIsUpdating());
         }
         // tick
         t++;
         setTimeout(() => requestAnimationFrame(tick), 1000 * 10);
+        console.log("tick", s);
     };
 
-    setTicker(true);
+    dispatch(setTicker(true));
     tick();
 });
 

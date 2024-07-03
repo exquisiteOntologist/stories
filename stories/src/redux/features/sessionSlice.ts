@@ -67,8 +67,8 @@ export const selectTimeSinceLaunch = (s: RootState): number => minutesSince(s.se
 export const selectShouldHaveUpdated = (s: RootState): boolean => selectTimeSinceLaunch(s) > 15;
 /** Has the server recorded a retrieval attempt recently? */
 export const selectHasUpdated = (s: RootState): boolean => s.session.hasRecentUpdates;
-/** Is initialising? If has updated it has (restart app after just update), otherwise only if time less than min */
-export const selectIsInitializing = (s: RootState): boolean => (selectHasUpdated(s) ? false : selectTimeSinceLaunch(s) < 1);
+/** Is initialising? If has updated it has (restart app after just update), otherwise only if time less than min. If past min then it's not init. */
+export const selectIsInitializing = (s: RootState): boolean => !selectHasUpdated(s) && selectTimeSinceLaunch(s) < 1;
 /** Is loading? */
 export const selectIsLoading = (s: RootState): boolean => selectIsInitializing(s);
 

@@ -13,13 +13,7 @@ export const fetchContentOfSources = createAsyncThunk("contents/fetchContentOfSo
     });
 
     dispatch(addContents(content as ContentDto[]));
-    dispatch(checkRetrievalsIsUpdating);
-});
-
-export const fetchContent = createAsyncThunk("contents/fetchContent", async (_, { dispatch }) => {
-    const content = await invoke("list_content");
-
-    dispatch(addContents(content as ContentDto[]));
+    dispatch(checkRetrievalsIsUpdating());
 });
 
 const contentsAdapter = createEntityAdapter<ContentDto>({

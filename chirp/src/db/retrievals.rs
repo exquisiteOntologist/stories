@@ -7,18 +7,26 @@ use crate::entities::Source;
 use super::{source::db_map_sources_query, utils::db_connect};
 
 const SQL_CHECK_RECENT_RETRIEVALS: &str = "SELECT COUNT(*) FROM retrieval WHERE substr(date_last_attempt, 1, 21) > strftime('%Y-%m-%d %H:%M:%S', 'now', '-62 minutes')";
+/// Here we count all sources who haven't failed 10 times to update, and compare against the number that have attempted to update in the past hour
+const SQL_CHECK_RECENT_RETRIEVALS_VS_RETRIEVALS: &str = "
+SELECT * FROM (SELECT COUNT(*) AS total_updatable FROM retrieval WHERE fails_since_success != 10), (SELECT COUNT(*) AS recently_updated FROM retrieval WHERE substr(date_last_attempt, 1, 21) > strftime('%Y-%m-%d %H:%M:%S', 'now', '-31 minutes') AND fails_since_success != 10);
+";
 
 pub fn db_retrievals_is_content_updating() -> Result<bool, Box<dyn Error>> {
     let conn = db_connect()?;
     match conn.query_row(
-        SQL_CHECK_RECENT_RETRIEVALS,
+        SQL_CHECK_RECENT_RETRIEVALS_VS_RETRIEVALS,
         params![],
         |r: &Row| -> Result<bool, rusqlite::Error> {
-            let count: i32 = match r.get::<_, i32>(0) {
+            let total_updatable: i32 = match r.get::<_, i32>(0) {
                 Ok(v) => v,
                 Err(e) => return Err(e),
             };
-            let is_updating: bool = count != 0;
+            let recently_updated: i32 = match r.get::<_, i32>(1) {
+                Ok(v) => v,
+                Err(e) => return Err(e),
+            };
+            let is_updating: bool = total_updatable == recently_updated;
             Ok(is_updating)
         },
     ) {

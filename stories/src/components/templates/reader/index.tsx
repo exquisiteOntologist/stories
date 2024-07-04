@@ -3,7 +3,7 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 // import Helmet from "react-helmet"
 import { contentBodiesSelectors } from "../../../redux/features/contentBodiesSlice";
-import { contentsSelectors, fetchContent } from "../../../redux/features/contentsSlice";
+import { contentsSelectors } from "../../../redux/features/contentsSlice";
 import { selectColours, setThemeColours } from "../../../redux/features/themeSlice";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { createHslaString } from "../../../utilities/graphics/colours";

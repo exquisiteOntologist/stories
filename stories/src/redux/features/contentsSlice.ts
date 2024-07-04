@@ -5,23 +5,24 @@ import { RootState } from "../store";
 import { collectionToSourceSelectors } from "./collectionToSourceSlice";
 import { selectCollectionId, selectNav } from "./navSlice";
 import { sortRecencyDescending } from "../../utilities/dates";
+import { checkRetrievalsIsUpdating } from "./sessionSlice";
 
 export const fetchContentOfSources = createAsyncThunk("contents/fetchContentOfSources", async (sourceIds: EntityId[] | null, { dispatch, getState }) => {
-    const content = await invoke("list_content", {
+    const content = await invoke<ContentDto[]>("list_content", {
         sourceIds,
     });
 
-    dispatch(addContents(content as ContentDto[]));
-});
+    // console.log("fetching content", sourceIds, new Set(content.map((c) => c.source_id)));
 
-export const fetchContent = createAsyncThunk("contents/fetchContent", async (_, { dispatch }) => {
-    const content = await invoke("list_content");
+    dispatch(addContents(content));
+    dispatch(checkRetrievalsIsUpdating());
 
-    dispatch(addContents(content as ContentDto[]));
+    return content;
 });
 
 const contentsAdapter = createEntityAdapter<ContentDto>({
     selectId: (content) => content.id,
+    sortComparer: (a, b) => sortContentRecencyDescending(a, b),
 });
 
 const contentsSlice = createSlice({
@@ -63,9 +64,11 @@ export const selectContentOfCollection = createSelector(
 );
 
 export const selectContentByRecency = (s: RootState, itemLimit?: number) => {
-    return selectContentOfCollection(s)
-        .sort(sortContentRecencyDescending)
-        .slice(0, itemLimit ?? 30);
+    return (
+        selectContentOfCollection(s)
+            // .sort(sortContentRecencyDescending)
+            .slice(0, itemLimit ?? 30)
+    );
 };
 
 export const contentsReducer = contentsSlice.reducer;

@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
@@ -18,13 +18,10 @@ import { motionProps } from "../../../utilities/animate";
 import { selectNestedSourceIds } from "../../../redux/features/collectionToSourceSlice";
 import { RefreshBar } from "../../molecules/listings/refresh-bar";
 import { retrieveMarks } from "../../../redux/features/marksSlice";
-import { ArticleCount } from "../../organisms/statistics/article_count";
-import { PhraseCount } from "../../organisms/statistics/phrase_count";
-import { ListingsContainerPhrase } from "../../molecules/listings/listings-container-phrase";
-import { selectPhrasesOfCollection } from "../../../redux/features/phrasesSlice";
 import { fetchPhrasesToCollection } from "../../../redux/features/collectionToPhraseSlice";
 import { FailBanner } from "../../organisms/fail-banner";
 import { CombinedCount } from "../../organisms/statistics/combined_counts";
+import { LoadingIndicator } from "../../organisms/loading-indicator";
 
 const clientItemsLimit: number = 100;
 
@@ -46,7 +43,6 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     // Non-visible content is typically the content that comes in later.
     const [contentsVisible, setContentsVisible] = useState<ContentDto[]>([]);
     const [filteringCollectionId, setFilteringCollectionId] = useState<number | null>(null);
-    const phrases = useAppSelector(selectPhrasesOfCollection);
 
     const title = isCustomizing ? "edit" : "hi";
     let updateTimeout: NodeJS.Timeout | undefined;
@@ -61,7 +57,10 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     }, [collection, collectionSettings]);
 
     useEffect(() => {
-        dispatch(fetchContentOfSources(sourceIds));
+        // if content is in another collection it tricks the refresh qeue mechanism
+        // so we here just set the contents visible straight away.
+        // Only because this dispatch's fetch is not synchronous
+        dispatch(fetchContentOfSources(sourceIds)).then(() => setContentsVisible(contents));
         dispatch(retrieveMarks(sourceIds));
     }, [collectionId, sources]);
 
@@ -71,7 +70,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
         /** fetches - content from the DB */
         const fetchCurrentContent = () => {
             dispatch(fetchContentOfSources(sourceIds));
-            console.log("updated", new Date(), collectionId, sourceIds);
+            // console.log("updated", new Date(), collectionId, sourceIds);
             updateTimeout = setTimeout(() => requestAnimationFrame(fetchCurrentContent), 1000 * 10);
         };
 
@@ -109,9 +108,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     }, [collectionId]);
 
     useEffect(() => {
-        if (doRefresh) {
-            setContentsVisible(contents);
-        }
+        if (doRefresh) setContentsVisible(contents);
     }, [doRefresh]);
 
     // know whether to just show content of collection or to show recency-based filtered list (cycles & speed)
@@ -125,6 +122,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
                 <CollectionCustomizer collectionSettings={collectionSettings} isCustomizing={isCustomizing} />
             </div>
             <FailBanner />
+            <LoadingIndicator />
             <RefreshBar refreshAction={() => setDoRefresh(true)} refreshPossible={isFilteredCollection && !isShowingMostCurrent} />
             <CombinedCount collectionId={collectionId} key={contents?.[0]?.id ?? "article-count"} />
             <ListingsContainerCollections className="mb-12" view={collectionSettings?.layout as SettingsLayout} collections={nestedCollections} selectAction={(c) => dispatch(chooseCollection(c.id))} />

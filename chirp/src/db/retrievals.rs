@@ -6,10 +6,10 @@ use crate::entities::Source;
 
 use super::{source::db_map_sources_query, utils::db_connect};
 
-const SQL_CHECK_RECENT_RETRIEVALS: &str = "SELECT COUNT(*) FROM retrieval WHERE substr(date_last_attempt, 1, 21) > strftime('%Y-%m-%d %H:%M:%S', 'now', '-62 minutes')";
+const _SQL_CHECK_RECENT_RETRIEVALS: &str = "SELECT COUNT(*) FROM retrieval WHERE substr(date_last_attempt, 1, 21) > strftime('%Y-%m-%d %H:%M:%S', 'now', '-62 minutes')";
 /// Here we count all sources who haven't failed 10 times to update, and compare against the number that have attempted to update in the past hour
 const SQL_CHECK_RECENT_RETRIEVALS_VS_RETRIEVALS: &str = "
-SELECT * FROM (SELECT COUNT(*) AS total_updatable FROM retrieval WHERE fails_since_success != 10), (SELECT COUNT(*) AS recently_updated FROM retrieval WHERE substr(date_last_attempt, 1, 21) > strftime('%Y-%m-%d %H:%M:%S', 'now', '-31 minutes') AND fails_since_success != 10);
+SELECT * FROM (SELECT COUNT(*) AS total_updatable FROM retrieval WHERE fails_since_success != 10), (SELECT COUNT(*) AS recently_updated FROM retrieval WHERE substr(date_last_attempt, 1, 21) > strftime('%Y-%m-%d %H:%M:%S', 'now', '-61 minutes') AND fails_since_success != 10);
 ";
 
 pub fn db_retrievals_is_content_updating() -> Result<bool, Box<dyn Error>> {
@@ -48,7 +48,8 @@ pub fn db_source_retrievals_add(source_id: &i32) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-const SQL_RETRIEVAL_OUTDATED_ID: &str = "SELECT source_id FROM retrieval WHERE ((date_last_attempt IS NULL) OR (date_last_attempt < datetime('now', '-1 hours'))) AND fails_since_success < 10";
+/// Find sources that need to be updated (were not updated in past X minutes)
+const SQL_RETRIEVAL_OUTDATED_ID: &str = "SELECT source_id FROM retrieval WHERE ((date_last_attempt IS NULL) OR (date_last_attempt < datetime('now', '-31 minutes'))) AND fails_since_success < 10";
 
 // Check retrievals to find Source Ids that haven't been updated for a while (or have no date)
 pub fn db_retrievals_outdated_ids() -> Result<Vec<i32>, Box<dyn Error>> {

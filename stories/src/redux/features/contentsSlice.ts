@@ -7,6 +7,7 @@ import { selectCollectionId, selectFilter, selectIsViewModeActive, selectNav, Vi
 import { sortRecencyDescending } from "../../utilities/dates";
 import { checkRetrievalsIsUpdating } from "./sessionSlice";
 import { marksSelectors } from "./marksSlice";
+import { phrasesSelectors } from "./phrasesSlice";
 
 export const fetchContentOfSources = createAsyncThunk("contents/fetchContentOfSources", async (sourceIds: EntityId[] | null, { dispatch, getState }) => {
     const content = await invoke<ContentDto[]>("list_content", {
@@ -62,7 +63,7 @@ export const selectContentOfCollection = createSelector(
         let filteredContents = collectionContents;
         if (selectIsViewModeActive(s, ViewMode.BOOKMARKS)) {
             const marks = marksSelectors.selectAll(s);
-            filteredContents = collectionContents.filter((cc) => marks.includes(cc.id));
+            filteredContents = filteredContents.filter((c) => marks.includes(c.id));
         }
 
         return filteredContents;

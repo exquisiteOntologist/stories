@@ -23,6 +23,10 @@ import { FailBanner } from "../../organisms/fail-banner";
 import { CombinedCount } from "../../organisms/statistics/combined_counts";
 import { LoadingIndicator } from "../../organisms/loading-indicator";
 import { FilterButton } from "../../molecules/filter-button";
+import { IconBookmark } from "../../atoms/icons/bookmark";
+import { IconFlower } from "../../atoms/icons/flower";
+import { selectPhrasesOfCollection } from "../../../redux/features/phrasesSlice";
+import { ListingsContainerPhrase } from "../../molecules/listings/listings-container-phrase";
 
 const clientItemsLimit: number = 100;
 
@@ -38,6 +42,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     const sourceIds = useAppSelector(selectNestedSourceIds);
     const contents = useAppSelector((s) => selectContentByRecency(s, clientItemsLimit));
     const marks = useAppSelector(marksSelectors.selectAll);
+    const phrases = useAppSelector(selectPhrasesOfCollection);
     const filter = useAppSelector(selectFilter);
     const isCustomizing = useAppSelector(selectIsCustomizing);
     const [doRefresh, setDoRefresh] = useState<boolean>(true);
@@ -128,19 +133,29 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
             <LoadingIndicator />
             <RefreshBar refreshAction={() => setDoRefresh(true)} refreshPossible={isFilteredCollection && !isShowingMostCurrent} />
             <CombinedCount collectionId={collectionId} key={contents?.[0]?.id ?? "article-count"} />
-            <div className="mb-8">
+            <div className="flex align-middle mb-8">
                 <FilterButton
                     number={marks.length}
                     colour="#F0315D"
+                    Icon={IconBookmark}
                     action={() => {
                         dispatch(toggleFilterViewMode(ViewMode.BOOKMARKS));
                         setDoRefresh(true);
                     }}
                     active={isViewModeActive(filter, ViewMode.BOOKMARKS)}
                 />
+                <FilterButton
+                    number={phrases.length ? phrases.length + "+" : 0}
+                    colour="#2F959F"
+                    Icon={IconFlower}
+                    action={() => {
+                        dispatch(toggleFilterViewMode(ViewMode.PHRASES));
+                    }}
+                    active={isViewModeActive(filter, ViewMode.PHRASES)}
+                />
             </div>
             <ListingsContainerCollections className="mb-12" view={collectionSettings?.layout as SettingsLayout} collections={nestedCollections} selectAction={(c) => dispatch(chooseCollection(c.id))} />
-            {/* <ListingsContainerPhrase view={collectionSettings?.layout as SettingsLayout} phrases={phrases.slice(0, 15)} /> */}
+            {isViewModeActive(filter, ViewMode.PHRASES) && <ListingsContainerPhrase view={collectionSettings?.layout as SettingsLayout} phrases={phrases} />}
             <ListingsContainerContent view={collectionSettings?.layout as SettingsLayout} contents={isFilteredCollection ? contentsVisible : contents} sources={sources} />
         </motion.div>
     );

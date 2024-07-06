@@ -10,6 +10,7 @@ export enum SelectionKind {
 
 export enum ViewMode {
     BOOKMARKS,
+    PHRASES,
 }
 
 export interface Filter {

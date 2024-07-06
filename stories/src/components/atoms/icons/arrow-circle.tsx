@@ -5,7 +5,7 @@ export const IconArrowCircle: React.FC = () => (
         <defs>
             <circle id="arrow-circle-a" cx="21" cy="21" r="21" />
         </defs>
-        <g fill="none" fill-rule="evenodd">
+        <g fill="none" fillRule="evenodd">
             <mask id="arrow-circle-b" fill="#fff">
                 <use xlinkHref="#arrow-circle-a" />
             </mask>

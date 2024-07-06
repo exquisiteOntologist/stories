@@ -1,6 +1,7 @@
 import React from "react";
+import { FilterButtonIconProps } from "./interfaces";
 
-interface IconBookmarkProps {
+interface IconBookmarkProps extends FilterButtonIconProps {
     filled: boolean;
     fillColour?: string;
     strokeColour?: string;

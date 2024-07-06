@@ -150,7 +150,6 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
                     Icon={IconFlower}
                     action={() => {
                         dispatch(toggleFilterViewMode(ViewMode.PHRASES));
-                        setDoRefresh(true);
                     }}
                     active={isViewModeActive(filter, ViewMode.PHRASES)}
                 />

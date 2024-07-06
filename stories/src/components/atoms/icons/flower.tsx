@@ -1,15 +1,11 @@
 import React from "react";
 import { FilterButtonIconProps } from "./interfaces";
 
-interface IconFlowerProps extends FilterButtonIconProps {
-    filled: boolean;
-    fillColour?: string;
-    strokeColour?: string;
-}
+interface IconFlowerProps extends FilterButtonIconProps {}
 
-export const IconFlower: React.FC<IconFlowerProps> = () => (
+export const IconFlower: React.FC<IconFlowerProps> = ({ filled, fillColour = "white", strokeColour = "#C6B3B8" }) => (
     <svg width="32" height="31" viewBox="0 0 32 31" xmlns="http://www.w3.org/2000/svg">
-        <g transform="translate(-.27 -.719)" fill="#2F959F" fillRule="evenodd">
+        <g transform="translate(-.27 -.719)" fill={filled ? "#2F959F" : fillColour} fillRule="evenodd">
             <circle cx="16.271" cy="15.719" r="3" />
             <ellipse cx="16.271" cy="26.219" rx="3" ry="5.5" />
             <ellipse transform="rotate(51 8.061 22.265)" cx="8.061" cy="22.265" rx="3" ry="5.5" />

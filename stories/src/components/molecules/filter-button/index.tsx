@@ -3,11 +3,9 @@ import { Button } from "../../atoms/button";
 import { IconBookmark } from "../../atoms/icons/bookmark";
 import { FilterButtonProps } from "./interfaces";
 
-export const FilterButton: React.FC<FilterButtonProps> = ({ number, colour }) => (
-    <button className="flex align-middle items-center border-2 rounded-md px-4 py-3 hover:border-current" style={{ borderColor: colour }}>
-        <IconBookmark active={true} />
-        <span className={`text-lg font-bold ml-20 hover:text-current`} style={{ color: colour }}>
-            {number}
-        </span>
+export const FilterButton: React.FC<FilterButtonProps> = ({ action, active, number, colour }) => (
+    <button className={`flex align-middle items-center ${active ? "bg-current" : "bg-transparent"} border-2 border-current rounded-md px-4 py-3 mr-4 hover:border-current`} style={{ color: colour }} onClick={action}>
+        <IconBookmark active={!active} />
+        <span className={`text-lg ${active ? "text-white" : "text-current"} font-bold ml-20`}>{number}</span>
     </button>
 );

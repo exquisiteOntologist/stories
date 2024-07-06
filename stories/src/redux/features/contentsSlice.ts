@@ -3,9 +3,10 @@ import { invoke } from "@tauri-apps/api/core";
 import { ContentDto } from "../../data/chirp-types";
 import { RootState } from "../store";
 import { collectionToSourceSelectors } from "./collectionToSourceSlice";
-import { selectCollectionId, selectNav } from "./navSlice";
+import { selectCollectionId, selectFilter, selectIsViewModeActive, selectNav, ViewMode } from "./navSlice";
 import { sortRecencyDescending } from "../../utilities/dates";
 import { checkRetrievalsIsUpdating } from "./sessionSlice";
+import { marksSelectors } from "./marksSlice";
 
 export const fetchContentOfSources = createAsyncThunk("contents/fetchContentOfSources", async (sourceIds: EntityId[] | null, { dispatch, getState }) => {
     const content = await invoke<ContentDto[]>("list_content", {
@@ -58,8 +59,13 @@ export const selectContentOfCollection = createSelector(
         const collectionToSource = collectionToSourceSelectors.selectAll(s).filter((c_to_s) => collectionId === c_to_s.collection_id);
         const sourceIds = collectionToSource.map((c_to_s) => c_to_s.source_id);
         const collectionContents = contents.filter((c) => sourceIds.includes(c.source_id));
+        let filteredContents = collectionContents;
+        if (selectIsViewModeActive(s, ViewMode.BOOKMARKS)) {
+            const marks = marksSelectors.selectAll(s);
+            filteredContents = collectionContents.filter((cc) => marks.includes(cc.id));
+        }
 
-        return collectionContents;
+        return filteredContents;
     },
 );
 

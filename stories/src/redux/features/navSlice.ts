@@ -8,6 +8,14 @@ export enum SelectionKind {
     CONTENT = "CONTENT",
 }
 
+export enum ViewMode {
+    BOOKMARKS,
+}
+
+export interface Filter {
+    viewModes: ViewMode[];
+}
+
 export interface NavState {
     selectionKind: SelectionKind;
     submergeHistory: Array<number>;
@@ -19,6 +27,7 @@ export interface NavState {
     contentId: number;
     isCustomizing: boolean;
     loading: boolean;
+    filter: Filter;
 }
 
 const initialNavState: NavState = {
@@ -29,6 +38,9 @@ const initialNavState: NavState = {
     contentId: 0,
     isCustomizing: false,
     loading: true,
+    filter: {
+        viewModes: [],
+    },
 };
 
 /**
@@ -65,11 +77,23 @@ const navSlice = createSlice({
         setLoading(state, action: PayloadAction<boolean>) {
             state.loading = action.payload;
         },
+        setFilter(state, action: PayloadAction<Filter>) {
+            state.filter = action.payload;
+        },
+        toggleFilterViewMode(state, action: PayloadAction<ViewMode>) {
+            const viewModes = state.filter.viewModes;
+            const activeIndex = viewModes.indexOf(action.payload);
+            if (activeIndex !== -1) {
+                viewModes.splice(activeIndex, 1);
+            } else {
+                viewModes.push(action.payload);
+            }
+        },
     },
     extraReducers: {},
 });
 
-export const { chooseCollection, setIsCustomizing, toggleIsCustomizing, setLoading } = navSlice.actions;
+export const { chooseCollection, setIsCustomizing, toggleIsCustomizing, setLoading, setFilter, toggleFilterViewMode } = navSlice.actions;
 export const selectNav = (state: RootState) => state.nav;
 export const selectCollectionId = (state: RootState) => state.nav.collectionId;
 export const selectHistory = (state: RootState) => state.nav.submergeHistory;
@@ -77,5 +101,10 @@ export const selectSourceId = (state: RootState) => state.nav.sourceId;
 export const selectContentId = (state: RootState) => state.nav.contentId;
 export const selectIsCustomizing = (state: RootState) => state.nav.isCustomizing;
 export const selectLoading = (state: RootState) => state.nav.loading;
+export const selectFilter = (state: RootState) => state.nav.filter;
+export const isViewModeActive = (state: RootState["nav"]["filter"], viewMode: ViewMode): boolean => {
+    return state.viewModes.includes(viewMode);
+};
+export const selectIsViewModeActive = (state: RootState, viewMode: ViewMode) => isViewModeActive(state.nav.filter, viewMode);
 
 export const navReducer = navSlice.reducer;

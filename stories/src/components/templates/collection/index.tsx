@@ -8,7 +8,7 @@ import { resetThemeColours } from "../../../redux/features/themeSlice";
 import { collectionsSelectors, fetchCollection, fetchNestedCollections, selectNestedCollections } from "../../../redux/features/collectionsSlice";
 import { collectionSettingsSelectors } from "../../../redux/features/collectionSettingsSlice";
 import { ContentDto, SettingsLayout } from "../../../data/chirp-types";
-import { chooseCollection, selectCollectionId, selectIsCustomizing } from "../../../redux/features/navSlice";
+import { chooseCollection, isViewModeActive, selectCollectionId, selectFilter, selectIsCustomizing, toggleFilterViewMode, ViewMode } from "../../../redux/features/navSlice";
 import { ListingsContainerContent } from "../../molecules/listings/listings-container-content";
 import { TitleCrumbs } from "../../organisms/title-crumbs";
 import { ListingsContainerCollections } from "../../molecules/listings/listings-container-collections";
@@ -17,11 +17,12 @@ import { CollectionViewProps } from "./interface";
 import { motionProps } from "../../../utilities/animate";
 import { selectNestedSourceIds } from "../../../redux/features/collectionToSourceSlice";
 import { RefreshBar } from "../../molecules/listings/refresh-bar";
-import { retrieveMarks } from "../../../redux/features/marksSlice";
+import { marksSelectors, retrieveMarks } from "../../../redux/features/marksSlice";
 import { fetchPhrasesToCollection } from "../../../redux/features/collectionToPhraseSlice";
 import { FailBanner } from "../../organisms/fail-banner";
 import { CombinedCount } from "../../organisms/statistics/combined_counts";
 import { LoadingIndicator } from "../../organisms/loading-indicator";
+import { FilterButton } from "../../molecules/filter-button";
 
 const clientItemsLimit: number = 100;
 
@@ -36,6 +37,8 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     const sources = useAppSelector(sourcesSelectors.selectAll);
     const sourceIds = useAppSelector(selectNestedSourceIds);
     const contents = useAppSelector((s) => selectContentByRecency(s, clientItemsLimit));
+    const marks = useAppSelector(marksSelectors.selectAll);
+    const filter = useAppSelector(selectFilter);
     const isCustomizing = useAppSelector(selectIsCustomizing);
     const [doRefresh, setDoRefresh] = useState<boolean>(true);
     // "contentsVisible" is the displayed subset of the current contents
@@ -125,6 +128,17 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
             <LoadingIndicator />
             <RefreshBar refreshAction={() => setDoRefresh(true)} refreshPossible={isFilteredCollection && !isShowingMostCurrent} />
             <CombinedCount collectionId={collectionId} key={contents?.[0]?.id ?? "article-count"} />
+            <div className="mb-8">
+                <FilterButton
+                    number={marks.length}
+                    colour="#F0315D"
+                    action={() => {
+                        dispatch(toggleFilterViewMode(ViewMode.BOOKMARKS));
+                        setDoRefresh(true);
+                    }}
+                    active={isViewModeActive(filter, ViewMode.BOOKMARKS)}
+                />
+            </div>
             <ListingsContainerCollections className="mb-12" view={collectionSettings?.layout as SettingsLayout} collections={nestedCollections} selectAction={(c) => dispatch(chooseCollection(c.id))} />
             {/* <ListingsContainerPhrase view={collectionSettings?.layout as SettingsLayout} phrases={phrases.slice(0, 15)} /> */}
             <ListingsContainerContent view={collectionSettings?.layout as SettingsLayout} contents={isFilteredCollection ? contentsVisible : contents} sources={sources} />

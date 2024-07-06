@@ -271,10 +271,10 @@ pub fn db_content_add_words_phrases(
     let mut phrases: Vec<String> = Vec::new();
     let mut tallies: Vec<i32> = Vec::new();
 
-    for (phrase, tally) in phrases_tallies {
+    for pt in phrases_tallies {
         // println!("c {:1}, p {:2}, t {:3}", &cc_id, &phrase.join(" "), &tally);
-        phrases.push(phrase.join(" "));
-        tallies.push(tally);
+        phrases.push(pt.phrase.join(" "));
+        tallies.push(pt.total);
     }
 
     let phrases_r = create_rarray_values(phrases);

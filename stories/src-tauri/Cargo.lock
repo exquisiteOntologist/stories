@@ -2348,8 +2348,8 @@ dependencies = [
 
 [[package]]
 name = "labels"
-version = "0.1.1"
-source = "git+https://github.com/exquisiteOntologist/labels.git#120208fb416b86e00beafc741947e74e8ce53e6a"
+version = "0.2.1"
+source = "git+https://github.com/exquisiteOntologist/labels.git#ce47974d3ddd3709054c45a29c8b10fbddd0b43c"
 dependencies = [
  "gather",
 ]

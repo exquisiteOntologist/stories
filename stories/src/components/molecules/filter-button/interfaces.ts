@@ -7,7 +7,7 @@ export interface FilterButtonProps {
     /** The button's represented state active state */
     active: boolean;
     /** Number of items to represent filtering */
-    number: number;
+    number: number | string;
     /** An Icon representing the filter state item */
     Icon: FC<FilterButtonIconProps>;
     /** Button colour theme, usually distinct for reach representation */

@@ -145,7 +145,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
                     active={isViewModeActive(filter, ViewMode.BOOKMARKS)}
                 />
                 <FilterButton
-                    number={phrases.length}
+                    number={phrases.length ? phrases.length + "+" : 0}
                     colour="#2F959F"
                     Icon={IconFlower}
                     action={() => {
@@ -155,7 +155,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
                 />
             </div>
             <ListingsContainerCollections className="mb-12" view={collectionSettings?.layout as SettingsLayout} collections={nestedCollections} selectAction={(c) => dispatch(chooseCollection(c.id))} />
-            {isViewModeActive(filter, ViewMode.PHRASES) && <ListingsContainerPhrase view={collectionSettings?.layout as SettingsLayout} phrases={phrases.slice(0, 15)} />}
+            {isViewModeActive(filter, ViewMode.PHRASES) && <ListingsContainerPhrase view={collectionSettings?.layout as SettingsLayout} phrases={phrases} />}
             <ListingsContainerContent view={collectionSettings?.layout as SettingsLayout} contents={isFilteredCollection ? contentsVisible : contents} sources={sources} />
         </motion.div>
     );

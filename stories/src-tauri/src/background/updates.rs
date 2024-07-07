@@ -9,7 +9,8 @@ pub async fn continual_updates() {
         println!("Before updates");
         _ = chirp::actions::update::update().await;
         println!("After updates");
-        interval.tick().await;
+        // This function is blocking, and should not be used in async functions. (oopsies)
+        std::thread::sleep(dur);
         println!("after sleep");
     }
 }

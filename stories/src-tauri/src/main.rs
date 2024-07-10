@@ -8,6 +8,8 @@ async fn main() {
     _ = chirp::db::init::db_init();
     println!("finished db init");
 
+    tokio::task::spawn(continual_updates());
+
     tauri::Builder::default()
         // note that this plugin for window state does not work with current versions and setup (it did before migration)
         .plugin(tauri_plugin_window_state::Builder::default().build())
@@ -36,12 +38,6 @@ async fn main() {
             commands::statistics::today_phrases_count,
             commands::search::search
         ])
-        .setup(|_app| {
-            // the spawned function and the functions that it calls must have the Send trait
-            tokio::spawn(continual_updates());
-
-            Ok(())
-        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

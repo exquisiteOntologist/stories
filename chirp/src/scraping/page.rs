@@ -7,13 +7,15 @@ use std::{collections::HashSet, error::Error, vec};
 
 /// For a URL get the page doc, scrape the page, and return the Contents
 pub async fn contents_from_page(url: String) -> Result<FullContent, Box<dyn Error + Send + Sync>> {
-    let doc: Result<Html, Box<dyn Error + Send + Sync>> = get_page_doc(&url).await;
+    let doc: Html = match get_page_doc(&url).await {
+        Ok(v) => v,
+        Err(_) => return Err(format!("Page could not be retrieved for {url}").into()),
+    };
 
-    if doc.is_err() {
-        return Err(format!("Page could not be retrieved for {url}").into());
-    }
-
-    let page = scrape_web_page(&doc.unwrap(), &url).unwrap();
+    let page: WebPage = match scrape_web_page(&doc, &url) {
+        Ok(v) => v,
+        Err(e) => return Err(e.to_string().into()),
+    };
 
     let contents = FullContent {
         content: Content {
@@ -49,9 +51,15 @@ pub async fn contents_from_page(url: String) -> Result<FullContent, Box<dyn Erro
 pub fn scrape_web_page(doc: &Html, url: &String) -> Result<WebPage, Box<dyn Error>> {
     let page = WebPage {
         url: url.to_owned(),
-        title: scrape_title_from_doc(&doc)?,
+        title: match scrape_title_from_doc(&doc) {
+            Ok(v) => v,
+            Err(e) => {
+                eprintln!("Failed to retrieve title from page for {:1}. {:2}", url, e);
+                String::new()
+            }
+        },
         body_text: doc.html(),
-        cover_img: scrape_cover_image(&doc)?,
+        cover_img: scrape_cover_image(&doc),
     };
 
     // println!("Cover is {:?}", page.cover_img.clone().unwrap_or_default());
@@ -61,7 +69,10 @@ pub fn scrape_web_page(doc: &Html, url: &String) -> Result<WebPage, Box<dyn Erro
 
 // Retrieve a web page from a URL
 pub async fn get_page_doc(url: &String) -> Result<Html, Box<dyn Error + Send + Sync>> {
-    let doc_text = fetch_url_to_string(&url).await?;
+    let doc_text: String = match fetch_url_to_string(&url).await {
+        Ok(v) => v,
+        Err(e) => return Err(e),
+    };
     let doc = Html::parse_document(&doc_text);
 
     Ok(doc)
@@ -82,13 +93,14 @@ pub fn scrape_title(doc_text: &String) -> Result<String, Box<dyn Error>> {
     Ok(title)
 }
 
-pub fn scrape_cover_image(doc: &Html) -> Result<Option<String>, Box<dyn Error>> {
-    let src_og_res = scrape_cover_images_og(&doc);
-    if src_og_res.is_ok() {
-        return Ok(Some(src_og_res?));
+pub fn scrape_cover_image(doc: &Html) -> Option<String> {
+    match scrape_cover_images_og(&doc) {
+        Ok(v) => Some(v),
+        Err(e) => {
+            eprintln!("Failed to retrieve cover image og, {}", e);
+            None
+        }
     }
-
-    Ok(None)
 }
 
 pub fn scrape_cover_images_og(doc: &Html) -> Result<String, Box<dyn Error>> {

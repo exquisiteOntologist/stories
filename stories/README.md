@@ -10,8 +10,24 @@ yarn tauri
 
 ## Running for Development
 
+For hot-reloading:
+
 ```cli
 yarn tauri dev
+```
+
+For [debugging](https://tauri.app/v1/guides/debugging/application/):
+
+```cli
+RUST_BACKTRACE=1 yarn tauri dev
+```
+
+## Building
+
+To build an application that can be opened without the dev tools:
+
+```cli
+yarn tauri build
 ```
 
 ## Recommended IDE Setup

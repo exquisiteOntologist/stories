@@ -1,5 +1,8 @@
 use std::time::Duration;
 
+use tokio::spawn;
+use tokio_schedule::{every, Job};
+
 const MIN_INTERVAL: Duration = Duration::from_secs(30);
 
 pub async fn update() {
@@ -12,8 +15,6 @@ pub async fn panicky() {
 }
 
 pub async fn continual_updates() -> Box<dyn 'static + Send> {
-    // Repeatedly call update (perform content updates and retrievals).
-    // let min_interval = Duration::from_secs(30);
     loop {
         println!("Before updates");
         tokio::spawn(update());
@@ -23,8 +24,15 @@ pub async fn continual_updates() -> Box<dyn 'static + Send> {
     }
 }
 
-pub async fn replicating_update_schedule() {
-    update().await;
-    tokio::time::sleep(MIN_INTERVAL).await;
-    tokio::spawn(replicating_update_schedule());
+// pub async fn replicating_update_schedule() {
+//     update().await;
+//     tokio::time::sleep(MIN_INTERVAL).await;
+//     tokio::spawn(replicating_update_schedule());
+//      not returning a value that implements Send (not returning a value)
+// }
+
+pub async fn scheduled_updates() {
+    tokio::spawn(update());
+    let schedule = every(30).minutes().perform(update);
+    spawn(schedule);
 }

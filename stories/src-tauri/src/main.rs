@@ -1,14 +1,13 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use stories::{background::updates::continual_updates, commands};
+use stories::{background::updates::replicating_update_schedule, commands};
 
 #[tokio::main]
 async fn main() {
     _ = chirp::db::init::db_init();
-    println!("finished db init");
 
-    tokio::task::spawn(continual_updates());
+    tokio::task::spawn(replicating_update_schedule());
 
     tauri::Builder::default()
         // note that this plugin for window state does not work with current versions and setup (it did before migration)

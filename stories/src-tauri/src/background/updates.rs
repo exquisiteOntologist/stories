@@ -9,10 +9,10 @@ pub async fn update() {
     _ = chirp::actions::update::update().await;
 }
 
-pub async fn panicky() {
-    eprintln!("Oh no, I'm going to panic!");
-    panic!();
-}
+// pub async fn panicky() {
+//     eprintln!("Oh no, I'm going to panic!");
+//     panic!();
+// }
 
 pub async fn continual_updates() -> Box<dyn 'static + Send> {
     loop {
@@ -31,8 +31,8 @@ pub async fn continual_updates() -> Box<dyn 'static + Send> {
 //      not returning a value that implements Send (not returning a value)
 // }
 
-pub async fn scheduled_updates() {
-    tokio::spawn(update());
-    let schedule = every(30).minutes().perform(update);
-    spawn(schedule);
-}
+// pub async fn scheduled_updates() {
+//     tokio::spawn(update());
+//     let schedule = every(30).minutes().perform(update);
+//     spawn(schedule);
+// }

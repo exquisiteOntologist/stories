@@ -9,8 +9,6 @@ async fn main() {
 
     tauri::async_runtime::set(tokio::runtime::Handle::current());
     tokio::task::spawn(continual_updates());
-    // tokio::task::spawn(replicating_update_schedule());
-    // scheduled_updates().await;
 
     tauri::Builder::default()
         // note that this plugin for window state does not work with current versions and setup (it did before migration)

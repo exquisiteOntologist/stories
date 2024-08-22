@@ -23,7 +23,7 @@ export const RefreshBar: React.FC<RefreshBarProps> = ({ refreshAction: action, r
                     <div className="text-lg text-slate-50">
                         This <span className="">collection</span> has <span className="font-semibold text-yellow-500">fresh content</span>
                     </div>
-                    <button className="font-medium p-0 w-11 h-11 rounded-full overflow-hidden relative bg-yellow-600 group-hover:bg-white text-black transition-colors">
+                    <button className="font-medium p-0 w-11 h-11 rounded-full overflow-hidden relative bg-yellow-600 translate-x-0 group-hover:bg-white group-hover:translate-x-4 text-black duration-300 transition-all">
                         {/* <IconRefresh className="w-20 h-24 max-w-none absolute -bottom-5 -left-4" /> */}
                         <IconArrowCircle />
                     </button>

@@ -5,6 +5,7 @@ use futures::future::join_all;
 use crate::{entities::FullContent, scraping::page::contents_from_page};
 
 /// Enrich content from page article scraper or RSS with page HTML metadata
+/// On error the original non-enriched item is returned instead.
 pub async fn enrich_content_further(mut fc_items: Vec<FullContent>) -> Vec<FullContent> {
     let update_futures = fc_items
         .into_iter()

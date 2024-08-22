@@ -8,6 +8,22 @@ Make sense of the outer world that affects **your narrative**.
 ![Thumbnail view](./materials/screenshots/screenshot-a.png)
 ![Article in Arc browser over thumbnail view](./materials/screenshots/screenshot-b.png)
 
+## Outstanding Bugs
+
+### Rote App Crash
+
+Unfortunately, after about a day of use the app eventually crashes.
+
+The solution at first will be to remove the readability functionality that is used to extract the articles for the article search index. The decision to remove functionality is because the integrity of the application should come first.
+
+The crash is a segmentation fault associated with unsafe C code being used with data that has no guaranteed conformity. Segmentation faults should not occur in Rust code by design. In this case we are using code from another library written in another language in an unsafe way.
+
+I have considered how to handle search and categorisation functionality moving forwards, and OpenAI is on the cards. The issue with sending data to a third party is it breaks the entire purpose of this app being more private. When you are not private it opens you up directly to harassment, bullying, and being defeated or forestalled. No service can be guaranteed to be safe. *I’d like to mention here that consuming **anything** will program you by design. Avoid large crowds where possible.*
+
+Useful libs that cause issue
+- hashbrown
+- libxml
+
 ## Benefits
 
 ### Features

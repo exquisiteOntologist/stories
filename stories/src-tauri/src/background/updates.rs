@@ -1,14 +1,19 @@
 use std::time::Duration;
 
-pub async fn continual_updates() {
-    // Repeatedly call update (perform content updates and retrievals).
-    let min_interval = Duration::from_secs(30);
+use tokio::spawn;
+
+const MIN_INTERVAL: Duration = Duration::from_secs(30);
+
+pub async fn update() {
+    _ = chirp::actions::update::update().await;
+}
+
+pub async fn continual_updates() -> Box<dyn 'static + Send> {
     loop {
         println!("Before updates");
-        _ = chirp::actions::update::update().await;
+        tokio::spawn(update());
         println!("After updates");
-        // This function is blocking, and should not be used in async functions. (oopsies)
-        std::thread::sleep(min_interval);
+        tokio::time::sleep(MIN_INTERVAL).await;
         println!("after sleep");
     }
 }

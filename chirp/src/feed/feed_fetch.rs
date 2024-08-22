@@ -11,14 +11,15 @@ pub async fn feed_fetch_from_url(
     url: String,
     other_param: &String,
 ) -> Result<(Source, Vec<FullContent>), Box<dyn Error + Send + Sync>> {
-    let feed_text_res = fetch_url_to_string(&url).await;
-    if let Err(e) = feed_text_res {
-        eprintln!("Failed to fetch feed content");
-        eprintln!("{:?}", e.to_string());
-        _ = db_log_add(e.to_string().as_str());
-        return Err(e);
-    }
-    let feed_text = feed_text_res.unwrap();
+    let feed_text = match fetch_url_to_string(&url).await {
+        Ok(v) => v,
+        Err(e) => {
+            eprintln!("Failed to fetch feed content");
+            eprintln!("{:?}", e.to_string());
+            _ = db_log_add(e.to_string().as_str());
+            return Err(e);
+        }
+    };
 
     // Note that even if a feed mentions "atom" it's more likely to be RSS if it doesn't begin with "<feed"
     let is_atom = feed_text.contains(&"<feed");
@@ -40,11 +41,5 @@ pub async fn feed_fetch_from_url(
         parse_website(&source_id, &url, &feed_text, &other_param).await
     };
 
-    if parse_result.is_err() {
-        return Err(parse_result.unwrap_err());
-    }
-
-    let (parsed_source, parsed_content) = parse_result?;
-
-    Ok((parsed_source, parsed_content))
+    parse_result
 }

@@ -6,7 +6,9 @@ use stories::{background::updates::continual_updates, commands};
 #[tokio::main]
 async fn main() {
     _ = chirp::db::init::db_init();
-    println!("finished db init");
+
+    tauri::async_runtime::set(tokio::runtime::Handle::current());
+    tokio::task::spawn(continual_updates());
 
     tauri::Builder::default()
         // note that this plugin for window state does not work with current versions and setup (it did before migration)
@@ -36,12 +38,6 @@ async fn main() {
             commands::statistics::today_phrases_count,
             commands::search::search
         ])
-        .setup(|_app| {
-            // the spawned function and the functions that it calls must have the Send trait
-            tokio::spawn(continual_updates());
-
-            Ok(())
-        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

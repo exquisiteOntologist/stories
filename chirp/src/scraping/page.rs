@@ -7,12 +7,12 @@ use std::{collections::HashSet, error::Error, vec};
 
 /// For a URL get the page doc, scrape the page, and return the Contents
 pub async fn contents_from_page(url: String) -> Result<FullContent, Box<dyn Error + Send + Sync>> {
-    let Ok(doc): Html = get_page_doc(&url).await else {
+    let Ok(doc) = get_page_doc(&url).await else {
         return Err(format!("Page could not be retrieved for {url}").into());
     };
 
-    let Ok(page): WebPage = scrape_web_page(&doc, &url) else {
-        return Err(e.to_string().into());
+    let Ok(page) = scrape_web_page(&doc, &url) else {
+        return Err(format!("Failed to scrape page {url}").into());
     };
 
     let contents = FullContent {

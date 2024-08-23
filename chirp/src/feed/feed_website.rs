@@ -4,10 +4,7 @@ use std::{borrow::Borrow, error::Error, vec};
 use crate::{
     db::content::db_check_content_existing_urls,
     entities::{FullContent, Source, SourceKind},
-    scraping::{
-        articles::contents_from_article,
-        page::{scrape_links, scrape_title},
-    },
+    scraping::page::{contents_from_page, scrape_links, scrape_title},
     utils::fully_form_url,
 };
 
@@ -103,7 +100,8 @@ pub async fn parse_web_articles(
 
     let articles_being_retrieved = urls_to_crawl
         .into_iter()
-        .map(|p_url| contents_from_article(p_url.to_string()));
+        // .map(|p_url| contents_from_article(p_url.to_string()));
+        .map(|p_url| contents_from_page(p_url.to_string()));
 
     let website_contents: Vec<FullContent> = join_all(articles_being_retrieved)
         .await

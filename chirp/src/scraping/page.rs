@@ -7,14 +7,12 @@ use std::{collections::HashSet, error::Error, vec};
 
 /// For a URL get the page doc, scrape the page, and return the Contents
 pub async fn contents_from_page(url: String) -> Result<FullContent, Box<dyn Error + Send + Sync>> {
-    let doc: Html = match get_page_doc(&url).await {
-        Ok(v) => v,
-        Err(_) => return Err(format!("Page could not be retrieved for {url}").into()),
+    let Ok(doc): Html = get_page_doc(&url).await else {
+        return Err(format!("Page could not be retrieved for {url}").into());
     };
 
-    let page: WebPage = match scrape_web_page(&doc, &url) {
-        Ok(v) => v,
-        Err(e) => return Err(e.to_string().into()),
+    let Ok(page): WebPage = scrape_web_page(&doc, &url) else {
+        return Err(e.to_string().into());
     };
 
     let contents = FullContent {
@@ -36,7 +34,7 @@ pub async fn contents_from_page(url: String) -> Result<FullContent, Box<dyn Erro
             vec![ContentMedia {
                 id: 0,
                 content_id: 0,
-                src: page.cover_img.unwrap(),
+                src: page.cover_img.unwrap_or_default(),
                 kind: MediaKind::IMAGE,
             }]
         } else {

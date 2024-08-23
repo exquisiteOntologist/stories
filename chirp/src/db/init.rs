@@ -10,7 +10,9 @@ pub fn db_init() -> Result<(), Box<dyn Error>> {
 pub fn db_seed_tables() -> Result<(), Box<dyn Error>> {
     let cuter = Cuter::new();
 
-    cuter.execute("VACUUM;PRAGMA auto_vacuum = FULL;")?;
+    // Calling VACUUM goes over entire database
+    // So don't call it here as it will slow startup.
+    cuter.execute("PRAGMA auto_vacuum = FULL;")?;
 
     cuter.execute(
         "CREATE TABLE IF NOT EXISTS source (

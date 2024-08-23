@@ -141,11 +141,12 @@ pub fn db_map_content_body_query<P: Params>(
 // Note that this will need to be updated in relation to the sources
 // & that will be a much slower query
 /// Delete old content. Where tables cascade, associated rows also get deleted.
+/// Note that VACUUM is called to recreate the DB file without fragmentation.
 const SQL_DELETE_OLD_CONTENT: &str = "DELETE FROM content
         WHERE id < (SELECT MAX(id) FROM content) - 30000
         AND id NOT IN (
             SELECT content_id as id FROM mark ORDER BY content_id DESC LIMIT 30000
-        )";
+        ); VACUUM";
 
 pub fn db_content_save_space() -> Result<(), Box<dyn Error + 'static>> {
     let conn = db_connect()?;

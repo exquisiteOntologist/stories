@@ -2,6 +2,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use stories::{background::updates::continual_updates, commands};
+use tauri::Manager;
 
 #[tokio::main]
 async fn main() {
@@ -38,6 +39,22 @@ async fn main() {
             commands::statistics::today_phrases_count,
             commands::search::search
         ])
+        .on_window_event(|window, event| match event {
+            tauri::WindowEvent::CloseRequested { api, .. } => {
+                #[cfg(not(target_os = "macos"))]
+                {
+                    event.window().hide().unwrap();
+                }
+                #[cfg(target_os = "macos")]
+                {
+                    // this hiding works when windowed,
+                    // however when fullscreen it doesn't hide
+                    tauri::AppHandle::hide(&window.app_handle()).unwrap();
+                }
+                api.prevent_close();
+            }
+            _ => {}
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

@@ -18,6 +18,8 @@ pub struct ScrapedArticle {
     pub html: Option<String>,
 }
 
+/// Extract the contents from an article with great accuracy.
+/// Unfortunately, this variant depends on unsafe C libs that crash the application.
 pub async fn contents_from_article(
     url: String,
 ) -> Result<FullContent, Box<dyn Error + Send + Sync>> {
@@ -81,29 +83,6 @@ pub async fn article_scraper(
         html: scraped.html,
     };
     Ok(article)
-}
-
-pub fn strip_html_tags_from_string(html: &str) -> String {
-    let mut html_out: String = String::new();
-    let mut within_bracket = false;
-    for c in html.chars() {
-        let is_opening = !within_bracket && c == '<';
-        let is_closing = !is_opening && c == '>';
-
-        if is_opening {
-            within_bracket = true;
-        }
-
-        if within_bracket == false {
-            html_out.push(c);
-        }
-
-        if is_closing {
-            within_bracket = false;
-        }
-    }
-
-    html_out
 }
 
 #[cfg(test)]

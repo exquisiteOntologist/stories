@@ -1,6 +1,6 @@
 use crate::db::logging::db_log_add;
 use crate::entities::{Content, ContentBody, ContentMedia, FullContent, MediaKind};
-use crate::scraping::articles::strip_html_tags_from_string;
+use crate::scraping::utilities::strip_html_tags_from_string;
 use chrono::DateTime;
 use chrono::NaiveDateTime;
 use chrono::Utc;

@@ -21,8 +21,8 @@ Make sense of the outer world that affects **your narrative**.
 1. Install [Node JS](https://nodejs.org/en/download)
 2. Install [Yarn](https://classic.yarnpkg.com/lang/en/docs/install/#mac-stable), a nicer Node package manager
 3. Install [Rust](https://www.rust-lang.org/tools/install), for compiling Rust binaries
-4. In your terminal navigate to the project directory, then `./stories`
-5. In your terminal run `yarn tauri build`
+4. Navigate to the project directory, then into the `./stories` subdirectory
+5. Run `yarn tauri build`
 
 <img src="./materials/readme-icon.png" width="128" height="128">
 

@@ -4,8 +4,8 @@
 
 Make sense of the outer world that affects **your narrative**.
 
-![Following Journals](./materials/screenshots/screenshot-c@2x.png)
 ![Article in Arc browser over thumbnail view](./materials/screenshots/screenshot-b.png)
+![Following Journals](./materials/screenshots/screenshot-c@2x.png)
 
 ## Benefits
 
@@ -23,6 +23,8 @@ Make sense of the outer world that affects **your narrative**.
 3. Install [Rust](https://www.rust-lang.org/tools/install), for compiling Rust binaries
 4. In your terminal navigate to the project directory, then `./stories`
 5. In your terminal run `yarn tauri build`
+
+<img src="./materials/readme-icon.png" width="128" height="128">
 
 ## Develop the app
 

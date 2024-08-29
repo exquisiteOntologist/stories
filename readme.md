@@ -24,6 +24,10 @@ Make sense of the outer world that affects **your narrative**.
 4. In your terminal navigate to the project directory, then `./stories`
 5. In your terminal run `yarn tauri build`
 
+## Develop the app
+
+Use `yarn tauri dev`, not `yarn dev`.
+
 ### Windows
 
 - You will need to install vcpkg and the provided dependency with it that the main build step mentions.

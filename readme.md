@@ -4,7 +4,7 @@
 
 Make sense of the outer world that affects **your narrative**.
 
-![Thumbnail view](./materials/screenshots/screenshot-a.png)
+![Following Journals](./materials/screenshots/screenshot-c@2x.png)
 ![Article in Arc browser over thumbnail view](./materials/screenshots/screenshot-b.png)
 
 ## Benefits

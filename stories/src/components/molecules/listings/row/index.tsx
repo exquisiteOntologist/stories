@@ -26,12 +26,12 @@ export const ListingRow: React.FC<ListingRowProps> = ({ title, linkUrl, action, 
     const actionBookmark = content && linkUrl && <Bookmark content={content} layout={SettingsLayout.ROWS} />;
 
     const titleInner = linkUrl ? (
-        <a className="block" href={linkUrl} target="_blank">
+        <a className="block font-bold" href={linkUrl} target="_blank">
             {actionInner}
         </a>
     ) : (
         action && (
-            <span className="block cursor-pointer" onClick={action}>
+            <span className="block cursor-pointer font-bold" onClick={action}>
                 {actionInner}
             </span>
         )

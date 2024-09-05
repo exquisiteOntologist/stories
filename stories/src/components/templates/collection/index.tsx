@@ -132,7 +132,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
             <FailBanner />
             <LoadingIndicator />
             <RefreshBar refreshAction={() => setDoRefresh(true)} refreshPossible={isFilteredCollection && !isShowingMostCurrent} />
-            <CombinedCount collectionId={collectionId} key={contents?.[0]?.id ?? "article-count"} />
+            {/*<CombinedCount collectionId={collectionId} key={contents?.[0]?.id ?? "article-count"} /> */ }
             <div className="flex align-middle mb-8">
                 <FilterButton
                     number={marks.length}

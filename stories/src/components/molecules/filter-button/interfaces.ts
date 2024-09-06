@@ -12,4 +12,6 @@ export interface FilterButtonProps {
     Icon: FC<FilterButtonIconProps>;
     /** Button colour theme, usually distinct for reach representation */
     colour: string;
+    /** Label to display alongside the icon and number */
+    label: string
 }

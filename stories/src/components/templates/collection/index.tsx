@@ -137,6 +137,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
                 <FilterButton
                     number={marks.length}
                     colour="#F0315D"
+                    label="bookmarks"
                     Icon={IconBookmark}
                     action={() => {
                         dispatch(toggleFilterViewMode(ViewMode.BOOKMARKS));
@@ -147,6 +148,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
                 <FilterButton
                     number={phrases.length ? phrases.length + "+" : 0}
                     colour="#2F959F"
+                    label="entities"
                     Icon={IconFlower}
                     action={() => {
                         dispatch(toggleFilterViewMode(ViewMode.PHRASES));

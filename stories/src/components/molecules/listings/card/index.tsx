@@ -4,6 +4,7 @@ import { SourceLink } from "../source-link/source-link";
 import { ListingCardProps } from "./interfaces";
 import { motionProps } from "../../../../utilities/animate";
 import { Bookmark } from "../../bookmark";
+import { ImageCanvas } from '../../../atoms/image-canvas'
 import { SettingsLayout } from "../../../../data/chirp-types";
 
 export const ListingCard: React.FC<ListingCardProps> = ({ title, linkUrl, content, source }) => {
@@ -35,6 +36,7 @@ export const ListingCard: React.FC<ListingCardProps> = ({ title, linkUrl, conten
         <motion.article {...motionProps} className="group relative flex flex-col text-center mb-6">
             <a className="flex flex-col w-full" href={linkUrl} target="_blank">
                 <picture className="flex flex-col grow w-full aspect-square my-1 rounded-md overflow-hidden empty:bg-gray-100">{coverImage}</picture>
+                <ImageCanvas src={listingCoverImage?.src} />
             </a>
             <h1 className="grow mx-0 my-2 text-sm">
                 <a className="grow font-bold text-current dark:text-slate-300 opacity-70 group-hover:opacity-100 transition-all duration-50" href={linkUrl} target="_blank">

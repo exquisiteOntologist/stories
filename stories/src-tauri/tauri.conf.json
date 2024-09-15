@@ -17,7 +17,6 @@
     "productName": "Stories",
     "version": "0.0.0",
     "identifier": "com.stories.dev",
-    "plugins": {},
     "app": {
         "withGlobalTauri": true,
         "windows": [

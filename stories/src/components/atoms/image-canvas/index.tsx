@@ -1,21 +1,22 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { fetch } from '@tauri-apps/plugin-http';
 import { ImageCanvasProps } from './interfaces';
-import { ReadableStreamBYOBReader } from 'node:stream/web';
 
 export const ImageCanvas: React.FC<ImageCanvasProps> = ({ className, src, style }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const [img, setImg] = useState<ImageBitmap | null>(null)
     const [rendered, setRendered] = useState<boolean>(false)
+    const [imageTagFailed, setImageTagFailed] = useState<boolean>(false)
 
     useEffect(() => {
         (async () => {
-            if (rendered || img) return
+            if (rendered || img || !imageTagFailed) return
             console.log('fetching img', src)
             const response = await fetch(src, {
                 method: 'GET',
                 connectTimeout: 30000,
                 // proxy
+                cache: 'force-cache'
             }).catch(e => console.error('e', e));
             console.log('response for image', response, src)
             if (!response || !response.blob || !response.arrayBuffer) return
@@ -27,7 +28,7 @@ export const ImageCanvas: React.FC<ImageCanvasProps> = ({ className, src, style 
             setImg(bitmap)
    
         })()
-    }, [img])
+    }, [img, imageTagFailed])
 
     useEffect(() => {
         console.log('render cycle', img)
@@ -51,7 +52,9 @@ export const ImageCanvas: React.FC<ImageCanvasProps> = ({ className, src, style 
 
     console.log('hello', img)
 
-    return (
+    return imageTagFailed ? (
         <canvas className={className} ref={canvasRef} style={style} />
+    ) : (
+        <img className={className} src={src} style={style} onError={e => setImageTagFailed(true)} />
     )
 }

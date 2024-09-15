@@ -44,16 +44,14 @@ Recognise entities in the text. Previously NER was performed extremely quickly w
 
 Use `yarn tauri dev`, not `yarn dev`.
 
-### Windows
+### Platform-specific Steps
 
-- You will need to install vcpkg and the provided dependency with it that the main build step mentions.
-
-### Ubuntu
+#### Ubuntu
 
 - Install additional libraries as required for your OS
     - Refer to the current build file in `./.github/workflows/test-on-pr.yml`
 
-### Fedora
+#### Fedora
 
 - The steps are the Fedora equivalent of Ubuntu
 
@@ -63,5 +61,3 @@ Use `yarn tauri dev`, not `yarn dev`.
     - **A)** No, nothing can replace Feedly.
 - **Q)** Can you provide 1-click app downloads?
     - **A)** Not yet. App signing is required.
-- **Q)** How come Windows doesn't get tested on GitHub?
-    - **A)** The libraries are not compatible with GitHub's Windows build environment. It does build on Windows Server in my testing.

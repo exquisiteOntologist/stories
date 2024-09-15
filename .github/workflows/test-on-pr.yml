@@ -11,11 +11,10 @@ jobs:
               args: '--target aarch64-apple-darwin'
             - platform: 'macos-latest' # for Intel based macs.
               args: '--target x86_64-apple-darwin'
-            - platform: 'ubuntu-22.04' # for Tauri v1 you could replace this with ubuntu-20.04.
+            - platform: 'ubuntu-22.04'
               args: ''
-            # Windows requires additional dependencies and also doesn't run in Workflows
-            # - platform: 'windows-latest'
-            #   args: ''
+            - platform: 'windows-latest' # Note that Windows also has its own dependency req's
+              args: ''
     runs-on: ${{ matrix.platform }}
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

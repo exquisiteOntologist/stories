@@ -78,7 +78,9 @@ pub async fn get_page_doc(url: &String) -> Result<Html, Box<dyn Error + Send + S
 
 pub fn scrape_title_from_doc(doc: &Html) -> Result<String, Box<dyn Error>> {
     let title_selector = Selector::parse("title").unwrap();
-    let node_title = doc.select(&title_selector).next().unwrap();
+    let Some(node_title) = doc.select(&title_selector).next() else {
+        return Ok(String::new());
+    };
     let title = node_title.text().collect::<Vec<_>>().join(&String::new());
 
     Ok(title)

@@ -5,13 +5,15 @@ import { ListingCardProps } from "./interfaces";
 import { motionProps } from "../../../../utilities/animate";
 import { Bookmark } from "../../bookmark";
 import { SettingsLayout } from "../../../../data/chirp-types";
+import { Visual } from "../../visual";
 
 export const ListingCard: React.FC<ListingCardProps> = ({ title, linkUrl, content, source }) => {
-    const listingCoverImage = content?.media?.length && [...content?.media][0]; //?.sort(m => m.isCover ? 0 : 1)[0]?.mediaImage[0]
+    const listingCoverImage = content?.media?.length ? [...content?.media][0] : undefined; //?.sort(m => m.isCover ? 0 : 1)[0]?.mediaImage[0]
     const perfectFit = (pxSize?: number) => (pxSize ? `min(100%, ${pxSize}px)` : "100%");
     const coverImage = listingCoverImage ? ( // && (!listingCoverImage?.width || (listingCoverImage.width > 300)) && (
-        <img
+        <Visual
             className="object-cover m-auto"
+            crossOrigin={undefined}
             src={listingCoverImage?.src}
             alt={title}
             width={undefined /* listingCoverImage?.width */}

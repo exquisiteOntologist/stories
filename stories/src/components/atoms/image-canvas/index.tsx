@@ -6,11 +6,10 @@ export const ImageCanvas: React.FC<ImageCanvasProps> = ({ className, src, style 
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const [img, setImg] = useState<ImageBitmap | null>(null)
     const [rendered, setRendered] = useState<boolean>(false)
-    const [imageTagFailed, setImageTagFailed] = useState<boolean>(false)
 
     useEffect(() => {
         (async () => {
-            if (rendered || img || !imageTagFailed) return
+            if (rendered || img || !src) return
             console.log('fetching img', src)
             const response = await fetch(src, {
                 method: 'GET',
@@ -28,7 +27,7 @@ export const ImageCanvas: React.FC<ImageCanvasProps> = ({ className, src, style 
             setImg(bitmap)
    
         })()
-    }, [img, imageTagFailed])
+    }, [img])
 
     useEffect(() => {
         console.log('render cycle', img)
@@ -52,9 +51,7 @@ export const ImageCanvas: React.FC<ImageCanvasProps> = ({ className, src, style 
 
     console.log('hello', img)
 
-    return imageTagFailed ? (
+    return (
         <canvas className={className} ref={canvasRef} style={style} />
-    ) : (
-        <img className={className} src={src} style={style} onError={e => setImageTagFailed(true)} />
     )
 }

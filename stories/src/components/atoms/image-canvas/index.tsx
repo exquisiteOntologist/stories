@@ -13,7 +13,7 @@ export const ImageCanvas: React.FC<ImageCanvasProps> = ({ className, src, style 
             const response = await fetch(src, {
                 method: 'GET',
                 connectTimeout: 30000,
-                // proxy
+                // proxy:
                 cache: 'force-cache'
             }).catch(e => console.error('e', e));
             if (!response || !response.blob) return

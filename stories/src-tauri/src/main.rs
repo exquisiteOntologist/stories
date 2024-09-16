@@ -41,17 +41,10 @@ async fn main() {
             commands::search::search
         ])
         .setup(|app| {
-            // let main_window = app.get_window("main").unwrap();
-            // main_window.with_webview(|webview| {
-            //     webview.controller().set_zoom_level
-            // });
             Ok(())
         })
         .on_window_event(|window, event| match event {
             tauri::WindowEvent::CloseRequested { api, .. } => {
-                // for (hash, ww) in window.webview_windows() {
-                //     ww.
-                // }
                 #[cfg(not(target_os = "macos"))]
                 {
                     window.hide().unwrap();

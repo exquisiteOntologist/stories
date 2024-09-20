@@ -1656,8 +1656,8 @@ checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
 
 [[package]]
 name = "titles"
-version = "1.1.1"
-source = "git+https://github.com/exquisiteOntologist/PageTitlesSansSourceNames#705886d99fe98b864ab34423a4b87ce97767faf5"
+version = "1.1.2"
+source = "git+https://github.com/exquisiteOntologist/PageTitlesSansSourceNames#5077edbe39757dfab261244f00e6339aa8550e0b"
 
 [[package]]
 name = "tokio"

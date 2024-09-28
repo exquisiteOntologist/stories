@@ -1,5 +1,6 @@
 use crate::db::logging::db_log_add;
 use crate::entities::{Content, ContentBody, ContentMedia, FullContent, MediaKind};
+use crate::scraping::page::scrape_paragraphs_from_text;
 use crate::scraping::utilities::strip_html_tags_from_string;
 use chrono::DateTime;
 use chrono::NaiveDateTime;
@@ -266,7 +267,8 @@ pub fn db_content_add_words_phrases(
     cc_id: i32,
     cb: ContentBody,
 ) -> Result<(), Box<dyn Error + 'static + Send + Sync>> {
-    let clean_text = strip_html_tags_from_string(&cb.body_text);
+    // let clean_text = strip_html_tags_from_string(&cb.body_text);
+    let clean_text = scrape_paragraphs_from_text(&cb.body_text).unwrap();
     let phrases_tallies = collect_word_tallies_with_intersections(&clean_text);
 
     let mut phrases: Vec<String> = Vec::new();

@@ -111,6 +111,11 @@ fn test_scrape_paragraphs() {
     assert_eq!("Hello this is the text.", text);
 }
 
+pub fn scrape_paragraphs_from_text(doc_text: &String) -> Result<String, Box<dyn Error>> {
+    let doc = Html::parse_document(doc_text);
+    scrape_paragraphs(&doc)
+}
+
 pub fn scrape_cover_image(doc: &Html) -> Option<String> {
     match scrape_cover_images_og(&doc) {
         Ok(v) => Some(v),

@@ -267,8 +267,10 @@ pub fn db_content_add_words_phrases(
     cc_id: i32,
     cb: ContentBody,
 ) -> Result<(), Box<dyn Error + 'static + Send + Sync>> {
-    // let clean_text = strip_html_tags_from_string(&cb.body_text);
-    let clean_text = scrape_paragraphs_from_text(&cb.body_text).unwrap();
+    let mut clean_text = scrape_paragraphs_from_text(&cb.body_text).unwrap();
+    if clean_text.trim().is_empty() {
+        clean_text = strip_html_tags_from_string(&cb.body_text);
+    }
     let phrases_tallies = collect_word_tallies_with_intersections(&clean_text);
 
     let mut phrases: Vec<String> = Vec::new();

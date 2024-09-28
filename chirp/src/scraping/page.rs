@@ -93,6 +93,24 @@ pub fn scrape_title(doc_text: &String) -> Result<String, Box<dyn Error>> {
     Ok(title)
 }
 
+pub fn scrape_paragraphs(doc: &Html) -> Result<String, Box<dyn Error>> {
+    let p_selector = Selector::parse("p").unwrap();
+
+    let paragraphs = doc.select(&p_selector);
+    let text: String = paragraphs.map(|p| p.text().collect::<String>()).collect();
+
+    Ok(text)
+}
+
+#[test]
+fn test_scrape_paragraphs() {
+    let markup =
+        "<body><div>Hello this is a div</div><div><p>Hello <span>this <strong>is</strong></span> the <i>text</i>.</p></div></body>";
+    let doc = Html::parse_document(markup);
+    let text = scrape_paragraphs(&doc).unwrap();
+    assert_eq!("Hello this is the text.", text);
+}
+
 pub fn scrape_cover_image(doc: &Html) -> Option<String> {
     match scrape_cover_images_og(&doc) {
         Ok(v) => Some(v),

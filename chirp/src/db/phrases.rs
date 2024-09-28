@@ -82,7 +82,7 @@ pub fn today_phrases(collection_id: &i32) -> Result<Vec<PhraseResult>, Box<dyn E
             Ok(PhraseResult {
                 id: r.get::<_, i32>(0).unwrap(),
                 phrase: r.get::<_, String>(1).unwrap(),
-                total: r.get::<_, i32>(0).unwrap(),
+                total: r.get::<_, i32>(2).unwrap(),
             })
         },
     );

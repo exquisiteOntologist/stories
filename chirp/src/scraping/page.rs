@@ -97,7 +97,9 @@ pub fn scrape_paragraphs(doc: &Html) -> Result<String, Box<dyn Error>> {
     let p_selector = Selector::parse("p").unwrap();
 
     let paragraphs = doc.select(&p_selector);
-    let text: String = paragraphs.map(|p| p.text().collect::<String>()).collect();
+    let text: String = paragraphs
+        .map(|p| p.text().collect::<String>() + " ")
+        .collect();
 
     Ok(text)
 }

@@ -121,8 +121,8 @@ pub fn scrape_paragraphs_from_text(doc_text: &String) -> Result<String, Box<dyn 
 pub fn scrape_cover_image(doc: &Html) -> Option<String> {
     match scrape_cover_images_og(&doc) {
         Ok(v) => Some(v),
-        Err(e) => {
-            eprintln!("Failed to retrieve cover image og, {}", e);
+        Err(_e) => {
+            // eprintln!("Failed to retrieve cover image og, {}", e);
             None
         }
     }

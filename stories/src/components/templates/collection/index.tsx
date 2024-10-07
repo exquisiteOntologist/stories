@@ -52,7 +52,8 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     const [contentsVisible, setContentsVisible] = useState<ContentDto[]>([]);
     const [filteringCollectionId, setFilteringCollectionId] = useState<number | null>(null);
 
-    const title = isCustomizing ? "edit" : "hi";
+    const greeting = new Date().getHours() >= 12 ? "morning" : "afternoon";
+    const title = isCustomizing ? "edit" : greeting;
     let updateTimeout: NodeJS.Timeout | undefined;
 
     useEffect(() => {
@@ -132,7 +133,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
             <FailBanner />
             <LoadingIndicator />
             <RefreshBar refreshAction={() => setDoRefresh(true)} refreshPossible={isFilteredCollection && !isShowingMostCurrent} />
-            {/*<CombinedCount collectionId={collectionId} key={contents?.[0]?.id ?? "article-count"} /> */ }
+            {/*<CombinedCount collectionId={collectionId} key={contents?.[0]?.id ?? "article-count"} /> */}
             <div className="flex align-middle mb-8">
                 <FilterButton
                     number={marks.length}

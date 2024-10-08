@@ -51,7 +51,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     // Non-visible content is typically the content that comes in later.
     const [contentsVisible, setContentsVisible] = useState<ContentDto[]>([]);
     const [filteringCollectionId, setFilteringCollectionId] = useState<number | null>(null);
-    const [greeting, setGreeting] = useState<String>("");
+    const [greeting, setGreeting] = useState<string>("");
 
     const title = isCustomizing ? "edit" : greeting;
     let updateTimeout: NodeJS.Timeout | undefined;

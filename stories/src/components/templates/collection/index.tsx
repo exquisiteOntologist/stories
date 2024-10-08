@@ -51,8 +51,8 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     // Non-visible content is typically the content that comes in later.
     const [contentsVisible, setContentsVisible] = useState<ContentDto[]>([]);
     const [filteringCollectionId, setFilteringCollectionId] = useState<number | null>(null);
+    const [greeting, setGreeting] = useState<String>("");
 
-    const greeting = new Date().getHours() >= 12 ? "morning" : "afternoon";
     const title = isCustomizing ? "edit" : greeting;
     let updateTimeout: NodeJS.Timeout | undefined;
 
@@ -95,6 +95,15 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
 
     useEffect(() => {
         dispatch(resetThemeColours());
+    }, [dispatch]);
+
+    useEffect(() => {
+        const updateGreeting = () => {
+            const greeting = new Date().getHours() >= 12 ? "afternoon" : "morning";
+            setGreeting(greeting);
+            setTimeout(updateGreeting, 1000 * 60); // I don't know how setInterval will be handled in long sessions
+        };
+        updateGreeting();
     }, [dispatch]);
 
     useEffect(() => {

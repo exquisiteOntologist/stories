@@ -26,19 +26,19 @@ export const ListingRow: React.FC<ListingRowProps> = ({ title, linkUrl, action, 
     const actionBookmark = content && linkUrl && <Bookmark content={content} layout={SettingsLayout.ROWS} />;
 
     const titleInner = linkUrl ? (
-        <a className="block" href={linkUrl} target="_blank">
+        <a className="block font-bold" href={linkUrl} target="_blank">
             {actionInner}
         </a>
     ) : (
         action && (
-            <span className="block cursor-pointer" onClick={action}>
+            <span className="block cursor-pointer font-bold" onClick={action}>
                 {actionInner}
             </span>
         )
     );
 
     const nodeRecency = content?.date_published && (
-        <span className="ml-2 text-sm text-gray-300 select-none cursor-default">
+        <span className="ml-2 text-sm text-gray-300 dark:text-gray-500 select-none cursor-default">
             <RelativeDate date={content?.date_published} />
         </span>
     );
@@ -55,7 +55,7 @@ export const ListingRow: React.FC<ListingRowProps> = ({ title, linkUrl, action, 
     return (
         <motion.article {...motionProps} className="group relative bg-transparent border-gray-100 dark:border-slate-800 before:block before:absolute before:z-0 before:-inset-0 before:-left-2">
             {actionBookmark}
-            <h1 className={`flex text-base ${bold ? "font-bold" : ""} mx-0 ${source ? "my-4" : "my-2"} relative z-10 whitespace-nowrap dark:text-slate-300 select-none`}>{nodeTitleLink}</h1>
+            <h1 className={`flex text-base ${bold ? "font-bold" : ""} mx-0 ${source ? "my-4" : "my-2"} relative z-10 whitespace-nowrap dark:text-slate-400 select-none`}>{nodeTitleLink}</h1>
         </motion.article>
     );
 };

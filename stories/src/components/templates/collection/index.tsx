@@ -51,8 +51,9 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     // Non-visible content is typically the content that comes in later.
     const [contentsVisible, setContentsVisible] = useState<ContentDto[]>([]);
     const [filteringCollectionId, setFilteringCollectionId] = useState<number | null>(null);
+    const [greeting, setGreeting] = useState<string>("");
 
-    const title = isCustomizing ? "edit" : "hi";
+    const title = isCustomizing ? "edit" : greeting;
     let updateTimeout: NodeJS.Timeout | undefined;
 
     useEffect(() => {
@@ -97,6 +98,15 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     }, [dispatch]);
 
     useEffect(() => {
+        const updateGreeting = () => {
+            const greeting = new Date().getHours() >= 12 ? "afternoon" : "morning";
+            setGreeting(greeting);
+            setTimeout(updateGreeting, 1000 * 60); // I don't know how setInterval will be handled in long sessions
+        };
+        updateGreeting();
+    }, [dispatch]);
+
+    useEffect(() => {
         console.log("refresh?", doRefresh);
         if (doRefresh && contents.length) {
             // set contents visible items to avoid shifting items in view after new updates
@@ -132,11 +142,12 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
             <FailBanner />
             <LoadingIndicator />
             <RefreshBar refreshAction={() => setDoRefresh(true)} refreshPossible={isFilteredCollection && !isShowingMostCurrent} />
-            <CombinedCount collectionId={collectionId} key={contents?.[0]?.id ?? "article-count"} />
+            {/*<CombinedCount collectionId={collectionId} key={contents?.[0]?.id ?? "article-count"} /> */}
             <div className="flex align-middle mb-8">
                 <FilterButton
                     number={marks.length}
                     colour="#F0315D"
+                    label="bookmarks"
                     Icon={IconBookmark}
                     action={() => {
                         dispatch(toggleFilterViewMode(ViewMode.BOOKMARKS));
@@ -147,6 +158,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
                 <FilterButton
                     number={phrases.length ? phrases.length + "+" : 0}
                     colour="#2F959F"
+                    label="entities"
                     Icon={IconFlower}
                     action={() => {
                         dispatch(toggleFilterViewMode(ViewMode.PHRASES));

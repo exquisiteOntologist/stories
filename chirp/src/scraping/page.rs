@@ -78,7 +78,9 @@ pub async fn get_page_doc(url: &String) -> Result<Html, Box<dyn Error + Send + S
 
 pub fn scrape_title_from_doc(doc: &Html) -> Result<String, Box<dyn Error>> {
     let title_selector = Selector::parse("title").unwrap();
-    let node_title = doc.select(&title_selector).next().unwrap();
+    let Some(node_title) = doc.select(&title_selector).next() else {
+        return Ok(String::new());
+    };
     let title = node_title.text().collect::<Vec<_>>().join(&String::new());
 
     Ok(title)
@@ -91,11 +93,36 @@ pub fn scrape_title(doc_text: &String) -> Result<String, Box<dyn Error>> {
     Ok(title)
 }
 
+pub fn scrape_paragraphs(doc: &Html) -> Result<String, Box<dyn Error>> {
+    let p_selector = Selector::parse("p").unwrap();
+
+    let paragraphs = doc.select(&p_selector);
+    let text: String = paragraphs
+        .map(|p| p.text().collect::<String>() + " ")
+        .collect();
+
+    Ok(text)
+}
+
+#[test]
+fn test_scrape_paragraphs() {
+    let markup =
+        "<body><div>Hello this is a div</div><div><p>Hello <span>this <strong>is</strong></span> the <i>text</i>.</p></div></body>";
+    let doc = Html::parse_document(markup);
+    let text = scrape_paragraphs(&doc).unwrap();
+    assert_eq!("Hello this is the text.", text);
+}
+
+pub fn scrape_paragraphs_from_text(doc_text: &String) -> Result<String, Box<dyn Error>> {
+    let doc = Html::parse_document(doc_text);
+    scrape_paragraphs(&doc)
+}
+
 pub fn scrape_cover_image(doc: &Html) -> Option<String> {
     match scrape_cover_images_og(&doc) {
         Ok(v) => Some(v),
-        Err(e) => {
-            eprintln!("Failed to retrieve cover image og, {}", e);
+        Err(_e) => {
+            // eprintln!("Failed to retrieve cover image og, {}", e);
             None
         }
     }

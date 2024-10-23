@@ -4,7 +4,7 @@ use rusqlite::{params, Connection, Statement};
 
 use crate::entities::{GenericCount, TodayCount};
 
-use super::{phrases::PHRASES_COLLECTION_TODAY_COUNT, utils::db_connect};
+use super::{phrases::PHRASES_COLLECTION_TODAY_FREQUENCIES_COUNT, utils::db_connect};
 
 pub const SQL_STATISTICS_TODAY_YESTERDAY_CONTENT_IN_COLLECTION: &str = "
     -- Today's articles count within collection and nested collections, but rewritten by OpenAI for performance
@@ -84,7 +84,7 @@ pub fn today_content_count(collection_id: &i32) -> Result<TodayCount, Box<dyn Er
 pub fn today_phrases_count(collection_id: &i32) -> Result<GenericCount, Box<dyn Error>> {
     let conn: Connection = db_connect()?;
 
-    let mut query_today: Statement = conn.prepare(PHRASES_COLLECTION_TODAY_COUNT)?;
+    let mut query_today: Statement = conn.prepare(PHRASES_COLLECTION_TODAY_FREQUENCIES_COUNT)?;
     match query_today.query_row(
         params![collection_id],
         |r| -> Result<GenericCount, rusqlite::Error> {

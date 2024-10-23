@@ -4,8 +4,8 @@
 
 Make sense of the outer world that affects **your narrative**.
 
-![Thumbnail view](./materials/screenshots/screenshot-a.png)
 ![Article in Arc browser over thumbnail view](./materials/screenshots/screenshot-b.png)
+![Following Journals](./materials/screenshots/screenshot-c@2x.png)
 
 ## Benefits
 
@@ -21,19 +21,37 @@ Make sense of the outer world that affects **your narrative**.
 1. Install [Node JS](https://nodejs.org/en/download)
 2. Install [Yarn](https://classic.yarnpkg.com/lang/en/docs/install/#mac-stable), a nicer Node package manager
 3. Install [Rust](https://www.rust-lang.org/tools/install), for compiling Rust binaries
-4. In your terminal navigate to the project directory, then `./stories`
-5. In your terminal run `yarn tauri build`
+4. Navigate to the project directory, then into the `./stories` subdirectory
+5. Run `yarn tauri build`
 
-### Windows
+<img src="./materials/readme-icon.png" width="128" height="128">
 
-- You will need to install vcpkg and the provided dependency with it that the main build step mentions.
+## Starting Again
 
-### Ubuntu
+I previously built this app using C# and [Catalyst](https://github.com/curiosity-ai/catalyst). Upon discovering that I was being spied upon, I decided not to release the SAAS and instead release a free version that runs on users' own devices, due to my concerns that I would be exposing vulnerable users. I'm very friendly, but it's nice for people to be able to learn without advertising their interests to everyone. An additional concern of mine was regarding the risk of being charged with user's crimes, as it's like hosting a web browser for everyone to use. I believe the criminals can be found without any data access, due to their nature. The way the world is going is very frustrating for me and I'm torn between throwing everything away and different unknown solutions.
+
+### Reader
+
+![Following Journals](./materials/roadmap/old-reader.png)
+
+The previous version of the application had a nice reader mode. It would use readability to display the article text, or when the article text was not provided it would display the web-page. This may be restored for RSS.
+
+### Named Entity Recognition
+
+Recognise entities in the text. Previously NER was performed extremely quickly with a high success rate using Catalyst. Entities are a fundamental component of making the app save time and yield better information.
+
+## Develop the app
+
+Use `yarn tauri dev`, not `yarn dev`.
+
+### Platform-specific Steps
+
+#### Ubuntu
 
 - Install additional libraries as required for your OS
     - Refer to the current build file in `./.github/workflows/test-on-pr.yml`
 
-### Fedora
+#### Fedora
 
 - The steps are the Fedora equivalent of Ubuntu
 
@@ -43,5 +61,3 @@ Make sense of the outer world that affects **your narrative**.
     - **A)** No, nothing can replace Feedly.
 - **Q)** Can you provide 1-click app downloads?
     - **A)** Not yet. App signing is required.
-- **Q)** How come Windows doesn't get tested on GitHub?
-    - **A)** The libraries are not compatible with GitHub's Windows build environment. It does build on Windows Server in my testing.

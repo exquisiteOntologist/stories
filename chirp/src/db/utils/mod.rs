@@ -1,27 +1,37 @@
-use std::rc::Rc;
+use std::{fs, path::Path, rc::Rc};
 
 use directories::ProjectDirs;
-use rusqlite::{types::Value, Connection};
+use rusqlite::{types::Value, Connection, OpenFlags};
 
 pub mod cuter;
 
-pub fn db_connect() -> Result<Connection, rusqlite::Error> {
-    let path = db_path_get().unwrap();
-
-    // https://github.com/rusqlite/rusqlite#usage
-    let conn = Connection::open(path);
-    // if let Err(ref e) = conn {
-    if let Err(e) = conn {
-        eprint!("DB connection failed: {:?}\n", e);
-        // return Err("DB connection failed");
-        return Err(e);
-    }
-    Ok(conn.unwrap())
+pub fn db_create_directory() {
+    let data_dir = db_dir_path_get();
+    let path = data_dir.data_local_dir();
+    fs::DirBuilder::new().recursive(true).create(path).unwrap()
 }
 
-pub fn db_path_get() -> Result<String, Box<()>> {
-    // "com.stories.dev" same as "CFBundleIdentifier"
-    let project_dirs = ProjectDirs::from("com", "stories", "dev").unwrap();
+pub fn db_connect() -> Result<Connection, rusqlite::Error> {
+    let path = db_file_path_get().unwrap();
+    let db_path = Path::new(&path);
+
+    // https://github.com/rusqlite/rusqlite#usage
+    match Connection::open(db_path) {
+        Ok(conn) => Ok(conn),
+        Err(e) => {
+            eprint!("DB connection failed: {:?}\n{:?}\n", e, path);
+            return Err(e);
+        }
+    }
+}
+
+pub fn db_dir_path_get() -> ProjectDirs {
+    ProjectDirs::from("com", "stories", "data").unwrap()
+}
+
+pub fn db_file_path_get() -> Result<String, Box<()>> {
+    // "com.stories.data" same as "CFBundleIdentifier"
+    let project_dirs = db_dir_path_get();
 
     // a lot of lifetime problems make the code inelegant
     let dirs = project_dirs;

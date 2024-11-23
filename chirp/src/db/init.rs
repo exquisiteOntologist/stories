@@ -1,6 +1,6 @@
 use std::error::Error;
 
-use super::utils::cuter::Cuter;
+use super::utils::{cuter::Cuter, db_create_directory};
 
 pub fn db_init() -> Result<(), Box<dyn Error>> {
     db_seed_tables()?;
@@ -8,6 +8,7 @@ pub fn db_init() -> Result<(), Box<dyn Error>> {
 }
 
 pub fn db_seed_tables() -> Result<(), Box<dyn Error>> {
+    db_create_directory();
     let cuter = Cuter::new();
 
     // Calling VACUUM goes over entire database

@@ -11,7 +11,10 @@ pub struct Cuter {
 /// Cuter executes queries and prints errors with details
 impl Cuter {
     pub fn new() -> Self {
-        let conn = db_connect().unwrap();
+        let Ok(conn) = db_connect() else {
+            // DB file doesn't exist or cannot be accessed
+            panic!("No DB file exists, was not able to create one");
+        };
 
         Self { conn }
     }

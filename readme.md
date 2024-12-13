@@ -30,6 +30,10 @@ Make sense of the outer world that affects **your narrative**.
 
 I previously built this app using C# and [Catalyst](https://github.com/curiosity-ai/catalyst). Upon discovering that I was being spied upon, I decided not to release the SAAS and instead release a free version that runs on users' own devices, due to my concerns that I would be exposing vulnerable users. I'm very friendly, but it's nice for people to be able to learn without advertising their interests to everyone. An additional concern of mine was regarding the risk of being charged with user's crimes, as it's like hosting a web browser for everyone to use. I believe the criminals can be found without any data access, due to their nature. The way the world is going is very frustrating for me and I'm torn between throwing everything away and different unknown solutions.
 
+## App Symbolism &amp; World Events
+
+After recent events of 2023-2024, it seems it is worth noting that I had made a joke about similar events before they happened. It turns out I'm not the first person to think that concerts are ideal venues to shoot people. My sincere apologies.
+
 ### Reader
 
 ![Following Journals](./materials/roadmap/old-reader.png)

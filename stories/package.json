@@ -16,7 +16,7 @@
     "@reduxjs/toolkit": "^1.9.5",
     "@tauri-apps/api": "^2.0.0-beta.3",
     "@tauri-apps/plugin-http": "2.0.0-rc.2",
-    "@tauri-apps/plugin-shell": "2.0.0-beta.1",
+    "@tauri-apps/plugin-shell": "2.2.1",
     "autoprefixer": "^10.4.14",
     "dayjs": "^1.11.10",
     "framer-motion": "^10.12.21",
@@ -40,7 +40,7 @@
     "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react": "^4.0.3",
     "typescript": "^5.1.6",
-    "vite": "^4.5.5"
+    "vite": "^4.5.11"
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

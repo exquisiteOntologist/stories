@@ -35,7 +35,7 @@ const themeSlice = createSlice({
             colours: {}
         }),
     },
-    extraReducers: {}
+    
 })
 
 export const { setThemeColours, resetThemeColours } = themeSlice.actions

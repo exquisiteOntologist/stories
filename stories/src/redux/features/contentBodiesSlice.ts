@@ -45,7 +45,7 @@ const contentBodiesSlice = createSlice({
     reducers: {
         setAllContentBodies: contentBodiesAdapter.setAll
     },
-    extraReducers: {}
+    
 })
 
 export const { setAllContentBodies } = contentBodiesSlice.actions

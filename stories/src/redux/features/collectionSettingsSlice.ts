@@ -40,7 +40,7 @@ const collectionSettingsSlice = createSlice({
         addCollectionSettings: collectionSettingsAdapter.addMany,
         upsertCollectionSettings: collectionSettingsAdapter.upsertMany
     },
-    extraReducers: {}
+    
 })
 
 export const { setAllCollectionSettings, addCollectionSettings, upsertCollectionSettings } = collectionSettingsSlice.actions

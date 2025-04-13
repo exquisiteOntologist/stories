@@ -34,7 +34,7 @@ const collectionToCollectionSlice = createSlice({
         upsertCollectionToCollection: collectionToCollectionAdapter.upsertMany,
         removeCollectionToCollection: collectionToCollectionAdapter.removeMany
     },
-    extraReducers: {}
+    
 })
 
 export const { setAllCollectionToCollection, addManyCollectionToCollection, upsertCollectionToCollection, removeCollectionToCollection } = collectionToCollectionSlice.actions

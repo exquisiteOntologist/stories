@@ -86,7 +86,7 @@ pub fn db_seed_tables() -> Result<(), Box<dyn Error>> {
     )?;
 
     cuter.execute(
-        "INSERT INTO collection (id, name) VALUES (0, 'Your Name?')
+        "INSERT INTO collection (id, name) VALUES (0, 'Home')
             ON CONFLICT DO NOTHING",
     )?;
 

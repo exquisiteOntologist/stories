@@ -29,7 +29,8 @@ const AppPageInner: React.FC = () => {
 
   setBodyBackground(colours.backgroundLightnessAdjusted ?? undefined);
 
-  const routerClassNames = "flex justify-center py-12 px-12 overflow-x-hidden";
+  const routerClassNames =
+    "flex justify-center py-12 px-12 max-w-md w-full overflow-x-hidden";
 
   const element = useRoutes([
     {

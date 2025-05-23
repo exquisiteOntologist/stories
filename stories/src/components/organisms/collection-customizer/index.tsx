@@ -52,11 +52,11 @@ export const CollectionCustomizer: React.FC<CollectionCustomizerProps> = ({
             )
           }
         >
-          <PopoverViewMode
+          {/* <PopoverViewMode
             contents={previewContents}
             sources={sources}
             layout={otherLayoutOption}
-          />
+          /> */}
         </Button>
         <Button
           label="Add Widget"

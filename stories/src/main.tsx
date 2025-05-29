@@ -1,8 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import AppView from "./views";
-import "./styles/wind.css";
 import "./styles/global.scss";
+import "./styles/wind.css";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import relativeTime from "dayjs/plugin/relativeTime";

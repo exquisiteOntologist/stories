@@ -1,1 +1,9 @@
 @import "tailwindcss";
+
+@config "../../tailwind.config.js";
+
+/*
+    NOTE: when debugging use Chrome DevTools instead because
+    they have more accurate representation of applied utility
+    layer styles.
+*/

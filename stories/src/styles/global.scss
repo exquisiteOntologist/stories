@@ -2,6 +2,10 @@
 @tailwind "base";
 @tailwind "components";
 @tailwind "utilities"; */
+/* @use "tailwindcss";
+@tailwind "base";
+@tailwind "components";
+@tailwind "utilities"; */
 
 $brand-light: #fffcf7;
 $brand-dark: #000;
@@ -83,7 +87,8 @@ html a {
 }
 
 * {
-    max-width: 100%;
+    /* because this is separate from tailwind styles it will override them and max-width utilities */
+    /* max-width: 100%; */
 }
 
 h1 {

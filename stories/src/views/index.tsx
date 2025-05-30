@@ -59,7 +59,7 @@ const AppPageInner: React.FC = () => {
 
   return (
     <main
-      className="w-screen flex flex-col min-h-screen overscroll-none transition-all duration-1000"
+      className="w-screen max-w-full flex flex-col min-h-screen overscroll-none transition-all duration-1000"
       style={elMainStyle}
     >
       <AppHeader location={location} />

@@ -12,7 +12,7 @@ export interface EditListMapperOptions<ListT> {
 }
 
 export interface EditListProps<ListT> {
-  title: React.ReactElement;
+  title: React.ReactElement | String;
   countColour: ColourNames;
   list: ListT[];
   mapper: (o: EditListMapperOptions<ListT>) => JSX.Element[];

@@ -90,6 +90,7 @@ export const ShutEye: React.FC = () => {
   const onLeave = () => setActive(false);
 
   useEffect(() => {
+    // this is called every time state changes, and it changes state during animation, but not after
     requestAnimationFrame(() => {
       // 0 = Open eye = active
       // 1 = Closed eye

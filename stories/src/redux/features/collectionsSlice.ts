@@ -128,8 +128,8 @@ export const renameCollection = createAsyncThunk(
   },
 );
 
-const collectionsAdapter = createEntityAdapter<Collection>({
-  selectId: (collection) => collection.id,
+const collectionsAdapter = createEntityAdapter({
+  selectId: (collection: Collection) => collection.id,
 });
 
 const collectionsSlice = createSlice({

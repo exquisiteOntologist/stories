@@ -24,8 +24,8 @@ export const fetchPhrasesOfCollection = createAsyncThunk(
   },
 );
 
-const phrasesAdapter = createEntityAdapter<PhraseResult>({
-  selectId: (phrase) => phrase.id,
+const phrasesAdapter = createEntityAdapter({
+  selectId: (phrase: PhraseResult) => phrase.id,
 });
 
 const phrasesSlice = createSlice({

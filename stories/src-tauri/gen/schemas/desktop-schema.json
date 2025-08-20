@@ -37,7 +37,7 @@
   ],
   "definitions": {
     "Capability": {
-      "description": "A grouping and boundary mechanism developers can use to isolate access to the IPC layer.\n\nIt controls application windows' and webviews' fine grained access to the Tauri core, application, or plugin commands. If a webview or its window is not matching any capability then it has no access to the IPC layer at all.\n\nThis can be done to create groups of windows, based on their required system access, which can reduce impact of frontend vulnerabilities in less privileged windows. Windows can be added to a capability by exact name (e.g. `main-window`) or glob patterns like `*` or `admin-*`. A Window can have none, one, or multiple associated capabilities.\n\n## Example\n\n```json { \"identifier\": \"main-user-files-write\", \"description\": \"This capability allows the `main` window on macOS and Windows access to `filesystem` write related commands and `dialog` commands to enable programatic access to files selected by the user.\", \"windows\": [ \"main\" ], \"permissions\": [ \"core:default\", \"dialog:open\", { \"identifier\": \"fs:allow-write-text-file\", \"allow\": [{ \"path\": \"$HOME/test.txt\" }] }, ], \"platforms\": [\"macOS\",\"windows\"] } ```",
+      "description": "A grouping and boundary mechanism developers can use to isolate access to the IPC layer.\n\nIt controls application windows' and webviews' fine grained access to the Tauri core, application, or plugin commands. If a webview or its window is not matching any capability then it has no access to the IPC layer at all.\n\nThis can be done to create groups of windows, based on their required system access, which can reduce impact of frontend vulnerabilities in less privileged windows. Windows can be added to a capability by exact name (e.g. `main-window`) or glob patterns like `*` or `admin-*`. A Window can have none, one, or multiple associated capabilities.\n\n## Example\n\n```json { \"identifier\": \"main-user-files-write\", \"description\": \"This capability allows the `main` window on macOS and Windows access to `filesystem` write related commands and `dialog` commands to enable programmatic access to files selected by the user.\", \"windows\": [ \"main\" ], \"permissions\": [ \"core:default\", \"dialog:open\", { \"identifier\": \"fs:allow-write-text-file\", \"allow\": [{ \"path\": \"$HOME/test.txt\" }] }, ], \"platforms\": [\"macOS\",\"windows\"] } ```",
       "type": "object",
       "required": [
         "identifier",
@@ -49,7 +49,7 @@
           "type": "string"
         },
         "description": {
-          "description": "Description of what the capability is intended to allow on associated windows.\n\nIt should contain a description of what the grouped permissions should allow.\n\n## Example\n\nThis capability allows the `main` window access to `filesystem` write related commands and `dialog` commands to enable programatic access to files selected by the user.",
+          "description": "Description of what the capability is intended to allow on associated windows.\n\nIt should contain a description of what the grouped permissions should allow.\n\n## Example\n\nThis capability allows the `main` window access to `filesystem` write related commands and `dialog` commands to enable programmatic access to files selected by the user.",
           "default": "",
           "type": "string"
         },
@@ -266,10 +266,10 @@
                   "identifier": {
                     "anyOf": [
                       {
-                        "description": "This permission set configures which\nshell functionality is exposed by default.\n\n#### Granted Permissions\n\nIt allows to use the `open` functionality without any specific\nscope pre-configured. It will allow opening `http(s)://`,\n`tel:` and `mailto:` links.\n\n#### This default permission set includes:\n\n- `allow-open`",
+                        "description": "This permission set configures which\nshell functionality is exposed by default.\n\n#### Granted Permissions\n\nIt allows to use the `open` functionality with a reasonable\nscope pre-configured. It will allow opening `http(s)://`,\n`tel:` and `mailto:` links.\n\n#### This default permission set includes:\n\n- `allow-open`",
                         "type": "string",
                         "const": "shell:default",
-                        "markdownDescription": "This permission set configures which\nshell functionality is exposed by default.\n\n#### Granted Permissions\n\nIt allows to use the `open` functionality without any specific\nscope pre-configured. It will allow opening `http(s)://`,\n`tel:` and `mailto:` links.\n\n#### This default permission set includes:\n\n- `allow-open`"
+                        "markdownDescription": "This permission set configures which\nshell functionality is exposed by default.\n\n#### Granted Permissions\n\nIt allows to use the `open` functionality with a reasonable\nscope pre-configured. It will allow opening `http(s)://`,\n`tel:` and `mailto:` links.\n\n#### This default permission set includes:\n\n- `allow-open`"
                       },
                       {
                         "description": "Enables the execute command without any pre-configured scope.",
@@ -339,72 +339,122 @@
                 "properties": {
                   "allow": {
                     "items": {
-                      "title": "Entry",
-                      "description": "A command allowed to be executed by the webview API.",
-                      "type": "object",
-                      "required": [
-                        "args",
-                        "cmd",
-                        "name",
-                        "sidecar"
-                      ],
-                      "properties": {
-                        "args": {
-                          "description": "The allowed arguments for the command execution.",
-                          "allOf": [
-                            {
-                              "$ref": "#/definitions/ShellAllowedArgs"
+                      "title": "ShellScopeEntry",
+                      "description": "Shell scope entry.",
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "required": [
+                            "cmd",
+                            "name"
+                          ],
+                          "properties": {
+                            "args": {
+                              "description": "The allowed arguments for the command execution.",
+                              "allOf": [
+                                {
+                                  "$ref": "#/definitions/ShellScopeEntryAllowedArgs"
+                                }
+                              ]
+                            },
+                            "cmd": {
+                              "description": "The command name. It can start with a variable that resolves to a system base directory. The variables are: `$AUDIO`, `$CACHE`, `$CONFIG`, `$DATA`, `$LOCALDATA`, `$DESKTOP`, `$DOCUMENT`, `$DOWNLOAD`, `$EXE`, `$FONT`, `$HOME`, `$PICTURE`, `$PUBLIC`, `$RUNTIME`, `$TEMPLATE`, `$VIDEO`, `$RESOURCE`, `$LOG`, `$TEMP`, `$APPCONFIG`, `$APPDATA`, `$APPLOCALDATA`, `$APPCACHE`, `$APPLOG`.",
+                              "type": "string"
+                            },
+                            "name": {
+                              "description": "The name for this allowed shell command configuration.\n\nThis name will be used inside of the webview API to call this command along with any specified arguments.",
+                              "type": "string"
                             }
-                          ]
+                          },
+                          "additionalProperties": false
                         },
-                        "cmd": {
-                          "description": "The command name. It can start with a variable that resolves to a system base directory. The variables are: `$AUDIO`, `$CACHE`, `$CONFIG`, `$DATA`, `$LOCALDATA`, `$DESKTOP`, `$DOCUMENT`, `$DOWNLOAD`, `$EXE`, `$FONT`, `$HOME`, `$PICTURE`, `$PUBLIC`, `$RUNTIME`, `$TEMPLATE`, `$VIDEO`, `$RESOURCE`, `$LOG`, `$TEMP`, `$APPCONFIG`, `$APPDATA`, `$APPLOCALDATA`, `$APPCACHE`, `$APPLOG`.",
-                          "type": "string"
-                        },
-                        "name": {
-                          "description": "The name for this allowed shell command configuration.\n\nThis name will be used inside of the webview API to call this command along with any specified arguments.",
-                          "type": "string"
-                        },
-                        "sidecar": {
-                          "description": "If this command is a sidecar command.",
-                          "type": "boolean"
+                        {
+                          "type": "object",
+                          "required": [
+                            "name",
+                            "sidecar"
+                          ],
+                          "properties": {
+                            "args": {
+                              "description": "The allowed arguments for the command execution.",
+                              "allOf": [
+                                {
+                                  "$ref": "#/definitions/ShellScopeEntryAllowedArgs"
+                                }
+                              ]
+                            },
+                            "name": {
+                              "description": "The name for this allowed shell command configuration.\n\nThis name will be used inside of the webview API to call this command along with any specified arguments.",
+                              "type": "string"
+                            },
+                            "sidecar": {
+                              "description": "If this command is a sidecar command.",
+                              "type": "boolean"
+                            }
+                          },
+                          "additionalProperties": false
                         }
-                      }
+                      ]
                     }
                   },
                   "deny": {
                     "items": {
-                      "title": "Entry",
-                      "description": "A command allowed to be executed by the webview API.",
-                      "type": "object",
-                      "required": [
-                        "args",
-                        "cmd",
-                        "name",
-                        "sidecar"
-                      ],
-                      "properties": {
-                        "args": {
-                          "description": "The allowed arguments for the command execution.",
-                          "allOf": [
-                            {
-                              "$ref": "#/definitions/ShellAllowedArgs"
+                      "title": "ShellScopeEntry",
+                      "description": "Shell scope entry.",
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "required": [
+                            "cmd",
+                            "name"
+                          ],
+                          "properties": {
+                            "args": {
+                              "description": "The allowed arguments for the command execution.",
+                              "allOf": [
+                                {
+                                  "$ref": "#/definitions/ShellScopeEntryAllowedArgs"
+                                }
+                              ]
+                            },
+                            "cmd": {
+                              "description": "The command name. It can start with a variable that resolves to a system base directory. The variables are: `$AUDIO`, `$CACHE`, `$CONFIG`, `$DATA`, `$LOCALDATA`, `$DESKTOP`, `$DOCUMENT`, `$DOWNLOAD`, `$EXE`, `$FONT`, `$HOME`, `$PICTURE`, `$PUBLIC`, `$RUNTIME`, `$TEMPLATE`, `$VIDEO`, `$RESOURCE`, `$LOG`, `$TEMP`, `$APPCONFIG`, `$APPDATA`, `$APPLOCALDATA`, `$APPCACHE`, `$APPLOG`.",
+                              "type": "string"
+                            },
+                            "name": {
+                              "description": "The name for this allowed shell command configuration.\n\nThis name will be used inside of the webview API to call this command along with any specified arguments.",
+                              "type": "string"
                             }
-                          ]
+                          },
+                          "additionalProperties": false
                         },
-                        "cmd": {
-                          "description": "The command name. It can start with a variable that resolves to a system base directory. The variables are: `$AUDIO`, `$CACHE`, `$CONFIG`, `$DATA`, `$LOCALDATA`, `$DESKTOP`, `$DOCUMENT`, `$DOWNLOAD`, `$EXE`, `$FONT`, `$HOME`, `$PICTURE`, `$PUBLIC`, `$RUNTIME`, `$TEMPLATE`, `$VIDEO`, `$RESOURCE`, `$LOG`, `$TEMP`, `$APPCONFIG`, `$APPDATA`, `$APPLOCALDATA`, `$APPCACHE`, `$APPLOG`.",
-                          "type": "string"
-                        },
-                        "name": {
-                          "description": "The name for this allowed shell command configuration.\n\nThis name will be used inside of the webview API to call this command along with any specified arguments.",
-                          "type": "string"
-                        },
-                        "sidecar": {
-                          "description": "If this command is a sidecar command.",
-                          "type": "boolean"
+                        {
+                          "type": "object",
+                          "required": [
+                            "name",
+                            "sidecar"
+                          ],
+                          "properties": {
+                            "args": {
+                              "description": "The allowed arguments for the command execution.",
+                              "allOf": [
+                                {
+                                  "$ref": "#/definitions/ShellScopeEntryAllowedArgs"
+                                }
+                              ]
+                            },
+                            "name": {
+                              "description": "The name for this allowed shell command configuration.\n\nThis name will be used inside of the webview API to call this command along with any specified arguments.",
+                              "type": "string"
+                            },
+                            "sidecar": {
+                              "description": "If this command is a sidecar command.",
+                              "type": "boolean"
+                            }
+                          },
+                          "additionalProperties": false
                         }
-                      }
+                      ]
                     }
                   }
                 }
@@ -469,10 +519,10 @@
           "markdownDescription": "Default core plugins set.\n#### This default permission set includes:\n\n- `core:path:default`\n- `core:event:default`\n- `core:window:default`\n- `core:webview:default`\n- `core:app:default`\n- `core:image:default`\n- `core:resources:default`\n- `core:menu:default`\n- `core:tray:default`"
         },
         {
-          "description": "Default permissions for the plugin.\n#### This default permission set includes:\n\n- `allow-version`\n- `allow-name`\n- `allow-tauri-version`\n- `allow-identifier`",
+          "description": "Default permissions for the plugin.\n#### This default permission set includes:\n\n- `allow-version`\n- `allow-name`\n- `allow-tauri-version`\n- `allow-identifier`\n- `allow-bundle-type`",
           "type": "string",
           "const": "core:app:default",
-          "markdownDescription": "Default permissions for the plugin.\n#### This default permission set includes:\n\n- `allow-version`\n- `allow-name`\n- `allow-tauri-version`\n- `allow-identifier`"
+          "markdownDescription": "Default permissions for the plugin.\n#### This default permission set includes:\n\n- `allow-version`\n- `allow-name`\n- `allow-tauri-version`\n- `allow-identifier`\n- `allow-bundle-type`"
         },
         {
           "description": "Enables the app_hide command without any pre-configured scope.",
@@ -485,6 +535,12 @@
           "type": "string",
           "const": "core:app:allow-app-show",
           "markdownDescription": "Enables the app_show command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the bundle_type command without any pre-configured scope.",
+          "type": "string",
+          "const": "core:app:allow-bundle-type",
+          "markdownDescription": "Enables the bundle_type command without any pre-configured scope."
         },
         {
           "description": "Enables the default_window_icon command without any pre-configured scope.",
@@ -523,6 +579,12 @@
           "markdownDescription": "Enables the set_app_theme command without any pre-configured scope."
         },
         {
+          "description": "Enables the set_dock_visibility command without any pre-configured scope.",
+          "type": "string",
+          "const": "core:app:allow-set-dock-visibility",
+          "markdownDescription": "Enables the set_dock_visibility command without any pre-configured scope."
+        },
+        {
           "description": "Enables the tauri_version command without any pre-configured scope.",
           "type": "string",
           "const": "core:app:allow-tauri-version",
@@ -545,6 +607,12 @@
           "type": "string",
           "const": "core:app:deny-app-show",
           "markdownDescription": "Denies the app_show command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the bundle_type command without any pre-configured scope.",
+          "type": "string",
+          "const": "core:app:deny-bundle-type",
+          "markdownDescription": "Denies the bundle_type command without any pre-configured scope."
         },
         {
           "description": "Denies the default_window_icon command without any pre-configured scope.",
@@ -581,6 +649,12 @@
           "type": "string",
           "const": "core:app:deny-set-app-theme",
           "markdownDescription": "Denies the set_app_theme command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the set_dock_visibility command without any pre-configured scope.",
+          "type": "string",
+          "const": "core:app:deny-set-dock-visibility",
+          "markdownDescription": "Denies the set_dock_visibility command without any pre-configured scope."
         },
         {
           "description": "Denies the tauri_version command without any pre-configured scope.",
@@ -1291,6 +1365,12 @@
           "markdownDescription": "Enables the reparent command without any pre-configured scope."
         },
         {
+          "description": "Enables the set_webview_auto_resize command without any pre-configured scope.",
+          "type": "string",
+          "const": "core:webview:allow-set-webview-auto-resize",
+          "markdownDescription": "Enables the set_webview_auto_resize command without any pre-configured scope."
+        },
+        {
           "description": "Enables the set_webview_background_color command without any pre-configured scope.",
           "type": "string",
           "const": "core:webview:allow-set-webview-background-color",
@@ -1391,6 +1471,12 @@
           "type": "string",
           "const": "core:webview:deny-reparent",
           "markdownDescription": "Denies the reparent command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the set_webview_auto_resize command without any pre-configured scope.",
+          "type": "string",
+          "const": "core:webview:deny-set-webview-auto-resize",
+          "markdownDescription": "Denies the set_webview_auto_resize command without any pre-configured scope."
         },
         {
           "description": "Denies the set_webview_background_color command without any pre-configured scope.",
@@ -1741,6 +1827,12 @@
           "markdownDescription": "Enables the set_focus command without any pre-configured scope."
         },
         {
+          "description": "Enables the set_focusable command without any pre-configured scope.",
+          "type": "string",
+          "const": "core:window:allow-set-focusable",
+          "markdownDescription": "Enables the set_focusable command without any pre-configured scope."
+        },
+        {
           "description": "Enables the set_fullscreen command without any pre-configured scope.",
           "type": "string",
           "const": "core:window:allow-set-fullscreen",
@@ -1811,6 +1903,12 @@
           "type": "string",
           "const": "core:window:allow-set-shadow",
           "markdownDescription": "Enables the set_shadow command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the set_simple_fullscreen command without any pre-configured scope.",
+          "type": "string",
+          "const": "core:window:allow-set-simple-fullscreen",
+          "markdownDescription": "Enables the set_simple_fullscreen command without any pre-configured scope."
         },
         {
           "description": "Enables the set_size command without any pre-configured scope.",
@@ -2185,6 +2283,12 @@
           "markdownDescription": "Denies the set_focus command without any pre-configured scope."
         },
         {
+          "description": "Denies the set_focusable command without any pre-configured scope.",
+          "type": "string",
+          "const": "core:window:deny-set-focusable",
+          "markdownDescription": "Denies the set_focusable command without any pre-configured scope."
+        },
+        {
           "description": "Denies the set_fullscreen command without any pre-configured scope.",
           "type": "string",
           "const": "core:window:deny-set-fullscreen",
@@ -2255,6 +2359,12 @@
           "type": "string",
           "const": "core:window:deny-set-shadow",
           "markdownDescription": "Denies the set_shadow command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the set_simple_fullscreen command without any pre-configured scope.",
+          "type": "string",
+          "const": "core:window:deny-set-simple-fullscreen",
+          "markdownDescription": "Denies the set_simple_fullscreen command without any pre-configured scope."
         },
         {
           "description": "Denies the set_size command without any pre-configured scope.",
@@ -2401,10 +2511,10 @@
           "markdownDescription": "Denies the fetch_send command without any pre-configured scope."
         },
         {
-          "description": "This permission set configures which\nshell functionality is exposed by default.\n\n#### Granted Permissions\n\nIt allows to use the `open` functionality without any specific\nscope pre-configured. It will allow opening `http(s)://`,\n`tel:` and `mailto:` links.\n\n#### This default permission set includes:\n\n- `allow-open`",
+          "description": "This permission set configures which\nshell functionality is exposed by default.\n\n#### Granted Permissions\n\nIt allows to use the `open` functionality with a reasonable\nscope pre-configured. It will allow opening `http(s)://`,\n`tel:` and `mailto:` links.\n\n#### This default permission set includes:\n\n- `allow-open`",
           "type": "string",
           "const": "shell:default",
-          "markdownDescription": "This permission set configures which\nshell functionality is exposed by default.\n\n#### Granted Permissions\n\nIt allows to use the `open` functionality without any specific\nscope pre-configured. It will allow opening `http(s)://`,\n`tel:` and `mailto:` links.\n\n#### This default permission set includes:\n\n- `allow-open`"
+          "markdownDescription": "This permission set configures which\nshell functionality is exposed by default.\n\n#### Granted Permissions\n\nIt allows to use the `open` functionality with a reasonable\nscope pre-configured. It will allow opening `http(s)://`,\n`tel:` and `mailto:` links.\n\n#### This default permission set includes:\n\n- `allow-open`"
         },
         {
           "description": "Enables the execute command without any pre-configured scope.",
@@ -2604,7 +2714,7 @@
         }
       ]
     },
-    "ShellAllowedArg": {
+    "ShellScopeEntryAllowedArg": {
       "description": "A command argument allowed to be executed by the webview API.",
       "anyOf": [
         {
@@ -2632,18 +2742,18 @@
         }
       ]
     },
-    "ShellAllowedArgs": {
-      "description": "A set of command arguments allowed to be executed by the webview API.\n\nA value of `true` will allow any arguments to be passed to the command. `false` will disable all arguments. A list of [`ShellAllowedArg`] will set those arguments as the only valid arguments to be passed to the attached command configuration.",
+    "ShellScopeEntryAllowedArgs": {
+      "description": "A set of command arguments allowed to be executed by the webview API.\n\nA value of `true` will allow any arguments to be passed to the command. `false` will disable all arguments. A list of [`ShellScopeEntryAllowedArg`] will set those arguments as the only valid arguments to be passed to the attached command configuration.",
       "anyOf": [
         {
           "description": "Use a simple boolean to allow all or disable all arguments to this command configuration.",
           "type": "boolean"
         },
         {
-          "description": "A specific set of [`ShellAllowedArg`] that are valid to call for the command configuration.",
+          "description": "A specific set of [`ShellScopeEntryAllowedArg`] that are valid to call for the command configuration.",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/ShellAllowedArg"
+            "$ref": "#/definitions/ShellScopeEntryAllowedArg"
           }
         }
       ]

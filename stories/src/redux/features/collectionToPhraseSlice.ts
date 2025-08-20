@@ -45,9 +45,10 @@ export const fetchPhrasesToCollection = createAsyncThunk(
   },
 );
 
-const collectionToPhraseAdapter = createEntityAdapter<CollectionToPhrase>({
-  selectId: (collectionToPhrase) => (
-    collectionToPhrase.collection_id, collectionToPhrase.phrase_id
+const collectionToPhraseAdapter = createEntityAdapter({
+  selectId: (collectionToPhrase: CollectionToPhrase) => (
+    collectionToPhrase.collection_id,
+    collectionToPhrase.phrase_id
   ),
 });
 

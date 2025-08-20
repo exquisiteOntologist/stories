@@ -30,7 +30,6 @@
     "react-dom": "^19",
     "react-redux": "^9",
     "react-router-dom": "^7",
-    "react-spring": "^9",
     "redux": "^5",
     "sass": "^1",
     "tailwindcss": "^4"

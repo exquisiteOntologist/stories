@@ -1,5 +1,5 @@
 import React from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, Transition } from "framer-motion";
 import { IconRefresh } from "../../../atoms/icons/refresh";
 import { RefreshBarProps } from "./interfaces";
 import { IconArrowCircle } from "../../../atoms/icons/arrow-circle";
@@ -36,7 +36,7 @@ export const motionPropsRefreshBar = {
     filter: "blur(100px)",
     transition: { duration: 1 },
   },
-  transition: { ease: "anticipate" },
+  transition: { ease: "anticipate" } as Transition,
 };
 
 export const RefreshBar: React.FC<RefreshBarProps> = ({

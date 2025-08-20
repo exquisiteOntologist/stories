@@ -37,8 +37,8 @@ export const fetchContentOfSources = createAsyncThunk(
   },
 );
 
-const contentsAdapter = createEntityAdapter<ContentDto>({
-  selectId: (content) => content.id,
+const contentsAdapter = createEntityAdapter({
+  selectId: (content: ContentDto) => content.id,
   sortComparer: (a, b) => sortContentRecencyDescending(a, b),
 });
 

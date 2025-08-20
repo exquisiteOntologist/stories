@@ -1,4 +1,8 @@
-import { createAsyncThunk, createEntityAdapter, createSlice } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createEntityAdapter,
+  createSlice,
+} from "@reduxjs/toolkit";
 import { invoke } from "@tauri-apps/api/core";
 import { ContentBody } from "../../data/chirp-types";
 // import { components } from "../../data/openapi";
@@ -6,49 +10,48 @@ import { ContentBody } from "../../data/chirp-types";
 import { RootState } from "../store";
 
 export const fetchContentBodies = createAsyncThunk(
-    'contentBodies/fetchContentBodies',
-    async (contentIds: number[] | null, { dispatch }) => {
-        // @TODO: Check the localStorage first (or maybe simultaneously)
-        
-        const allContentBodiesData: Array<ContentBody> = []
-        
-        try {
-            // There are limits to how many IDs are accepted from a GET request
-            const atOnce = 50
-            let i = 0
-            while (!!contentIds && i < contentIds.length) {
-                const idsToFetchThisIteration = contentIds.slice(i, i + atOnce)
-                i += atOnce
+  "contentBodies/fetchContentBodies",
+  async (contentIds: number[] | null, { dispatch }) => {
+    // @TODO: Check the localStorage first (or maybe simultaneously)
 
-                const contentBodies = await invoke('content_bodies', {
-                    contentIds: idsToFetchThisIteration
-                }) as ContentBody[]
+    const allContentBodiesData: Array<ContentBody> = [];
 
-                allContentBodiesData.push(...contentBodies)
+    try {
+      // There are limits to how many IDs are accepted from a GET request
+      const atOnce = 50;
+      let i = 0;
+      while (!!contentIds && i < contentIds.length) {
+        const idsToFetchThisIteration = contentIds.slice(i, i + atOnce);
+        i += atOnce;
 
-            }
-        } catch (e) {
-            console.error('Content body retrieval failure', e)
-        }
+        const contentBodies = (await invoke("content_bodies", {
+          contentIds: idsToFetchThisIteration,
+        })) as ContentBody[];
 
-        dispatch(setAllContentBodies(allContentBodiesData))
+        allContentBodiesData.push(...contentBodies);
+      }
+    } catch (e) {
+      console.error("Content body retrieval failure", e);
     }
-)
 
-const contentBodiesAdapter = createEntityAdapter<ContentBody>({
-    selectId: (contentBody) => contentBody.content_id,
-})
+    dispatch(setAllContentBodies(allContentBodiesData));
+  },
+);
+
+const contentBodiesAdapter = createEntityAdapter({
+  selectId: (contentBody: ContentBody) => contentBody.content_id,
+});
 
 const contentBodiesSlice = createSlice({
-    name: 'contentBodies',
-    initialState: contentBodiesAdapter.getInitialState(),
-    reducers: {
-        setAllContentBodies: contentBodiesAdapter.setAll
-    },
-    
-})
+  name: "contentBodies",
+  initialState: contentBodiesAdapter.getInitialState(),
+  reducers: {
+    setAllContentBodies: contentBodiesAdapter.setAll,
+  },
+});
 
-export const { setAllContentBodies } = contentBodiesSlice.actions
-export const contentBodiesSelectors = contentBodiesAdapter.getSelectors<RootState>((state) => state.contentBodies)
+export const { setAllContentBodies } = contentBodiesSlice.actions;
+export const contentBodiesSelectors =
+  contentBodiesAdapter.getSelectors<RootState>((state) => state.contentBodies);
 
-export const contentBodiesReducer = contentBodiesSlice.reducer
+export const contentBodiesReducer = contentBodiesSlice.reducer;

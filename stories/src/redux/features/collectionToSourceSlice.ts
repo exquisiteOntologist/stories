@@ -37,10 +37,10 @@ export const fetchCollectionToSource = createAsyncThunk(
   },
 );
 
-const collectionToSourceAdapter = createEntityAdapter<CollectionToSource>({
+const collectionToSourceAdapter = createEntityAdapter({
   // selectId: (collectionToSource) => (collectionToSource.collection_id, collectionToSource.source_id),
   // Going to a string selection here fixed a bug with upsert where tuple would not recognise the combined key
-  selectId: (collectionToSource) =>
+  selectId: (collectionToSource: CollectionToSource) =>
     `${collectionToSource.collection_id}-${collectionToSource.source_id})`,
 });
 

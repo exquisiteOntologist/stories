@@ -1,6 +1,5 @@
 use std::time::Duration;
 
-use tokio::spawn;
 
 const MIN_INTERVAL: Duration = Duration::from_secs(30);
 

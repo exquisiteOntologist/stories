@@ -70,8 +70,8 @@ export const retrieveMarks = createAsyncThunk(
   },
 );
 
-const marksAdapter = createEntityAdapter<number>({
-  selectId: (markId) => markId,
+const marksAdapter = createEntityAdapter({
+  selectId: (markId: number) => markId,
 });
 
 const marksSlice = createSlice({

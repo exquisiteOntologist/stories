@@ -106,8 +106,8 @@ export const removeSources: AsyncThunk<boolean, RemoveSources, {}> =
     },
   );
 
-const sourcesAdapter = createEntityAdapter<SourceDto>({
-  selectId: (source) => source.id,
+const sourcesAdapter = createEntityAdapter({
+  selectId: (source: SourceDto) => source.id,
 });
 
 const sourcesSlice = createSlice({

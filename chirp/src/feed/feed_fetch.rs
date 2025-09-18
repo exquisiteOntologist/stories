@@ -21,25 +21,64 @@ pub async fn feed_fetch_from_url(
         }
     };
 
-    // Note that even if a feed mentions "atom" it's more likely to be RSS if it doesn't begin with "<feed"
-    let is_atom = feed_text.contains(&"<feed");
-    let is_rss = !is_atom && feed_text.contains(&"<rss")
-        || feed_text.contains(&"http://purl.org/rss/1.0/")
-        || url.contains(".rss");
+    let feed_type = determine_feed_type(&feed_text, &url);
+
+    // if feed_type == FeedType::Website && other_param.is_empty() {
+    //     println!("it's a site and other param was empty");
+    //     // here we scrape the page for RSS feed urls
+    //     let new_feed_url = url;
+    //     return feed_fetch_from_url(source_id, new_feed_url, other_param).await;
+    // }
 
     // print!("\n\nFeed test\n{:?}\n\n", feed_text);
 
-    let parse_result: Result<(Source, Vec<FullContent>), Box<dyn Error + Send + Sync>> = if is_atom
-    {
-        println!("Parsing atom {:?}", &url);
-        parse_atom(&source_id, &url, &feed_text)
-    } else if is_rss {
-        println!("Parsing RSS {:?}", &url);
-        parse_rss(&source_id, &url, &feed_text).await
-    } else {
-        println!("Parsing website {:?}", &url);
-        parse_website(&source_id, &url, &feed_text, &other_param).await
-    };
+    let parse_result: Result<(Source, Vec<FullContent>), Box<dyn Error + Send + Sync>> =
+        match feed_type {
+            FeedType::Atom => {
+                println!("Parsing atom {:?}", &url);
+                parse_atom(&source_id, &url, &feed_text)
+            }
+            FeedType::Rss => {
+                println!("Parsing RSS {:?}", &url);
+                parse_rss(&source_id, &url, &feed_text).await
+            }
+            FeedType::Website => {
+                println!("Parsing website {:?}", &url);
+                parse_website(&source_id, &url, &feed_text, &other_param).await
+            }
+        };
 
     parse_result
+}
+
+fn determine_feed_type(feed_text: &str, url: &str) -> FeedType {
+    // Note that even if a feed mentions "atom" it's more likely to be RSS if it doesn't begin with "<feed"
+    if check_is_atom(&feed_text) {
+        FeedType::Atom
+    } else if check_is_rss(&feed_text, &url) {
+        FeedType::Rss
+    } else {
+        FeedType::Website
+    }
+}
+
+fn check_is_atom(feed_text: &str) -> bool {
+    feed_text.contains(&"<feed")
+}
+
+fn check_is_rss(feed_text: &str, url: &str) -> bool {
+    feed_text.contains(&"<rss")
+        || feed_text.contains(&"http://purl.org/rss/1.0/")
+        || url.contains(".rss")
+}
+
+fn check_contains_rss_urls(feed_text: &str) -> bool {
+    feed_text.contains("application/rss+xml")
+}
+
+#[derive(PartialEq)]
+enum FeedType {
+    Rss,
+    Atom,
+    Website,
 }

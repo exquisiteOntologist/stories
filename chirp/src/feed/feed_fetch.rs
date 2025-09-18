@@ -92,10 +92,12 @@ fn get_nested_feed_url(page_url: &str, feed_text: &str) -> Option<String> {
     }
 
     if let Some(feed_url) = scrape_feed_url_from_page(feed_text) {
+        // if has protocol assume is complete URL
         if feed_url.contains("http") {
             return feed_url.into();
         }
 
+        // join the "./feed-path" with the "https://base.tld"
         let parsed_page = Url::parse(page_url).unwrap();
         let parsed_feed = parsed_page.join(&feed_url).unwrap();
         return Some(parsed_feed.as_str().into());

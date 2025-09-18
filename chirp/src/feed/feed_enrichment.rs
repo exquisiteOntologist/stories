@@ -29,7 +29,7 @@ pub async fn enrich_content_item_from_page<'a>(
         return Ok(fc);
     }
     if let Ok(page) = contents_from_page(fc.content.url.clone()).await {
-        if !page.content.title.is_empty() {
+        if !page.content.title.is_empty() && fc.content.title.is_empty() {
             fc.content.title = page.content.title;
         }
         for media in page.content_media {

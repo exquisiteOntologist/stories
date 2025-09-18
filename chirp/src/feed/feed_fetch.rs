@@ -1,3 +1,5 @@
+use url::Url;
+
 use crate::{
     db::logging::db_log_add,
     entities::{FullContent, Source},
@@ -28,7 +30,7 @@ pub async fn feed_fetch_from_url(
     // If there is a feed URL we replace the url, feed_text, and feed_type.
     // This should only happen when adding a feed (in theory).
     if feed_type == FeedType::Website && other_param.is_empty() {
-        if let Some(new_feed_url) = get_nested_feed_url(&feed_text) {
+        if let Some(new_feed_url) = get_nested_feed_url(&url, &feed_text) {
             println!("New feed url {}", new_feed_url);
             url = new_feed_url;
             feed_text = fetch_url_to_string(&url).await?;
@@ -84,12 +86,22 @@ fn check_has_feeds(feed_text: &str) -> bool {
 }
 
 /// if the page is a webpage it may contain links to feeds
-fn get_nested_feed_url(feed_text: &str) -> Option<String> {
+fn get_nested_feed_url(page_url: &str, feed_text: &str) -> Option<String> {
     if !check_has_feeds(feed_text) {
         return None;
     }
 
-    scrape_feed_url_from_page(feed_text)
+    if let Some(feed_url) = scrape_feed_url_from_page(feed_text) {
+        if feed_url.contains("http") {
+            return feed_url.into();
+        }
+
+        let parsed_page = Url::parse(page_url).unwrap();
+        let parsed_feed = parsed_page.join(&feed_url).unwrap();
+        return Some(parsed_feed.as_str().into());
+    };
+
+    None
 }
 
 #[derive(PartialEq)]

@@ -9,10 +9,10 @@ use std::error::Error;
 
 pub async fn feed_fetch_from_url(
     source_id: i32,
-    url: String,
+    mut url: String,
     other_param: &String,
 ) -> Result<(Source, Vec<FullContent>), Box<dyn Error + Send + Sync>> {
-    let feed_text = match fetch_url_to_string(&url).await {
+    let mut feed_text = match fetch_url_to_string(&url).await {
         Ok(v) => v,
         Err(e) => {
             eprintln!("Failed to fetch feed content");
@@ -22,15 +22,19 @@ pub async fn feed_fetch_from_url(
         }
     };
 
-    let feed_type = determine_feed_type(&feed_text, &url);
+    let mut feed_type = determine_feed_type(&feed_text, &url);
 
+    // Here we scrape the page for RSS feed URLs.
+    // If there is a feed URL we replace the url, feed_text, and feed_type.
+    // This should only happen when adding a feed (in theory).
     if feed_type == FeedType::Website && other_param.is_empty() {
-        println!("it's a site and other param was empty");
-        // here we scrape the page for RSS feed urls
         if let Some(new_feed_url) = get_nested_feed_url(&feed_text) {
             println!("New feed url {}", new_feed_url);
+            url = new_feed_url;
+            feed_text = fetch_url_to_string(&url).await?;
+            feed_type = determine_feed_type(&feed_text, &url);
+            // we cannot replace this with recursion
         };
-        // return feed_fetch_from_url(source_id, new_feed_url, other_param).await;
     }
 
     // print!("\n\nFeed test\n{:?}\n\n", feed_text);

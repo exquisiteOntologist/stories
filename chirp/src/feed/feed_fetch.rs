@@ -2,6 +2,7 @@ use crate::{
     db::logging::db_log_add,
     entities::{FullContent, Source},
     feed::{feed_atom::parse_atom, feed_rss::parse_rss, feed_website::parse_website},
+    scraping::page::scrape_feed_url_from_page,
     utils::fetch_url_to_string,
 };
 use std::error::Error;
@@ -23,12 +24,14 @@ pub async fn feed_fetch_from_url(
 
     let feed_type = determine_feed_type(&feed_text, &url);
 
-    // if feed_type == FeedType::Website && other_param.is_empty() {
-    //     println!("it's a site and other param was empty");
-    //     // here we scrape the page for RSS feed urls
-    //     let new_feed_url = url;
-    //     return feed_fetch_from_url(source_id, new_feed_url, other_param).await;
-    // }
+    if feed_type == FeedType::Website && other_param.is_empty() {
+        println!("it's a site and other param was empty");
+        // here we scrape the page for RSS feed urls
+        if let Some(new_feed_url) = get_nested_feed_url(&feed_text) {
+            println!("New feed url {}", new_feed_url);
+        };
+        // return feed_fetch_from_url(source_id, new_feed_url, other_param).await;
+    }
 
     // print!("\n\nFeed test\n{:?}\n\n", feed_text);
 
@@ -72,8 +75,17 @@ fn check_is_rss(feed_text: &str, url: &str) -> bool {
         || url.contains(".rss")
 }
 
-fn check_contains_rss_urls(feed_text: &str) -> bool {
+fn check_has_feeds(feed_text: &str) -> bool {
     feed_text.contains("application/rss+xml")
+}
+
+/// if the page is a webpage it may contain links to feeds
+fn get_nested_feed_url(feed_text: &str) -> Option<String> {
+    if !check_has_feeds(feed_text) {
+        return None;
+    }
+
+    scrape_feed_url_from_page(feed_text)
 }
 
 #[derive(PartialEq)]

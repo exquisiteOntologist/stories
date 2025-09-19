@@ -1,5 +1,5 @@
 use chrono::{DateTime, NaiveDate, Utc};
-use reqwest::Url;
+use reqwest::{redirect::Policy, Url};
 use std::error::Error;
 
 pub fn get_date_now_naive() -> NaiveDate {
@@ -13,14 +13,19 @@ pub fn get_datetime_now() -> DateTime<Utc> {
 pub async fn fetch_url_to_string(url: &String) -> Result<String, Box<dyn Error + Send + Sync>> {
     println!("fetching {:?}", url);
 
-    let client = reqwest::Client::new();
+    let client = reqwest::Client::builder()
+        .redirect(Policy::limited(3))
+        .build()?;
     let mut headers = reqwest::header::HeaderMap::new();
 
     headers.insert("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36".parse().unwrap());
+    // headers.insert("user-agent", "STORIES/1.0".parse().unwrap());
     headers.insert("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7".parse().unwrap());
 
     match client.get(url.to_owned()).headers(headers).send().await {
         Ok(res) => {
+            println!("res url {}", &res.url());
+            println!("res status {}", &res.status());
             let content_bytes = res.bytes().await?;
             let content_text = String::from_utf8((&content_bytes).to_vec())?;
             Ok(content_text)

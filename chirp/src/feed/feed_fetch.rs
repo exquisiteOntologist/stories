@@ -112,13 +112,13 @@ fn get_nested_feed_url(page_url: &str, feed_text: &str) -> Option<String> {
     None
 }
 
-const CommonFeedPaths: [&str; 2] = ["/feed", "/rss"];
+const COMMON_FEED_PATHS: [&str; 2] = ["/feed", "/rss"];
 
 /// Attempt to load "/rss".
 /// Only call if haven't got a feed URL yet.
 /// This is different to similar-looking functions because it is guessing.
 async fn guess_feed_url(page_url: &str) -> Option<String> {
-    for path in CommonFeedPaths {
+    for path in COMMON_FEED_PATHS {
         if let Some(new_url) = attempt_feed_url_path(page_url, path).await {
             println!("guessed path match {}", &new_url);
             return Some(new_url);

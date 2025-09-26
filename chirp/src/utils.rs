@@ -1,10 +1,6 @@
 use chrono::{DateTime, NaiveDate, Utc};
-use isahc::{
-    config::{Configurable, RedirectPolicy, VersionNegotiation},
-    AsyncReadResponseExt, HttpClient,
-};
 use reqwest::{redirect::Policy, Url};
-use std::{error::Error, process::Command, time::Duration};
+use std::{error::Error, process::Command};
 
 pub fn get_date_now_naive() -> NaiveDate {
     Utc::now().date_naive()
@@ -17,9 +13,9 @@ pub fn get_datetime_now() -> DateTime<Utc> {
 pub async fn fetch_url_to_string(url: &String) -> Result<String, Box<dyn Error + Send + Sync>> {
     println!("fetching {:?}", url);
 
-    // fetch_url_to_string_reqwest(url).await
+    fetch_url_to_string_reqwest(url).await
     // fetch_url_to_string_surf(url).await
-    fetch_url_to_string_isahc(url).await
+    // fetch_url_to_string_isahc(url).await
 }
 
 pub async fn fetch_url_to_string_reqwest(
@@ -99,23 +95,23 @@ pub async fn fetch_url_to_string_reqwest(
 //     Ok(result)
 // }
 
-pub async fn fetch_url_to_string_isahc<'a>(
-    url: &String,
-) -> Result<String, Box<dyn Error + Send + Sync>> {
-    let client = HttpClient::builder()
-        .default_headers(&[("User-Agent", "curl/8.7.1"), ("Accept", "*/*")])
-        .version_negotiation(VersionNegotiation::http11())
-        .redirect_policy(RedirectPolicy::Limit(10))
-        .timeout(Duration::from_secs(20))
-        // May return an error if there's something wrong with our configuration
-        // or if the client failed to start up.
-        .build()?;
+// pub async fn fetch_url_to_string_isahc<'a>(
+//     url: &String,
+// ) -> Result<String, Box<dyn Error + Send + Sync>> {
+//     let client = HttpClient::builder()
+//         .default_headers(&[("User-Agent", "curl/8.7.1"), ("Accept", "*/*")])
+//         .version_negotiation(VersionNegotiation::http11())
+//         .redirect_policy(RedirectPolicy::Limit(10))
+//         .timeout(Duration::from_secs(20))
+//         // May return an error if there's something wrong with our configuration
+//         // or if the client failed to start up.
+//         .build()?;
 
-    let mut response = client.get_async(url).await?;
-    let content = response.text().await?;
+//     let mut response = client.get_async(url).await?;
+//     let content = response.text().await?;
 
-    Ok(content)
-}
+//     Ok(content)
+// }
 
 pub async fn fetch_url_to_string_shell<'a>(
     url: &String,

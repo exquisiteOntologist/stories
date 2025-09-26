@@ -26,12 +26,6 @@ Make sense of the outer world that affects **your narrative**.
 
 <img src="./materials/readme-icon.png" width="128" height="128">
 
-## Feed Compatibility
-
-### Cloudflare Incompatibility
-
-Stories cannot subscribe to feeds on sites that are hosted with Cloudflare. This is because Cloudflare blocks requests from unknown sources, which is a security measure to prevent malicious actors from accessing the content. However, this also prevents the app from subscribing to feeds hosted on Cloudflare.
-
 ## Starting Again
 
 I previously built this app using C# and [Catalyst](https://github.com/curiosity-ai/catalyst). Upon discovering that I was being spied upon, I decided not to release the SAAS and instead release a free version that runs on users' own devices, due to my concerns that I would be exposing vulnerable users. I'm very friendly, but it's nice for people to be able to learn without advertising their interests to everyone. An additional concern of mine was regarding the risk of being charged with user's crimes, as it's like hosting a web browser for everyone to use. I believe the criminals can be found without any data access, due to their nature. The way the world is going is very frustrating for me and I'm torn between throwing everything away and different unknown solutions.

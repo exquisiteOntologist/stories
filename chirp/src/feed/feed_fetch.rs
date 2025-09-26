@@ -112,7 +112,7 @@ fn get_nested_feed_url(page_url: &str, feed_text: &str) -> Option<String> {
     None
 }
 
-const COMMON_FEED_PATHS: [&str; 2] = ["/feed", "/rss"];
+const COMMON_FEED_PATHS: [&str; 2] = ["/feed/", "/rss/"];
 
 /// Attempt to load "/rss".
 /// Only call if haven't got a feed URL yet.

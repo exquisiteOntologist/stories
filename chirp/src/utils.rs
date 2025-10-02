@@ -113,7 +113,7 @@ pub async fn fetch_url_to_string_reqwest(
 //     Ok(content)
 // }
 
-pub async fn fetch_url_to_string_shell<'a>(
+pub async fn fetch_url_to_string_shell(
     url: &String,
 ) -> Result<String, Box<dyn Error + Send + Sync>> {
     let output = Command::new("curl").arg(url).output()?;

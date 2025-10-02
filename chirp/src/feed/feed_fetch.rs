@@ -86,27 +86,28 @@ fn check_is_rss(feed_text: &str, url: &str) -> bool {
         || url.contains(".rss")
 }
 
-fn check_has_feeds(feed_text: &str) -> bool {
-    feed_text.contains("application/rss+xml")
+fn check_has_feeds(page_text: &str) -> bool {
+    page_text.contains("application/rss+xml")
 }
 
 /// If the page is a webpage it may contain links to feeds.
 /// Here we find the feed link and retrieve the URL to the feed.
-fn get_nested_feed_url(page_url: &str, feed_text: &str) -> Option<String> {
-    if !check_has_feeds(feed_text) {
+fn get_nested_feed_url(page_url: &str, page_text: &str) -> Option<String> {
+    if !check_has_feeds(page_text) {
         return None;
     }
 
-    if let Some(feed_url) = scrape_feed_url_from_page(feed_text) {
+    // if there is a link to a feed parse and return it
+    if let Some(feed_url) = scrape_feed_url_from_page(page_text) {
         // if has protocol assume is complete URL
         if feed_url.contains("http") {
             return feed_url.into();
         }
 
         // join the "./feed-path" with the "https://base.tld"
-        let parsed_page = Url::parse(page_url).unwrap();
-        let parsed_feed = parsed_page.join(&feed_url).unwrap();
-        return Some(parsed_feed.as_str().into());
+        let parsed_page_url = Url::parse(page_url).unwrap();
+        let parsed_feed_url = parsed_page_url.join(&feed_url).unwrap();
+        return Some(parsed_feed_url.as_str().into());
     };
 
     None
@@ -129,9 +130,9 @@ async fn guess_feed_url(page_url: &str) -> Option<String> {
 }
 
 async fn attempt_feed_url_path(page_url: &str, path: &str) -> Option<String> {
-    let parsed_page = Url::parse(page_url).unwrap();
-    let parsed_path = parsed_page.join(path).unwrap();
-    let url: String = parsed_path.as_str().into();
+    let parsed_page_url = Url::parse(page_url).unwrap();
+    let parsed_path_url = parsed_page_url.join(path).unwrap();
+    let url: String = parsed_path_url.as_str().into();
 
     match fetch_url_to_string(&url).await {
         Ok(_) => Some(url.into()),

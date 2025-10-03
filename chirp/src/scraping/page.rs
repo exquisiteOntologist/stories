@@ -104,6 +104,19 @@ pub fn scrape_paragraphs(doc: &Html) -> Result<String, Box<dyn Error>> {
     Ok(text)
 }
 
+pub fn scrape_feed_url_from_page(html_string: &str) -> Option<String> {
+    let doc = Html::parse_document(html_string);
+
+    let link_selector = Selector::parse("link[type=\"application/rss+xml\"]").unwrap();
+    if let Some(link) = doc.select(&link_selector).next() {
+        if let Some(url) = link.attr("href") {
+            return Some(url.into());
+        }
+    };
+
+    None
+}
+
 #[test]
 fn test_scrape_paragraphs() {
     let markup =

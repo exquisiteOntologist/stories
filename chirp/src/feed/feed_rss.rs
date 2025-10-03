@@ -55,10 +55,10 @@ pub async fn parse_rss(
     let mut rss_contents: Vec<FullContent> = channel
         .items
         .into_iter()
-        .map(|fc| {
+        .map(|c_item| {
             let mut content_media: Vec<ContentMedia> = vec![];
 
-            if let Some(enclosure) = fc.enclosure {
+            if let Some(enclosure) = c_item.enclosure {
                 content_media.push(ContentMedia {
                     id: 0,
                     content_id: 0,
@@ -73,19 +73,19 @@ pub async fn parse_rss(
                 })
             }
 
-            if let Some(atom) = fc.atom_ext {
+            if let Some(atom) = c_item.atom_ext {
                 // atom features (the other "feed_atom.rs" is for pure atom)
                 for atom_link in atom.links() {
-                    let mimetype = atom_link.mime_type().unwrap();
+                    let mimetype = atom_link.mime_type().unwrap_or("unknown");
                     println!("atom LINK ! ! ! {:1} {:2}", mimetype, &atom_link.href);
                 }
             }
 
-            if let Some(_dublin) = fc.dublin_core_ext {
+            if let Some(_dublin) = c_item.dublin_core_ext {
                 // data for Dublin, academia
             }
 
-            for (_ext_a_name, ext_a_extensions) in fc.extensions {
+            for (_ext_a_name, ext_a_extensions) in c_item.extensions {
                 // println!("Found extension");
                 // println!("{:?}", &ext_a_name);
                 for (_ext_b_name, ext_b_extensions) in ext_a_extensions {
@@ -117,16 +117,18 @@ pub async fn parse_rss(
                 content: Content {
                     id: 0,
                     source_id: s_id | 0,
-                    title: fc.title.unwrap_or_default(),
-                    author: fc.author.unwrap_or_default(),
-                    url: fc.link.unwrap_or_default(),
-                    date_published: parse_rss_date(&fc.pub_date.unwrap_or(String::new())),
+                    title: c_item.title.unwrap_or_default(),
+                    author: c_item.author.unwrap_or_default(),
+                    url: c_item.link.unwrap_or_default(),
+                    date_published: parse_rss_date(&c_item.pub_date.unwrap_or(String::new())),
                     date_retrieved: get_datetime_now(),
                 },
                 content_body: ContentBody {
                     id: 0,
                     content_id: 0,
-                    body_text: fc.content.unwrap_or(fc.description.unwrap_or_default()),
+                    body_text: c_item
+                        .content
+                        .unwrap_or(c_item.description.unwrap_or_default()),
                 },
                 content_media,
             };

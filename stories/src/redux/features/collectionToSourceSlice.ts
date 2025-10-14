@@ -21,7 +21,8 @@ export const fetchCollectionToSource = createAsyncThunk(
       // console.log('received C to S items:', collectionIds, collectionToSourceItems)
 
       dispatch(
-        upsertCollectionToSource(
+        addManyCollectionToSource(
+          // upsertCollectionToSource(
           collectionToSourceItems as CollectionToSource[],
         ),
       );
@@ -91,6 +92,10 @@ export const selectNestedSourceIds = createSelector(
     const nestedSourceIds: number[] = nestedSources.map(
       (cToC) => cToC.source_id,
     );
+
+    // console.log("current collection id", currentCollectionId);
+    // console.log("nested sources", nestedSources);
+    // console.log("nested source ids", nestedSourceIds);
 
     return nestedSourceIds;
   },

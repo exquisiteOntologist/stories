@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import {
   Collection,
   CollectionSettings,
+  ContentDto,
   SourceDto,
 } from "../../../data/chirp-types";
 import { ThunkDispatch } from "@reduxjs/toolkit";
@@ -13,6 +14,7 @@ import { fetchSourcesOfCollection } from "../../../redux/features/sourcesSlice";
 import { fetchContentOfSources } from "../../../redux/features/contentsSlice";
 import { retrieveMarks } from "../../../redux/features/marksSlice";
 import { resetThemeColours } from "../../../redux/features/themeSlice";
+import { fetchPhrasesToCollection } from "../../../redux/features/collectionToPhraseSlice";
 
 type Dispatch = ThunkDispatch<any, any, any>;
 
@@ -131,4 +133,76 @@ export const useTitle = ({
   const greeting = useGreeting({ dispatch });
   const title = isCustomizing ? "edit" : greeting;
   return title;
+};
+
+/**
+ * Get the visible content based on the current state.
+ * There is an array in the content reducer with the content,
+ * and there is an array in state here for the visible content.
+ *
+ * Based on a couple of scenarios we update the visible content
+ * with the latest content from the reducer.
+ *
+ * The 2 scenarios are the user clicking refresh, or the user navigating to a different collection.
+ */
+export const useGetRefreshedContent = ({
+  dispatch,
+  collectionId,
+  contents,
+}: {
+  dispatch: Dispatch;
+  collectionId: number;
+  contents: ContentDto[];
+}): {
+  filteredContent: ContentDto[];
+  refreshPossible: boolean;
+  setDoRefresh: (value: boolean) => void;
+} => {
+  // "contentsVisible" is the displayed subset of the current contents
+  // when the user clicks "reveal/refresh" then all contents are made visible.
+  // Non-visible content is typically new content that is fetched after the last load.
+  // For example, after visiting a "wikis" collection a new wiki article is fetched.
+  const [contentsVisible, setContentsVisible] = useState<ContentDto[]>([]);
+  const [doRefresh, setDoRefresh] = useState<boolean>(true);
+  const [filteringCollectionId, setFilteringCollectionId] =
+    useState<number>(collectionId);
+
+  useEffect(() => {
+    // console.log("refresh?", doRefresh);
+    if (doRefresh && contents.length) {
+      // set contents visible items to avoid shifting items in view after new updates
+      setContentsVisible(contents);
+      setDoRefresh(false); // set back to false
+      setFilteringCollectionId(collectionId);
+    }
+    // console.log("refresh after?", doRefresh);
+  }, [contents]);
+
+  useEffect(() => {
+    // when changing collections enable the content queue to refresh
+    setContentsVisible(contents);
+    setDoRefresh(true);
+    setFilteringCollectionId(collectionId);
+    dispatch(fetchPhrasesToCollection(collectionId));
+  }, [collectionId]);
+
+  useEffect(() => {
+    if (doRefresh) setContentsVisible(contents);
+  }, [doRefresh]);
+
+  // know whether to just show content of collection or to show recency-based filtered list (cycles & speed)
+  const isFilteredCollection = filteringCollectionId === collectionId;
+  // is the most recent content item also the most recent visible item?
+  const isShowingMostCurrent =
+    contents[0]?.date_published === contentsVisible[0]?.date_published &&
+    contents[0]?.url === contentsVisible[0]?.url;
+
+  const filteredContent = isFilteredCollection ? contentsVisible : contents;
+  const refreshPossible = isFilteredCollection && !isShowingMostCurrent;
+
+  return {
+    filteredContent,
+    refreshPossible,
+    setDoRefresh,
+  };
 };

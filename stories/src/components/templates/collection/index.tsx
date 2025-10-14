@@ -54,6 +54,7 @@ import {
   useFetchContent,
   useFetchContentOnFocus,
   useFetchNestedCollections,
+  useGetRefreshedContent,
   useGreeting,
   useResetThemeColours,
   useTitle,
@@ -82,15 +83,14 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
   const phrases = useAppSelector(selectPhrasesOfCollection);
   const filter = useAppSelector(selectFilter);
   const isCustomizing = useAppSelector(selectIsCustomizing);
-  const [doRefresh, setDoRefresh] = useState<boolean>(true);
+  // const [doRefresh, setDoRefresh] = useState<boolean>(true);
   // "contentsVisible" is the displayed subset of the current contents
   // when the user clicks "reveal/refresh" then all contents are made visible.
   // Non-visible content is typically the content that is fetched after the initial load.
   // For example, after visiting a "wikis" collection a new wiki article is fetched.
-  const [contentsVisible, setContentsVisible] = useState<ContentDto[]>([]);
-  const [filteringCollectionId, setFilteringCollectionId] = useState<
-    number | null
-  >(null);
+  // const [contentsVisible, setContentsVisible] = useState<ContentDto[]>([]);
+  // const [filteringCollectionId, setFilteringCollectionId] = useState<
+  //   number | null>(null);
   // const [greeting, setGreeting] = useState<string>("");
 
   // const title = isCustomizing ? "edit" : greeting;
@@ -174,36 +174,45 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
   // const greeting = useGreeting({ dispatch });
   const title = useTitle({ dispatch, isCustomizing });
 
-  useEffect(() => {
-    console.log("refresh?", doRefresh);
-    if (doRefresh && contents.length) {
-      // set contents visible items to avoid shifting items in view after new updates
-      setContentsVisible(contents);
-      setDoRefresh(false);
-      setFilteringCollectionId(collectionId);
-    }
-    console.log("refresh after?", doRefresh);
-  }, [contents]);
+  // useEffect(() => {
+  //   console.log("refresh?", doRefresh);
+  //   if (doRefresh && contents.length) {
+  //     // set contents visible items to avoid shifting items in view after new updates
+  //     setContentsVisible(contents);
+  //     setDoRefresh(false);
+  //     setFilteringCollectionId(collectionId);
+  //   }
+  //   console.log("refresh after?", doRefresh);
+  // }, [contents]);
 
-  useEffect(() => {
-    // when changing collections enable the content queue to refresh
-    setContentsVisible(contents);
-    setDoRefresh(true);
-    setFilteringCollectionId(collectionId);
-    dispatch(fetchPhrasesToCollection(collectionId));
-  }, [collectionId]);
+  // useEffect(() => {
+  //   // when changing collections enable the content queue to refresh
+  //   setContentsVisible(contents);
+  //   setDoRefresh(true);
+  //   setFilteringCollectionId(collectionId);
+  //   dispatch(fetchPhrasesToCollection(collectionId));
+  // }, [collectionId]);
 
-  useEffect(() => {
-    if (doRefresh) setContentsVisible(contents);
-  }, [doRefresh]);
+  // useEffect(() => {
+  //   if (doRefresh) setContentsVisible(contents);
+  // }, [doRefresh]);
 
-  // know whether to just show content of collection or to show recency-based filtered list (cycles & speed)
-  const isFilteredCollection = filteringCollectionId === collectionId;
-  const isShowingMostCurrent =
-    contents[0]?.date_published === contentsVisible[0]?.date_published &&
-    contents[0]?.url === contentsVisible[0]?.url;
+  // // know whether to just show content of collection or to show recency-based filtered list (cycles & speed)
+  // const isFilteredCollection = filteringCollectionId === collectionId;
+  // const isShowingMostCurrent =
+  //   contents[0]?.date_published === contentsVisible[0]?.date_published &&
+  //   contents[0]?.url === contentsVisible[0]?.url;
 
-  console.log("source ids", sourceIds.join(", "));
+  // console.log("source ids", sourceIds.join(", "));
+  // console.log("contentsVisible", contentsVisible?.length, contentsVisible);
+  // console.log("contents!", contents?.length, contents);
+
+  const { filteredContent, refreshPossible, setDoRefresh } =
+    useGetRefreshedContent({
+      dispatch,
+      collectionId,
+      contents,
+    });
 
   return (
     <motion.div
@@ -222,7 +231,8 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
       <LoadingIndicator />
       <RefreshBar
         refreshAction={() => setDoRefresh(true)}
-        refreshPossible={isFilteredCollection && !isShowingMostCurrent}
+        refreshPossible={refreshPossible}
+        // refreshPossible={isFilteredCollection && !isShowingMostCurrent}
       />
       {/*<CombinedCount collectionId={collectionId} key={contents?.[0]?.id ?? "article-count"} /> */}
       <div className="flex align-middle mb-8">
@@ -262,7 +272,8 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
       )}
       <ListingsContainerContent
         view={collectionSettings?.layout as SettingsLayout}
-        contents={isFilteredCollection ? contentsVisible : contents}
+        contents={filteredContent}
+        // contents={isFilteredCollection ? contentsVisible : contents}
         sources={sources}
       />
     </motion.div>

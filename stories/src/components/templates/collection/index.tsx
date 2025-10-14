@@ -85,7 +85,8 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
   const [doRefresh, setDoRefresh] = useState<boolean>(true);
   // "contentsVisible" is the displayed subset of the current contents
   // when the user clicks "reveal/refresh" then all contents are made visible.
-  // Non-visible content is typically the content that comes in later.
+  // Non-visible content is typically the content that is fetched after the initial load.
+  // For example, after visiting a "wikis" collection a new wiki article is fetched.
   const [contentsVisible, setContentsVisible] = useState<ContentDto[]>([]);
   const [filteringCollectionId, setFilteringCollectionId] = useState<
     number | null

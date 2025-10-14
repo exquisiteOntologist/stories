@@ -52,7 +52,11 @@ import { ListingsContainerPhrase } from "../../molecules/listings/listings-conta
 import {
   useFetchCollection,
   useFetchContent,
+  useFetchContentOnFocus,
   useFetchNestedCollections,
+  useGreeting,
+  useResetThemeColours,
+  useTitle,
 } from "./hooks";
 
 const clientItemsLimit: number = 100;
@@ -86,10 +90,10 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
   const [filteringCollectionId, setFilteringCollectionId] = useState<
     number | null
   >(null);
-  const [greeting, setGreeting] = useState<string>("");
+  // const [greeting, setGreeting] = useState<string>("");
 
-  const title = isCustomizing ? "edit" : greeting;
-  let updateTimeout: NodeJS.Timeout | undefined;
+  // const title = isCustomizing ? "edit" : greeting;
+  // let updateTimeout: NodeJS.Timeout | undefined;
 
   // useEffect(() => {
   //   dispatch(fetchCollection([collectionId]));
@@ -126,41 +130,48 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     sources,
   });
 
-  useEffect(() => {
-    updateTimeout && clearTimeout(updateTimeout);
+  // useEffect(() => {
+  //   updateTimeout && clearTimeout(updateTimeout);
 
-    /** fetches - content from the DB */
-    const fetchCurrentContent = () => {
-      dispatch(fetchContentOfSources(sourceIds));
-      // console.log("updated", new Date(), collectionId, sourceIds);
-      updateTimeout = setTimeout(
-        () => requestAnimationFrame(fetchCurrentContent),
-        1000 * 10,
-      );
-    };
+  //   /** fetches - content from the DB */
+  //   const fetchCurrentContent = () => {
+  //     dispatch(fetchContentOfSources(sourceIds));
+  //     // console.log("updated", new Date(), collectionId, sourceIds);
+  //     updateTimeout = setTimeout(
+  //       () => requestAnimationFrame(fetchCurrentContent),
+  //       1000 * 10,
+  //     );
+  //   };
 
-    fetchCurrentContent();
-    window.removeEventListener("focus", fetchCurrentContent);
-    window.addEventListener("focus", fetchCurrentContent);
+  //   fetchCurrentContent();
+  //   window.removeEventListener("focus", fetchCurrentContent);
+  //   window.addEventListener("focus", fetchCurrentContent);
 
-    return () => {
-      updateTimeout && clearTimeout(updateTimeout);
-      window.removeEventListener("focus", fetchCurrentContent);
-    };
-  }, [dispatch, sourceIds]);
+  //   return () => {
+  //     updateTimeout && clearTimeout(updateTimeout);
+  //     window.removeEventListener("focus", fetchCurrentContent);
+  //   };
+  // }, [dispatch, sourceIds]);
+  useFetchContentOnFocus({
+    dispatch,
+    sourceIds,
+  });
 
-  useEffect(() => {
-    dispatch(resetThemeColours());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(resetThemeColours());
+  // }, [dispatch]);
+  useResetThemeColours({ dispatch });
 
-  useEffect(() => {
-    const updateGreeting = () => {
-      const greeting = new Date().getHours() >= 12 ? "afternoon" : "morning";
-      setGreeting(greeting);
-      setTimeout(updateGreeting, 1000 * 60); // I don't know how setInterval will be handled in long sessions
-    };
-    updateGreeting();
-  }, [dispatch]);
+  // useEffect(() => {
+  //   const updateGreeting = () => {
+  //     const greeting = new Date().getHours() >= 12 ? "afternoon" : "morning";
+  //     setGreeting(greeting);
+  //     setTimeout(updateGreeting, 1000 * 60); // I don't know how setInterval will be handled in long sessions
+  //   };
+  //   updateGreeting();
+  // }, [dispatch]);
+  // const greeting = useGreeting({ dispatch });
+  const title = useTitle({ dispatch, isCustomizing });
 
   useEffect(() => {
     console.log("refresh?", doRefresh);

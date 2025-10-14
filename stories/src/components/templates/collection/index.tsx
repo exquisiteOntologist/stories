@@ -49,6 +49,11 @@ import { IconBookmark } from "../../atoms/icons/bookmark";
 import { IconFlower } from "../../atoms/icons/flower";
 import { selectPhrasesOfCollection } from "../../../redux/features/phrasesSlice";
 import { ListingsContainerPhrase } from "../../molecules/listings/listings-container-phrase";
+import {
+  useFetchCollection,
+  useFetchContent,
+  useFetchNestedCollections,
+} from "./hooks";
 
 const clientItemsLimit: number = 100;
 
@@ -86,24 +91,40 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
   const title = isCustomizing ? "edit" : greeting;
   let updateTimeout: NodeJS.Timeout | undefined;
 
-  useEffect(() => {
-    dispatch(fetchCollection([collectionId]));
-    dispatch(fetchSourcesOfCollection([collectionId]));
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(fetchCollection([collectionId]));
+  //   dispatch(fetchSourcesOfCollection([collectionId]));
+  // }, [dispatch]);
+  useFetchCollection({
+    dispatch,
+    collectionId,
+  });
 
-  useEffect(() => {
-    dispatch(fetchNestedCollections([collectionId]));
-  }, [collection, collectionSettings]);
+  // useEffect(() => {
+  //   dispatch(fetchNestedCollections([collectionId]));
+  // }, [collection, collectionSettings]);
+  useFetchNestedCollections({
+    dispatch,
+    collection,
+    collectionSettings,
+    collectionId,
+  });
 
-  useEffect(() => {
-    // if content is in another collection it tricks the refresh qeue mechanism
-    // so we here just set the contents visible straight away.
-    // Only because this dispatch's fetch is not synchronous
-    dispatch(fetchContentOfSources(sourceIds)).then(() =>
-      setContentsVisible(contents),
-    );
-    dispatch(retrieveMarks(sourceIds));
-  }, [collectionId, sources]);
+  // useEffect(() => {
+  //   // if content is in another collection it tricks the refresh qeue mechanism
+  //   // so we here just set the contents visible straight away.
+  //   // Only because this dispatch's fetch is not synchronous
+  //   dispatch(fetchContentOfSources(sourceIds)).then(() =>
+  //     setContentsVisible(contents),
+  //   );
+  //   dispatch(retrieveMarks(sourceIds));
+  // }, [collectionId, sources]);
+  useFetchContent({
+    dispatch,
+    collectionId,
+    sourceIds,
+    sources,
+  });
 
   useEffect(() => {
     updateTimeout && clearTimeout(updateTimeout);
@@ -169,6 +190,8 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
   const isShowingMostCurrent =
     contents[0]?.date_published === contentsVisible[0]?.date_published &&
     contents[0]?.url === contentsVisible[0]?.url;
+
+  console.log("source ids", sourceIds.join(", "));
 
   return (
     <motion.div

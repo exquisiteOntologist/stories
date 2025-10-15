@@ -1,24 +1,14 @@
 import React from "react";
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import {
-  fetchContentOfSources,
-  selectContentByRecency,
-} from "../../../redux/features/contentsSlice";
-import {
-  fetchSourcesOfCollection,
-  sourcesSelectors,
-} from "../../../redux/features/sourcesSlice";
-import { resetThemeColours } from "../../../redux/features/themeSlice";
+import { selectContentByRecency } from "../../../redux/features/contentsSlice";
+import { sourcesSelectors } from "../../../redux/features/sourcesSlice";
 import {
   collectionsSelectors,
-  fetchCollection,
-  fetchNestedCollections,
   selectNestedCollections,
 } from "../../../redux/features/collectionsSlice";
 import { collectionSettingsSelectors } from "../../../redux/features/collectionSettingsSlice";
-import { ContentDto, SettingsLayout } from "../../../data/chirp-types";
+import { SettingsLayout } from "../../../data/chirp-types";
 import {
   chooseCollection,
   isViewModeActive,
@@ -36,13 +26,8 @@ import { CollectionViewProps } from "./interface";
 import { motionProps } from "../../../utilities/animate";
 import { selectNestedSourceIds } from "../../../redux/features/collectionToSourceSlice";
 import { RefreshBar } from "../../molecules/listings/refresh-bar";
-import {
-  marksSelectors,
-  retrieveMarks,
-} from "../../../redux/features/marksSlice";
-import { fetchPhrasesToCollection } from "../../../redux/features/collectionToPhraseSlice";
+import { marksSelectors } from "../../../redux/features/marksSlice";
 import { FailBanner } from "../../organisms/fail-banner";
-import { CombinedCount } from "../../organisms/statistics/combined_counts";
 import { LoadingIndicator } from "../../organisms/loading-indicator";
 import { FilterButton } from "../../molecules/filter-button";
 import { IconBookmark } from "../../atoms/icons/bookmark";
@@ -55,7 +40,6 @@ import {
   useFetchContentOnFocus,
   useFetchNestedCollections,
   useGetRefreshedContent,
-  useGreeting,
   useResetThemeColours,
   useTitle,
 } from "./hooks";
@@ -83,31 +67,12 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
   const phrases = useAppSelector(selectPhrasesOfCollection);
   const filter = useAppSelector(selectFilter);
   const isCustomizing = useAppSelector(selectIsCustomizing);
-  // const [doRefresh, setDoRefresh] = useState<boolean>(true);
-  // "contentsVisible" is the displayed subset of the current contents
-  // when the user clicks "reveal/refresh" then all contents are made visible.
-  // Non-visible content is typically the content that is fetched after the initial load.
-  // For example, after visiting a "wikis" collection a new wiki article is fetched.
-  // const [contentsVisible, setContentsVisible] = useState<ContentDto[]>([]);
-  // const [filteringCollectionId, setFilteringCollectionId] = useState<
-  //   number | null>(null);
-  // const [greeting, setGreeting] = useState<string>("");
 
-  // const title = isCustomizing ? "edit" : greeting;
-  // let updateTimeout: NodeJS.Timeout | undefined;
-
-  // useEffect(() => {
-  //   dispatch(fetchCollection([collectionId]));
-  //   dispatch(fetchSourcesOfCollection([collectionId]));
-  // }, [dispatch]);
   useFetchCollection({
     dispatch,
     collectionId,
   });
 
-  // useEffect(() => {
-  //   dispatch(fetchNestedCollections([collectionId]));
-  // }, [collection, collectionSettings]);
   useFetchNestedCollections({
     dispatch,
     collection,
@@ -115,15 +80,6 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     collectionId,
   });
 
-  // useEffect(() => {
-  //   // if content is in another collection it tricks the refresh qeue mechanism
-  //   // so we here just set the contents visible straight away.
-  //   // Only because this dispatch's fetch is not synchronous
-  //   dispatch(fetchContentOfSources(sourceIds)).then(() =>
-  //     setContentsVisible(contents),
-  //   );
-  //   dispatch(retrieveMarks(sourceIds));
-  // }, [collectionId, sources]);
   useFetchContent({
     dispatch,
     collectionId,
@@ -131,81 +87,14 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
     sources,
   });
 
-  // useEffect(() => {
-  //   updateTimeout && clearTimeout(updateTimeout);
-
-  //   /** fetches - content from the DB */
-  //   const fetchCurrentContent = () => {
-  //     dispatch(fetchContentOfSources(sourceIds));
-  //     // console.log("updated", new Date(), collectionId, sourceIds);
-  //     updateTimeout = setTimeout(
-  //       () => requestAnimationFrame(fetchCurrentContent),
-  //       1000 * 10,
-  //     );
-  //   };
-
-  //   fetchCurrentContent();
-  //   window.removeEventListener("focus", fetchCurrentContent);
-  //   window.addEventListener("focus", fetchCurrentContent);
-
-  //   return () => {
-  //     updateTimeout && clearTimeout(updateTimeout);
-  //     window.removeEventListener("focus", fetchCurrentContent);
-  //   };
-  // }, [dispatch, sourceIds]);
   useFetchContentOnFocus({
     dispatch,
     sourceIds,
   });
 
-  // useEffect(() => {
-  //   dispatch(resetThemeColours());
-  // }, [dispatch]);
   useResetThemeColours({ dispatch });
 
-  // useEffect(() => {
-  //   const updateGreeting = () => {
-  //     const greeting = new Date().getHours() >= 12 ? "afternoon" : "morning";
-  //     setGreeting(greeting);
-  //     setTimeout(updateGreeting, 1000 * 60); // I don't know how setInterval will be handled in long sessions
-  //   };
-  //   updateGreeting();
-  // }, [dispatch]);
-  // const greeting = useGreeting({ dispatch });
-  const title = useTitle({ dispatch, isCustomizing });
-
-  // useEffect(() => {
-  //   console.log("refresh?", doRefresh);
-  //   if (doRefresh && contents.length) {
-  //     // set contents visible items to avoid shifting items in view after new updates
-  //     setContentsVisible(contents);
-  //     setDoRefresh(false);
-  //     setFilteringCollectionId(collectionId);
-  //   }
-  //   console.log("refresh after?", doRefresh);
-  // }, [contents]);
-
-  // useEffect(() => {
-  //   // when changing collections enable the content queue to refresh
-  //   setContentsVisible(contents);
-  //   setDoRefresh(true);
-  //   setFilteringCollectionId(collectionId);
-  //   dispatch(fetchPhrasesToCollection(collectionId));
-  // }, [collectionId]);
-
-  // useEffect(() => {
-  //   if (doRefresh) setContentsVisible(contents);
-  // }, [doRefresh]);
-
-  // // know whether to just show content of collection or to show recency-based filtered list (cycles & speed)
-  // const isFilteredCollection = filteringCollectionId === collectionId;
-  // const isShowingMostCurrent =
-  //   contents[0]?.date_published === contentsVisible[0]?.date_published &&
-  //   contents[0]?.url === contentsVisible[0]?.url;
-
-  // console.log("source ids", sourceIds.join(", "));
-  // console.log("contentsVisible", contentsVisible?.length, contentsVisible);
-  // console.log("contents!", contents?.length, contents);
+  const { title } = useTitle({ dispatch, isCustomizing });
 
   const { filteredContent, refreshPossible, setDoRefresh } =
     useGetRefreshedContent({
@@ -232,7 +121,6 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
       <RefreshBar
         refreshAction={() => setDoRefresh(true)}
         refreshPossible={refreshPossible}
-        // refreshPossible={isFilteredCollection && !isShowingMostCurrent}
       />
       {/*<CombinedCount collectionId={collectionId} key={contents?.[0]?.id ?? "article-count"} /> */}
       <div className="flex align-middle mb-8">
@@ -273,7 +161,6 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
       <ListingsContainerContent
         view={collectionSettings?.layout as SettingsLayout}
         contents={filteredContent}
-        // contents={isFilteredCollection ? contentsVisible : contents}
         sources={sources}
       />
     </motion.div>

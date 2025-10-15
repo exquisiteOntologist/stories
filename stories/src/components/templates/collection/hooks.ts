@@ -129,10 +129,10 @@ export const useTitle = ({
 }: {
   dispatch: Dispatch;
   isCustomizing: boolean;
-}): string => {
+}): { title: string } => {
   const greeting = useGreeting({ dispatch });
   const title = isCustomizing ? "edit" : greeting;
-  return title;
+  return { title };
 };
 
 /**
@@ -168,14 +168,14 @@ export const useGetRefreshedContent = ({
     useState<number>(collectionId);
 
   useEffect(() => {
-    // console.log("refresh?", doRefresh);
+    console.log("refresh?", doRefresh);
     if (doRefresh && contents.length) {
       // set contents visible items to avoid shifting items in view after new updates
       setContentsVisible(contents);
       setDoRefresh(false); // set back to false
       setFilteringCollectionId(collectionId);
     }
-    // console.log("refresh after?", doRefresh);
+    console.log("refresh after?", doRefresh);
   }, [contents]);
 
   useEffect(() => {

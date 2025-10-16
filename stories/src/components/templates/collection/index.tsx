@@ -39,6 +39,7 @@ import {
   useFetchContent,
   useFetchContentOnFocus,
   useFetchNestedCollections,
+  useFetchPhrases,
   useGetRefreshedContent,
   useResetThemeColours,
   useTitle,
@@ -98,10 +99,14 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
 
   const { contentForDisplay, refreshPossible, setDoRefresh } =
     useGetRefreshedContent({
-      dispatch,
       collectionId,
       contents,
     });
+
+  useFetchPhrases({
+    dispatch,
+    collectionId,
+  });
 
   return (
     <motion.div

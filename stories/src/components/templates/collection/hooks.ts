@@ -144,13 +144,14 @@ export const useTitle = ({
  * with the latest content from the reducer.
  *
  * The 2 scenarios are the user clicking refresh, or the user navigating to a different collection.
+ *
+ * When the user navigates to a different collection, there may be new content since it was last visited.
+ * We want to make sure that on navigation the user doesn't have to refresh.
  */
 export const useGetRefreshedContent = ({
-  dispatch,
   collectionId,
   contents,
 }: {
-  dispatch: Dispatch;
   collectionId: number;
   contents: ContentDto[];
 }): {
@@ -174,8 +175,8 @@ export const useGetRefreshedContent = ({
     // because we `setDoRefresh = false` when we refresh
     if (doRefresh && contents.length) {
       // set contents visible items to avoid shifting items in view after new updates
-      setContentsVisible(contents);
       setDoRefresh(false); // set back to false
+      setContentsVisible(contents);
       setContentVisibleCollectionId(collectionId);
     }
     console.log("refresh after?", doRefresh);
@@ -184,22 +185,10 @@ export const useGetRefreshedContent = ({
   useEffect(() => {
     // when changing collections enable the content queue to refresh
     setDoRefresh(true);
-    setContentsVisible(contents);
-    setContentVisibleCollectionId(collectionId);
-    dispatch(fetchPhrasesToCollection(collectionId));
   }, [collectionId]);
 
-  // useEffect(() => {
-  //   if (doRefresh) setContentsVisible(contents);
-  // }, [doRefresh]);
-
-  // know whether to just show content of collection or to show recency-based filtered list (cycles & speed)
+  // show all contents, or show just the `contentsVisible` set?
   const isContentsVisible = contentVisibleCollectionId === collectionId;
-
-  // is the most recent content item also the most recent visible item?
-  // const isShowingMostCurrent =
-  //   contents[0]?.date_published === contentsVisible[0]?.date_published &&
-  //   contents[0]?.url === contentsVisible[0]?.url;
 
   // is the most recent content item also the most recent visible item?
   const isShowingMostCurrent = contents[0]?.id === contentsVisible[0]?.id;
@@ -212,4 +201,16 @@ export const useGetRefreshedContent = ({
     refreshPossible,
     setDoRefresh,
   };
+};
+
+export const useFetchPhrases = ({
+  dispatch,
+  collectionId,
+}: {
+  dispatch: Dispatch;
+  collectionId: number;
+}) => {
+  useEffect(() => {
+    dispatch(fetchPhrasesToCollection(collectionId));
+  }, [collectionId]);
 };

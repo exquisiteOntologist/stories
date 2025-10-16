@@ -96,7 +96,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
 
   const { title } = useTitle({ dispatch, isCustomizing });
 
-  const { filteredContent, refreshPossible, setDoRefresh } =
+  const { contentForDisplay, refreshPossible, setDoRefresh } =
     useGetRefreshedContent({
       dispatch,
       collectionId,
@@ -160,7 +160,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
       )}
       <ListingsContainerContent
         view={collectionSettings?.layout as SettingsLayout}
-        contents={filteredContent}
+        contents={contentForDisplay}
         sources={sources}
       />
     </motion.div>

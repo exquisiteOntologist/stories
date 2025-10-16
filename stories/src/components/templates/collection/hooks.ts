@@ -154,7 +154,7 @@ export const useGetRefreshedContent = ({
   collectionId: number;
   contents: ContentDto[];
 }): {
-  filteredContent: ContentDto[];
+  contentForDisplay: ContentDto[];
   refreshPossible: boolean;
   setDoRefresh: (value: boolean) => void;
 } => {
@@ -164,44 +164,51 @@ export const useGetRefreshedContent = ({
   // For example, after visiting a "wikis" collection a new wiki article is fetched.
   const [contentsVisible, setContentsVisible] = useState<ContentDto[]>([]);
   const [doRefresh, setDoRefresh] = useState<boolean>(true);
-  const [filteringCollectionId, setFilteringCollectionId] =
+  const [contentVisibleCollectionId, setContentVisibleCollectionId] =
     useState<number>(collectionId);
 
   useEffect(() => {
+    // refresh because the user activated refresh or changed view filter to bookmarks
     console.log("refresh?", doRefresh);
+    // we don't want to refresh before there is contents (contents.length)
+    // because we `setDoRefresh = false` when we refresh
     if (doRefresh && contents.length) {
       // set contents visible items to avoid shifting items in view after new updates
       setContentsVisible(contents);
       setDoRefresh(false); // set back to false
-      setFilteringCollectionId(collectionId);
+      setContentVisibleCollectionId(collectionId);
     }
     console.log("refresh after?", doRefresh);
-  }, [contents]);
+  }, [contents, doRefresh]);
 
   useEffect(() => {
     // when changing collections enable the content queue to refresh
-    setContentsVisible(contents);
     setDoRefresh(true);
-    setFilteringCollectionId(collectionId);
+    setContentsVisible(contents);
+    setContentVisibleCollectionId(collectionId);
     dispatch(fetchPhrasesToCollection(collectionId));
   }, [collectionId]);
 
-  useEffect(() => {
-    if (doRefresh) setContentsVisible(contents);
-  }, [doRefresh]);
+  // useEffect(() => {
+  //   if (doRefresh) setContentsVisible(contents);
+  // }, [doRefresh]);
 
   // know whether to just show content of collection or to show recency-based filtered list (cycles & speed)
-  const isFilteredCollection = filteringCollectionId === collectionId;
-  // is the most recent content item also the most recent visible item?
-  const isShowingMostCurrent =
-    contents[0]?.date_published === contentsVisible[0]?.date_published &&
-    contents[0]?.url === contentsVisible[0]?.url;
+  const isContentsVisible = contentVisibleCollectionId === collectionId;
 
-  const filteredContent = isFilteredCollection ? contentsVisible : contents;
-  const refreshPossible = isFilteredCollection && !isShowingMostCurrent;
+  // is the most recent content item also the most recent visible item?
+  // const isShowingMostCurrent =
+  //   contents[0]?.date_published === contentsVisible[0]?.date_published &&
+  //   contents[0]?.url === contentsVisible[0]?.url;
+
+  // is the most recent content item also the most recent visible item?
+  const isShowingMostCurrent = contents[0]?.id === contentsVisible[0]?.id;
+
+  const contentForDisplay = isContentsVisible ? contentsVisible : contents;
+  const refreshPossible = isContentsVisible && !isShowingMostCurrent;
 
   return {
-    filteredContent,
+    contentForDisplay,
     refreshPossible,
     setDoRefresh,
   };

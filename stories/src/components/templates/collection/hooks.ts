@@ -185,6 +185,10 @@ export const useGetRefreshedContent = ({
   useEffect(() => {
     // when changing collections enable the content queue to refresh
     setDoRefresh(true);
+    // we have to set contents visible here otherwise it requires a manual refresh
+    // to see new articles on collections that were already viewed in the same session
+    setContentsVisible(contents);
+    setContentVisibleCollectionId(collectionId);
   }, [collectionId]);
 
   // show all contents, or show just the `contentsVisible` set?

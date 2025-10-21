@@ -1656,8 +1656,8 @@ checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
 
 [[package]]
 name = "titles"
-version = "1.1.3"
-source = "git+https://github.com/exquisiteOntologist/PageTitlesSansSourceNames#da0c8a2699262bea7b2c7d60eae6407d3b8505e9"
+version = "1.1.4"
+source = "git+https://github.com/exquisiteOntologist/PageTitlesSansSourceNames#3ab68fcd4a31b9bd8fe823b3f6c6e7d748214e3e"
 dependencies = [
  "gather",
 ]

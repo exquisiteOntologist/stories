@@ -39,8 +39,8 @@ pub fn db_retrievals_is_content_updating() -> Result<bool, Box<dyn Error>> {
 const SQL_ARE_ANY_SOURCES_SUCCESSFUL: &str =
     "SELECT COUNT(*) FROM retrieval WHERE fails_since_success = 0";
 
+/// Determine if any sources are successfully updating.
 pub fn db_check_if_any_sources_successful(conn: &Connection) -> Result<bool, Box<dyn Error>> {
-    // let conn = db_connect()?;
     let mut stmt = conn.prepare(SQL_ARE_ANY_SOURCES_SUCCESSFUL)?;
     let count = stmt.query_row([], |r| Ok(r.get::<usize, i32>(0)?))?;
     println!("check # sources successful {}", count);

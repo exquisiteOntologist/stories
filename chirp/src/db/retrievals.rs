@@ -1,6 +1,6 @@
 use std::error::Error;
 
-use rusqlite::{params, Row};
+use rusqlite::{params, Connection, Row};
 
 use crate::entities::Source;
 
@@ -33,6 +33,18 @@ pub fn db_retrievals_is_content_updating() -> Result<bool, Box<dyn Error>> {
         Ok(v) => Ok(v),
         Err(e) => Err(e.to_string().into()),
     }
+}
+
+/// Find out if any sources are successful. If not it could mean they all failed due to network issues.
+const SQL_ARE_ANY_SOURCES_SUCCESSFUL: &str =
+    "SELECT COUNT(*) FROM retrieval WHERE fails_since_success = 0";
+
+/// Determine if any sources are successfully updating.
+pub fn db_check_if_any_sources_successful(conn: &Connection) -> Result<bool, Box<dyn Error>> {
+    let mut stmt = conn.prepare(SQL_ARE_ANY_SOURCES_SUCCESSFUL)?;
+    let count = stmt.query_row([], |r| Ok(r.get::<usize, i32>(0)?))?;
+    println!("check # sources successful {}", count);
+    Ok(count > 0)
 }
 
 // Adds a sources retrieval table row. Only should be done once (when source is created).
@@ -97,6 +109,13 @@ pub fn db_source_retrievals_update_success(source_id: &i32) -> Result<(), Box<dy
 // Retrievals fails increment with date
 pub fn db_source_retrievals_update_failures(source_id: &i32) -> Result<(), Box<dyn Error>> {
     let conn = db_connect()?;
+    let any_successful = db_check_if_any_sources_successful(&conn).unwrap();
+    if !any_successful {
+        // If none of the feeds were successful then the reason for failure is likely
+        // something such as the network connection and not individual feeds.
+        // So in this case we don't want to record more failures.
+        return Ok(());
+    }
     if let Err(e) = conn.execute(
         "UPDATE retrieval
 			SET date_last_attempt = datetime(),

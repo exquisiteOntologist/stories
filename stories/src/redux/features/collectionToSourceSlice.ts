@@ -48,9 +48,8 @@ const collectionToSourceAdapter = createEntityAdapter({
     // ignoring the collection id
     // so using a string creates a combined key
     // this fixes some collections not showing the source if it is in another collection too
-    `${collectionToSource.collection_id},${collectionToSource.source_id}`,
-  // collectionToSource.collection_id,
-  // collectionToSource.source_id
+    `${collectionToSource.collection_id},${collectionToSource.source_id}` as string,
+  // (collectionToSource.collection_id, collectionToSource.source_id),
 });
 
 const collectionToSourceSlice = createSlice({
@@ -96,6 +95,7 @@ export const selectNestedSourceIds = createSelector(
     const nestedSources = cToSs.filter(
       (cToS) => currentCollectionId === cToS.collection_id,
     );
+    // console.log("nested sources", nestedSources);
     const nestedSourceIds: number[] = nestedSources.map(
       (cToC) => cToC.source_id,
     );

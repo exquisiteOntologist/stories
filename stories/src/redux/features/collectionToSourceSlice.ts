@@ -41,10 +41,15 @@ export const fetchCollectionToSource = createAsyncThunk(
 const collectionToSourceAdapter = createEntityAdapter({
   // selectId: (collectionToSource) => (collectionToSource.collection_id, collectionToSource.source_id),
   // Going to a string selection here fixed a bug with upsert where tuple would not recognise the combined key
-  selectId: (collectionToSource: CollectionToSource) => (
-    collectionToSource.collection_id,
-    collectionToSource.source_id
-  ),
+  selectId: (collectionToSource: CollectionToSource) =>
+    // by combining both ids they are treated as a unique single entity
+    // if we instead have seperate id values in the tuple,
+    // for some reason all source_ids of the same id are treated as the same entity,
+    // ignoring the collection id
+    // so using a string creates a combined key
+    // this fixes some collections not showing the source if it is in another collection too
+    `${collectionToSource.collection_id},${collectionToSource.source_id}` as string,
+  // (collectionToSource.collection_id, collectionToSource.source_id),
 });
 
 const collectionToSourceSlice = createSlice({
@@ -86,9 +91,11 @@ export const selectNestedSourceIds = createSelector(
   // and returns a final result value
   (cToSs, s) => {
     const currentCollectionId = selectCollectionId(s);
+    // console.log("cToSs", cToSs);
     const nestedSources = cToSs.filter(
       (cToS) => currentCollectionId === cToS.collection_id,
     );
+    // console.log("nested sources", nestedSources);
     const nestedSourceIds: number[] = nestedSources.map(
       (cToC) => cToC.source_id,
     );

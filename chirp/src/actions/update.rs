@@ -3,6 +3,7 @@ use chrono::Local;
 use rusqlite::Result;
 use std::error::Error;
 
+use crate::db::retrievals::db_source_retrievals_update_failures_conditionally;
 use crate::db::{
     content::db_content_add, content::db_content_save_space, logging::db_log_add,
     retrievals::db_source_retrievals_update_failures,
@@ -43,7 +44,7 @@ pub async fn update_single_feed(source: &Source) -> Result<(), Box<dyn Error + S
     let res_f_fetch =
         feed_fetch_from_url(source.id, source.url.to_owned(), &fetch_other_param).await;
     if res_f_fetch.is_err() {
-        db_source_retrievals_update_failures(&source.id).unwrap();
+        db_source_retrievals_update_failures_conditionally(&source.id).unwrap();
         return Err(res_f_fetch.unwrap_err());
     }
 
@@ -51,7 +52,7 @@ pub async fn update_single_feed(source: &Source) -> Result<(), Box<dyn Error + S
     let res_c_add = db_content_add(contents);
     if let Err(err) = res_c_add {
         _ = db_log_add(err.to_string().as_str());
-        db_source_retrievals_update_failures(&source.id).unwrap();
+        db_source_retrievals_update_failures_conditionally(&source.id).unwrap();
         return Err(err);
     }
 

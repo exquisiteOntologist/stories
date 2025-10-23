@@ -107,15 +107,10 @@ pub fn db_source_retrievals_update_success(source_id: &i32) -> Result<(), Box<dy
 }
 
 // Retrievals fails increment with date
-pub fn db_source_retrievals_update_failures(source_id: &i32) -> Result<(), Box<dyn Error>> {
-    let conn = db_connect()?;
-    let any_successful = db_check_if_any_sources_successful(&conn).unwrap();
-    if !any_successful {
-        // If none of the feeds were successful then the reason for failure is likely
-        // something such as the network connection and not individual feeds.
-        // So in this case we don't want to record more failures.
-        return Ok(());
-    }
+pub fn db_source_retrievals_update_failures(
+    conn: &Connection,
+    source_id: &i32,
+) -> Result<(), Box<dyn Error>> {
     if let Err(e) = conn.execute(
         "UPDATE retrieval
 			SET date_last_attempt = datetime(),
@@ -129,6 +124,25 @@ pub fn db_source_retrievals_update_failures(source_id: &i32) -> Result<(), Box<d
         eprintln!("Error updating retrievals failures");
         eprint!("{:?}\n", e);
     };
+
+    Ok(())
+}
+
+// Retrieval fails increment with date, but only when not because all feeds are offline (due to network outage etc.)
+pub fn db_source_retrievals_update_failures_conditionally(
+    source_id: &i32,
+) -> Result<(), Box<dyn Error>> {
+    let conn = db_connect()?;
+    let any_successful = db_check_if_any_sources_successful(&conn).unwrap();
+    if !any_successful {
+        // If none of the feeds were successful then the reason for failure is likely
+        // something such as the network connection and not individual feeds.
+        // So in this case we don't want to record more failures.
+        return Ok(());
+    }
+
+    db_source_retrievals_update_failures(&conn, source_id)?;
+
     _ = conn.close();
 
     Ok(())

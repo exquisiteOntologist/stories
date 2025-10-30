@@ -24,8 +24,7 @@ export const ListingRow: React.FC<ListingRowProps> = ({
     </>
   );
 
-  const titleClasses =
-    "flex font-bold cursor-pointer whitespace-nowrap overflow-hidden text-ellipsis";
+  const titleClasses = `flex font-bold cursor-pointer whitespace-nowrap overflow-hidden text-ellipsis rounded-md ${hasBg ? "py-2" : "py-0"} px-4`;
 
   const titleContent = linkUrl ? (
     <a className={titleClasses} href={linkUrl} target="_blank">
@@ -48,9 +47,16 @@ export const ListingRow: React.FC<ListingRowProps> = ({
   const nodeTitleLink = (
     <span className="truncate w-full">
       {titleContent}
+      {/*<SourceLink source={source} isBlock={false} />*/}
+      {/*{nodeRecency}*/}
+    </span>
+  );
+
+  const metaDetail = (
+    <div className="px-4">
       <SourceLink source={source} isBlock={false} />
       {nodeRecency}
-    </span>
+    </div>
   );
 
   const actionBookmark = content && linkUrl && (
@@ -61,14 +67,15 @@ export const ListingRow: React.FC<ListingRowProps> = ({
   return (
     <motion.article
       {...motionProps}
-      className={`group relative ${hasBg ? "bg-[#F9F9F9] dark:bg-[#1A1E28]" : "bg-transparent"} border-gray-100 dark:border-slate-800 rounded-md ${hasBg ? "py-1" : "py-0"} px-4 before:block before:absolute before:z-0 before:-inset-0 before:-left-2`}
+      className={`group relative border-gray-100 dark:border-slate-800 before:block before:absolute before:z-0 before:-inset-0 before:-left-2`}
     >
       {actionBookmark}
       <h1
-        className={`flex text-base ${bold ? "font-bold" : ""} mx-0 ${source ? "my-4" : "my-2"} relative z-10 whitespace-nowrap dark:text-slate-400 select-none`}
+        className={`flex text-base ${bold ? "font-bold" : ""} mx-0 ${source ? "mt-4" : "mt-0"} mb-0 relative z-10 whitespace-nowrap rounded-md ${hasBg ? "bg-[#F9F9F9] dark:bg-[#1A1E28]" : "bg-transparent"} dark:text-slate-400 select-none`}
       >
         {nodeTitleLink}
       </h1>
+      {metaDetail}
     </motion.article>
   );
 };

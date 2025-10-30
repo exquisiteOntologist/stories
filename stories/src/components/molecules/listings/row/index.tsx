@@ -68,7 +68,7 @@ export const ListingRow: React.FC<ListingRowProps> = ({
   return (
     <motion.article
       {...motionProps}
-      className={`group relative ${hasBg ? "py-1 bg-[#F9F9F9] dark:bg-slate-900" : "bg-transparent"} border-gray-100 dark:border-slate-800 rounded-md px-4 before:block before:absolute before:z-0 before:-inset-0 before:-left-2`}
+      className={`group relative ${hasBg ? "py-1 bg-[#F9F9F9] dark:bg-[#1A1E28]" : "bg-transparent"} border-gray-100 dark:border-slate-800 rounded-md px-4 before:block before:absolute before:z-0 before:-inset-0 before:-left-2`}
     >
       {actionBookmark}
       <h1

@@ -17,16 +17,9 @@ export const ListingRow: React.FC<ListingRowProps> = ({
   trailingIcon,
   hasBg,
 }) => {
-  // const description = content && (
-  //     <span className='font-normal ml-6 text-gray-300'>
-  //         {/* {content?.description?.slice(0, 100)} */}
-  //     </span>
-  // )
-
   const titleInner = (
     <>
       <span className="grow me-2">{title}</span>
-      {/* {description} */}
       {trailingIcon && <span>{trailingIcon}</span>}
     </>
   );
@@ -68,7 +61,7 @@ export const ListingRow: React.FC<ListingRowProps> = ({
   return (
     <motion.article
       {...motionProps}
-      className={`group relative ${hasBg ? "py-1 bg-[#F9F9F9] dark:bg-[#1A1E28]" : "bg-transparent"} border-gray-100 dark:border-slate-800 rounded-md px-4 before:block before:absolute before:z-0 before:-inset-0 before:-left-2`}
+      className={`group relative ${hasBg ? "bg-[#F9F9F9] dark:bg-[#1A1E28]" : "bg-transparent"} border-gray-100 dark:border-slate-800 rounded-md ${hasBg ? "py-1" : "py-0"} px-4 before:block before:absolute before:z-0 before:-inset-0 before:-left-2`}
     >
       {actionBookmark}
       <h1

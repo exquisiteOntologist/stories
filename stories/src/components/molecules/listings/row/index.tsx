@@ -24,7 +24,8 @@ export const ListingRow: React.FC<ListingRowProps> = ({
     </>
   );
 
-  const titleClasses = `flex font-bold cursor-pointer whitespace-nowrap overflow-hidden text-ellipsis rounded-md ${hasBg ? "py-2" : "py-0"} px-4`;
+  const xPadClass = "px-4";
+  const titleClasses = `flex font-bold cursor-pointer whitespace-nowrap overflow-hidden text-ellipsis rounded-md ${hasBg ? "py-2" : "py-0"} ${xPadClass}`;
 
   const titleContent = linkUrl ? (
     <a className={titleClasses} href={linkUrl} target="_blank">
@@ -53,7 +54,7 @@ export const ListingRow: React.FC<ListingRowProps> = ({
   );
 
   const metaDetail = (
-    <div className="px-4">
+    <div className={xPadClass}>
       <SourceLink source={source} isBlock={false} />
       {nodeRecency}
     </div>

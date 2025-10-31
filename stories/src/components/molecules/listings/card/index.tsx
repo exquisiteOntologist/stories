@@ -40,7 +40,7 @@ export const ListingCard: React.FC<ListingCardProps> = ({
   // )
 
   const actionBookmark = content && linkUrl && (
-    <Bookmark content={content} layout={SettingsLayout.CARDS} />
+    <Bookmark content={content} layout={SettingsLayout.COLUMNS} />
   );
 
   return (

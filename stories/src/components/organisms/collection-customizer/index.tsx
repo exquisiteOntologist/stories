@@ -27,7 +27,7 @@ export const CollectionCustomizer: React.FC<CollectionCustomizerProps> = ({
 
   const viewIsList = collectionSettings?.layout === SettingsLayout.ROWS;
   const otherLayoutOption = viewIsList
-    ? SettingsLayout.CARDS
+    ? SettingsLayout.COLUMNS
     : SettingsLayout.ROWS;
 
   return (

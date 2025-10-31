@@ -44,6 +44,7 @@ import {
   useResetThemeColours,
   useTitle,
 } from "./hooks";
+import ListingsContainer from "../../molecules/listings/listings-container";
 
 const clientItemsLimit: number = 100;
 
@@ -128,11 +129,11 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
         refreshPossible={refreshPossible}
       />
       {/*<CombinedCount collectionId={collectionId} key={contents?.[0]?.id ?? "article-count"} /> */}
-      <div className="flex align-middle mb-8">
+      <ListingsContainer className="mb-2" view={SettingsLayout.COLUMNS}>
         <FilterButton
           number={marks.length}
           colour="#F0315D"
-          label="bookmarks"
+          label="Bookmarks"
           Icon={IconBookmark}
           action={() => {
             dispatch(toggleFilterViewMode(ViewMode.BOOKMARKS));
@@ -143,14 +144,14 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
         <FilterButton
           number={phrases.length ? phrases.length + "+" : 0}
           colour="#2F959F"
-          label="entities"
+          label="Entities"
           Icon={IconFlower}
           action={() => {
             dispatch(toggleFilterViewMode(ViewMode.PHRASES));
           }}
           active={isViewModeActive(filter, ViewMode.PHRASES)}
         />
-      </div>
+      </ListingsContainer>
       <ListingsContainerCollections
         className="mb-12"
         view={collectionSettings?.layout as SettingsLayout}

@@ -21,7 +21,7 @@ export const Bookmark: React.FC<BookmarkProps> = ({ content, layout }) => {
   const actionToggleMark = () =>
     dispatch(isBookmarked ? removeMark(content) : addMark(content));
   const layoutStyles =
-    layout === SettingsLayout.CARDS
+    layout === SettingsLayout.COLUMNS
       ? "absolute top-0 left-0 p-2"
       : "absolute -left-6 right-full pr-2";
 

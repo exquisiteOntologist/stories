@@ -15,7 +15,7 @@ import { SourceLink } from "../source-link/source-link";
 export const ListingsContainerContent: React.FC<
   ListingsContainerContentProps
 > = ({ className, view, contents, sources }) => {
-  const ListingTag = view === SettingsLayout.CARDS ? ListingCard : ListingRow;
+  const ListingTag = view === SettingsLayout.COLUMNS ? ListingCard : ListingRow;
 
   return (
     <ListingsContainer className={className} view={view}>

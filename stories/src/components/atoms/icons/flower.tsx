@@ -16,7 +16,7 @@ export const IconFlower: React.FC<IconFlowerProps> = ({
   >
     <g
       transform="translate(-.27 -.719)"
-      fill={filled ? "#2F959F" : fillColour}
+      fill={filled ? fillColour : "transparent"}
       fillRule="evenodd"
     >
       <circle cx="16.271" cy="15.719" r="3" />

@@ -2,6 +2,7 @@ import React from "react";
 import { FilterButtonProps } from "./interfaces";
 import { ListingRow } from "../listings/row";
 import { Surface } from "../../atoms/surface";
+import { PillButton } from "../../atoms/pill-button";
 
 // export const FilterButton: React.FC<FilterButtonProps> = ({ action, active, number, colour, Icon, label }) => (
 //     <button className={`flex align-middle items-center ${active ? "bg-current" : "bg-transparent"} border-2 border-gray-100 dark:border-slate-800 rounded-md px-4 py-3 mr-4 hover:border-current`} style={{ color: colour }} onClick={action}>
@@ -10,22 +11,39 @@ import { Surface } from "../../atoms/surface";
 //     </button>
 // );
 
+// export const FilterButton: React.FC<FilterButtonProps> = ({
+//   action,
+//   active,
+//   number,
+//   colour,
+//   Icon,
+//   label,
+// }) => (
+//   <ListingRow
+//     id={label}
+//     title={label}
+//     action={action}
+//     hasBg={true}
+//     trailingIcon={
+//       <Icon filled={!active} strokeColour="white" fillColour="white" />
+//     }
+//   />
+// );
+
 export const FilterButton: React.FC<FilterButtonProps> = ({
   action,
   active,
   number,
-  colour,
+  activeClass,
   Icon,
   label,
 }) => (
-  <ListingRow
-    id={label}
-    title={label}
+  <PillButton
     action={action}
-    hasBg={true}
-    trailingIcon={
-      <Icon filled={!active} strokeColour="white" fillColour="white" />
-    }
+    active={active}
+    activeClass={activeClass}
+    Icon={Icon}
+    label={`${label}`}
   />
 );
 

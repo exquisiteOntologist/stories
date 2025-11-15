@@ -27,10 +27,14 @@ export const Bookmark: React.FC<BookmarkProps> = ({ content, layout }) => {
 
   return (
     <button
-      className={`${layoutStyles} bg-transparent text-rose-500 ${isBookmarked ? "opacity-100" : "opacity-0"} group-hover:opacity-100`}
+      className={`${layoutStyles} bg-transparent ${isBookmarked ? "opacity-100" : "opacity-0"} group-hover:opacity-100`}
       onClick={actionToggleMark}
     >
-      <IconBookmark filled={isBookmarked} />
+      <IconBookmark
+        filled={true}
+        fillColour={isBookmarked ? "#F0315D" : "transparent"}
+        strokeColour={isBookmarked ? "transparent" : "currentcolor"}
+      />
     </button>
   );
 };

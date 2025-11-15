@@ -129,10 +129,10 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
         refreshPossible={refreshPossible}
       />
       {/*<CombinedCount collectionId={collectionId} key={contents?.[0]?.id ?? "article-count"} /> */}
-      <ListingsContainer className="mb-2" view={SettingsLayout.COLUMNS}>
+      <div className="flex mb-8">
         <FilterButton
           number={marks.length}
-          colour="#F0315D"
+          activeClass="text-white bg-[#F0315D]"
           label="Bookmarks"
           Icon={IconBookmark}
           action={() => {
@@ -143,7 +143,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
         />
         <FilterButton
           number={phrases.length ? phrases.length + "+" : 0}
-          colour="#2F959F"
+          activeClass="text-white bg-[#2F959F]"
           label="Entities"
           Icon={IconFlower}
           action={() => {
@@ -151,7 +151,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
           }}
           active={isViewModeActive(filter, ViewMode.PHRASES)}
         />
-      </ListingsContainer>
+      </div>
       <ListingsContainerCollections
         className="mb-12"
         view={collectionSettings?.layout as SettingsLayout}

@@ -11,7 +11,7 @@ export interface FilterButtonProps {
   /** An Icon representing the filter state item */
   Icon: FC<IconButtonProps>;
   /** Button colour theme, usually distinct for reach representation */
-  colour: string;
+  activeClass: string;
   /** Label to display alongside the icon and number */
   label: string;
 }

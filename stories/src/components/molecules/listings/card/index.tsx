@@ -3,8 +3,6 @@ import { motion } from "framer-motion";
 import { SourceLink } from "../source-link/source-link";
 import { ListingCardProps } from "./interfaces";
 import { motionProps } from "../../../../utilities/animate";
-import { Bookmark } from "../../bookmark";
-import { SettingsLayout } from "../../../../data/chirp-types";
 import { Visual } from "../../visual";
 
 export const ListingCard: React.FC<ListingCardProps> = ({
@@ -12,6 +10,7 @@ export const ListingCard: React.FC<ListingCardProps> = ({
   linkUrl,
   content,
   source,
+  leadingContent,
 }) => {
   const listingCoverImage = content?.media?.length
     ? [...content?.media][0]
@@ -39,10 +38,6 @@ export const ListingCard: React.FC<ListingCardProps> = ({
   //     </span>
   // )
 
-  const actionBookmark = content && linkUrl && (
-    <Bookmark content={content} layout={SettingsLayout.COLUMNS} />
-  );
-
   return (
     <motion.article
       {...motionProps}
@@ -64,7 +59,7 @@ export const ListingCard: React.FC<ListingCardProps> = ({
         </a>
         <SourceLink source={source} isBlock={true} />
       </h1>
-      {actionBookmark}
+      {leadingContent}
     </motion.article>
   );
 };

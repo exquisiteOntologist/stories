@@ -2,12 +2,13 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 
 import { fn } from "storybook/test";
 
-import { FloatingButton } from ".";
+import { PillButton } from ".";
+import { IconBookmark } from "../icons/bookmark";
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
-  title: "Atoms/Buttons/Floating Button",
-  component: FloatingButton,
+  title: "Atoms/Buttons/Pill Button",
+  component: PillButton,
   parameters: {
     // Optional parameter to center the component in the Canvas. More info: https://storybook.js.org/docs/configure/story-layout
     layout: "centered",
@@ -20,14 +21,32 @@ const meta = {
   },
   // Use `fn` to spy on the onClick arg, which will appear in the actions panel once invoked: https://storybook.js.org/docs/essentials/actions#story-args
   args: { action: fn() },
-} satisfies Meta<typeof FloatingButton>;
+} satisfies Meta<typeof PillButton>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
-export const Standard: Story = {
+export const Gray: Story = {
   args: {
-    label: "Button",
+    label: "Pill",
+    Icon: undefined,
+    // action: () => {},
+  },
+};
+
+export const WithIcon: Story = {
+  args: {
+    label: "The Pill",
+    Icon: IconBookmark,
+  },
+};
+
+export const WithIconActive: Story = {
+  args: {
+    label: "The Pill",
+    Icon: IconBookmark,
+    active: true,
+    activeClass: "bg-[#F0315D] text-white",
   },
 };

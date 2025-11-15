@@ -8,10 +8,7 @@ import { IconCaretExpandRight } from "../../../atoms/icons/caret-expand-right";
 export const ListingsContainerCollections: React.FC<
   ListingsContainerCollectionsProps
 > = ({ className, view, collections, selectAction }) => (
-  <ListingsContainer
-    className={className}
-    view={SettingsLayout.CARDS /* view */}
-  >
+  <ListingsContainer className={className} view={SettingsLayout.COLUMNS}>
     {collections.map((c) => (
       <ListingRow
         key={c.id}

@@ -1,5 +1,5 @@
-export interface FilterButtonIconProps {
-    filled: boolean;
-    fillColour?: string;
-    strokeColour?: string;
+export interface IconButtonProps {
+  filled: boolean;
+  fillColour?: string;
+  strokeColour?: string;
 }

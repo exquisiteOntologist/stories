@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { selectColours } from "../../../../redux/features/themeSlice";
 import { useAppSelector } from "../../../../redux/hooks";
-import { buttonClassesPadding } from "../../button";
+import { buttonClassesPadding } from "../../floating-button";
 
 const generateCanvasEye = (
   progress: number,

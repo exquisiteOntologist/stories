@@ -5,7 +5,7 @@ import { IconAddCircle } from "../../atoms/icons/add-circle";
 import { IconShapes } from "../../atoms/icons/shapes";
 import { IconTickCircle } from "../../atoms/icons/tick-circle";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { Button } from "../../atoms/button";
+import { FloatingButton } from "../../atoms/floating-button";
 import { CollectionSettings, SettingsLayout } from "../../../data/chirp-types";
 import { setCollectionSettings } from "../../../redux/features/collectionSettingsSlice";
 import { CollectionCustomizerProps } from "./interfaces";
@@ -27,7 +27,7 @@ export const CollectionCustomizer: React.FC<CollectionCustomizerProps> = ({
 
   const viewIsList = collectionSettings?.layout === SettingsLayout.ROWS;
   const otherLayoutOption = viewIsList
-    ? SettingsLayout.CARDS
+    ? SettingsLayout.COLUMNS
     : SettingsLayout.ROWS;
 
   return (
@@ -35,12 +35,12 @@ export const CollectionCustomizer: React.FC<CollectionCustomizerProps> = ({
       className={`z-50 transition-all duration-100 ${isCustomizing ? "opacity-100 translate-x-0 translate-y-0" : "opacity-0 translate-x-3 -translate-y-3"} mb-6`}
     >
       <div className={`flex justify-start`}>
-        <Button
+        <FloatingButton
           label="Done"
           Icon={IconTickCircle}
           action={() => dispatch(setIsCustomizing(false))}
         />
-        <Button
+        <FloatingButton
           label={`View as ${viewIsList ? "Cards" : "List"}`}
           Icon={viewIsList ? IconGrid : IconList}
           action={() =>
@@ -57,14 +57,14 @@ export const CollectionCustomizer: React.FC<CollectionCustomizerProps> = ({
             sources={sources}
             layout={otherLayoutOption}
           /> */}
-        </Button>
-        <Button
+        </FloatingButton>
+        <FloatingButton
           label="Add Widget"
           Icon={IconAddCircle}
           action={() => void 8}
           disabled={true}
         />
-        <Button Icon={IconShapes} label="Sources" linkTo={`/edit`} />
+        <FloatingButton Icon={IconShapes} label="Sources" linkTo={`/edit`} />
       </div>
     </div>
   );

@@ -130,5 +130,5 @@ export interface CollectionToPhrase {
 
 export enum SettingsLayout {
   ROWS = "ROWS",
-  CARDS = "CARDS",
+  COLUMNS = "COLUMNS",
 }

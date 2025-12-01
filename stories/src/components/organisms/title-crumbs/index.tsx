@@ -41,7 +41,7 @@ export const TitleCrumbs: React.FC<TitleCrumbsProps> = ({
   });
 
   return (
-    <hgroup className="mb-12">
+    <hgroup className="px-4 mb-12">
       <h1 className="text-4xl font-semibold">{title}</h1>
       <h2 className="text-2xl font-semibold select-none">{historyItems}</h2>
     </hgroup>

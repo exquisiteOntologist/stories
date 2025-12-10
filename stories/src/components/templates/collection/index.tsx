@@ -44,7 +44,6 @@ import {
   useResetThemeColours,
   useTitle,
 } from "./hooks";
-import ListingsContainer from "../../molecules/listings/listings-container";
 
 const clientItemsLimit: number = 100;
 
@@ -115,7 +114,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
       key={collectionId}
       className="collection h-min-content w-full max-w-7xl"
     >
-      <div className="flex justify-between">
+      <div className="flex justify-between px-4">
         <TitleCrumbs collectionId={collectionId} title={title} />
         <CollectionCustomizer
           collectionSettings={collectionSettings}
@@ -128,7 +127,6 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
         refreshAction={() => setDoRefresh(true)}
         refreshPossible={refreshPossible}
       />
-      {/*<CombinedCount collectionId={collectionId} key={contents?.[0]?.id ?? "article-count"} /> */}
       <div className="flex mb-8">
         <FilterButton
           number={marks.length}
@@ -152,12 +150,14 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
           active={isViewModeActive(filter, ViewMode.PHRASES)}
         />
       </div>
-      <ListingsContainerCollections
-        className="mb-12"
-        view={collectionSettings?.layout as SettingsLayout}
-        collections={nestedCollections}
-        selectAction={(c) => dispatch(chooseCollection(c.id))}
-      />
+      {!!nestedCollections.length && (
+        <ListingsContainerCollections
+          className="mb-12"
+          view={collectionSettings?.layout as SettingsLayout}
+          collections={nestedCollections}
+          selectAction={(c) => dispatch(chooseCollection(c.id))}
+        />
+      )}
       {isViewModeActive(filter, ViewMode.PHRASES) && (
         <ListingsContainerPhrase
           view={collectionSettings?.layout as SettingsLayout}

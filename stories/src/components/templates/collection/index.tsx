@@ -114,7 +114,7 @@ const CollectionView: React.FC<CollectionViewProps> = () => {
       key={collectionId}
       className="collection h-min-content w-full max-w-7xl"
     >
-      <div className="flex justify-between">
+      <div className="flex justify-between px-4">
         <TitleCrumbs collectionId={collectionId} title={title} />
         <CollectionCustomizer
           collectionSettings={collectionSettings}

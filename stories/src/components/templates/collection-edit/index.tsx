@@ -45,7 +45,7 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = () => {
         // rotate-x-50 rotate-z-45
         className="w-full max-w-7xl mx-4 flex flex-wrap justify-normal"
       >
-        <div className="collection w-full h-min-content">
+        <div className="collection w-full h-min-content px-4">
           <TitleCrumbs collectionId={collectionId} title="materials" />
         </div>
         <div className="collection w-full h-min-content px-4">

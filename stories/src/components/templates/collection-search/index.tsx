@@ -25,7 +25,9 @@ const CollectionSearchView: React.FC = () => {
       {...motionProps}
       className="collection w-full max-w-7xl mx-4 h-min-content"
     >
-      <TitleCrumbs collectionId={collectionId} title="find" />
+      <div className="px-4">
+        <TitleCrumbs collectionId={collectionId} title="find" />
+      </div>
       <div className="px-4 mb-12">
         <SearchForm />
         <SearchResults />

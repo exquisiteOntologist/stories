@@ -48,7 +48,7 @@ const CollectionEditView: React.FC<CollectionEditViewProps> = () => {
         <div className="collection w-full h-min-content">
           <TitleCrumbs collectionId={collectionId} title="materials" />
         </div>
-        <div className="collection w-full h-min-content">
+        <div className="collection w-full h-min-content px-4">
           <RenameCollectionSection />
           <EditListSources />
           <EditListCollections />

@@ -2,10 +2,9 @@
 
 # Stories
 
-Make sense of the outer world that affects **your narrative**.
+Make sense of the world that affects **your narrative**.
 
-![Article in Arc browser over thumbnail view](./materials/screenshots/screenshot-b.png)
-![Following Journals](./materials/screenshots/screenshot-c@2x.png)
+<img src="./materials/screenshots/screenshot-tiles.png" width="2792" height="1928">
 
 ## Benefits
 
@@ -25,20 +24,6 @@ Make sense of the outer world that affects **your narrative**.
 5. Run `yarn tauri build`
 
 <img src="./materials/readme-icon.png" width="128" height="128">
-
-## Starting Again
-
-I previously built this app using C# and [Catalyst](https://github.com/curiosity-ai/catalyst). Upon discovering that I was being spied upon, I decided not to release the SAAS and instead release a free version that runs on users' own devices, due to my concerns that I would be exposing vulnerable users. I'm very friendly, but it's nice for people to be able to learn without advertising their interests to everyone. An additional concern of mine was regarding the risk of being charged with user's crimes, as it's like hosting a web browser for everyone to use. I believe the criminals can be found without any data access, due to their nature. The way the world is going is very frustrating for me and I'm torn between throwing everything away and different unknown solutions.
-
-### Reader
-
-![Following Journals](./materials/roadmap/old-reader.png)
-
-The previous version of the application had a nice reader mode. It would use readability to display the article text, or when the article text was not provided it would display the web-page. This may be restored for RSS.
-
-### Named Entity Recognition
-
-Recognise entities in the text. Previously NER was performed extremely quickly with a high success rate using Catalyst. Entities are a fundamental component of making the app save time and yield better information.
 
 ## Develop the app
 
